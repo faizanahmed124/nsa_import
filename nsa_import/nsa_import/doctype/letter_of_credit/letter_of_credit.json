@@ -1,0 +1,595 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "lc_no",
+  "lc_type",
+  "usance_days",
+  "cb_1",
+  "lc_date",
+  "status",
+  "cb_2",
+  "company",
+  "company_currency",
+  "po_section",
+  "purchase_order",
+  "pi_no",
+  "pi_date",
+  "cb_3",
+  "supplier",
+  "supplier_name",
+  "beneficiary_bank",
+  "bank_section",
+  "issuing_bank",
+  "bank_gl_account",
+  "cb_4",
+  "advising_bank",
+  "confirming_bank",
+  "amount_section",
+  "currency",
+  "exchange_rate",
+  "cb_5",
+  "lc_amount",
+  "tolerance_percent",
+  "cb_6",
+  "max_lc_amount",
+  "base_lc_amount",
+  "validity_section",
+  "expiry_date",
+  "place_of_expiry",
+  "presentation_days",
+  "cb_7",
+  "latest_shipment_date",
+  "mode_of_shipment",
+  "shipping_term",
+  "cb_8",
+  "partial_shipment",
+  "transhipment",
+  "port_of_loading",
+  "port_of_discharge",
+  "documents_section",
+  "documents_required",
+  "margin_section",
+  "margin_percent",
+  "margin_amount",
+  "cb_9",
+  "total_charges",
+  "journal_entry",
+  "charges",
+  "amendment_section",
+  "amendments",
+  "utilization_section",
+  "shipped_amount",
+  "retired_amount",
+  "cb_10",
+  "balance_amount",
+  "remarks",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "LC-.YYYY.-",
+   "reqd": 1,
+   "default": "LC-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "lc_no",
+   "fieldtype": "Data",
+   "label": "LC No.",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "lc_type",
+   "fieldtype": "Select",
+   "label": "LC Type",
+   "options": "Sight\nUsance\nDeferred Payment\nBack to Back\nStandby",
+   "reqd": 1,
+   "default": "Sight"
+  },
+  {
+   "fieldname": "usance_days",
+   "fieldtype": "Int",
+   "label": "Usance Days",
+   "depends_on": "eval:['Usance','Deferred Payment'].includes(doc.lc_type)"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lc_date",
+   "fieldtype": "Date",
+   "label": "LC Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nOpened\nAmended\nPartially Shipped\nFully Shipped\nPartially Retired\nRetired\nExpired\nClosed\nCancelled",
+   "default": "Draft",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "remember_last_selected_value": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "po_section",
+   "fieldtype": "Section Break",
+   "label": "Purchase Order & Beneficiary"
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "options": "Purchase Order",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "pi_no",
+   "fieldtype": "Data",
+   "label": "PI No.",
+   "fetch_from": "purchase_order.pi_no",
+   "read_only": 1
+  },
+  {
+   "fieldname": "pi_date",
+   "fieldtype": "Date",
+   "label": "PI Date",
+   "fetch_from": "purchase_order.pi_date",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier (Beneficiary)",
+   "options": "Supplier",
+   "fetch_from": "purchase_order.supplier",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name",
+   "fetch_from": "supplier.supplier_name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "beneficiary_bank",
+   "fieldtype": "Small Text",
+   "label": "Beneficiary Bank Details"
+  },
+  {
+   "fieldname": "bank_section",
+   "fieldtype": "Section Break",
+   "label": "Banks"
+  },
+  {
+   "fieldname": "issuing_bank",
+   "fieldtype": "Link",
+   "label": "Issuing / Opening Bank",
+   "options": "Bank",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "bank_gl_account",
+   "fieldtype": "Link",
+   "label": "Bank GL Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "cb_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "advising_bank",
+   "fieldtype": "Data",
+   "label": "Advising Bank"
+  },
+  {
+   "fieldname": "confirming_bank",
+   "fieldtype": "Data",
+   "label": "Confirming Bank"
+  },
+  {
+   "fieldname": "amount_section",
+   "fieldtype": "Section Break",
+   "label": "LC Amount"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate (to Company Currency)",
+   "reqd": 1,
+   "default": "1",
+   "precision": "9"
+  },
+  {
+   "fieldname": "cb_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lc_amount",
+   "fieldtype": "Currency",
+   "label": "LC Amount",
+   "options": "currency",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "tolerance_percent",
+   "fieldtype": "Percent",
+   "label": "Tolerance (+/-) %"
+  },
+  {
+   "fieldname": "cb_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "max_lc_amount",
+   "fieldtype": "Currency",
+   "label": "Max LC Amount (incl. amendments & tolerance)",
+   "options": "currency",
+   "read_only": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "base_lc_amount",
+   "fieldtype": "Currency",
+   "label": "LC Amount (Company Currency)",
+   "options": "company_currency",
+   "read_only": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "validity_section",
+   "fieldtype": "Section Break",
+   "label": "Validity & Shipment Terms"
+  },
+  {
+   "fieldname": "expiry_date",
+   "fieldtype": "Date",
+   "label": "Expiry Date",
+   "reqd": 1,
+   "allow_on_submit": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "place_of_expiry",
+   "fieldtype": "Data",
+   "label": "Place of Expiry"
+  },
+  {
+   "fieldname": "presentation_days",
+   "fieldtype": "Int",
+   "label": "Documents Presentation Period (Days)",
+   "default": "21"
+  },
+  {
+   "fieldname": "cb_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "latest_shipment_date",
+   "fieldtype": "Date",
+   "label": "Latest Shipment Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "mode_of_shipment",
+   "fieldtype": "Select",
+   "label": "Mode of Shipment",
+   "options": "\nBy Sea\nBy Air\nBy Road\nBy Rail\nCourier"
+  },
+  {
+   "fieldname": "shipping_term",
+   "fieldtype": "Select",
+   "label": "Shipping Term (Incoterm)",
+   "options": "\nEXW\nFCA\nFAS\nFOB\nCFR\nCIF\nCPT\nCIP\nDAP\nDPU\nDDP"
+  },
+  {
+   "fieldname": "cb_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "partial_shipment",
+   "fieldtype": "Select",
+   "label": "Partial Shipment",
+   "options": "Allowed\nNot Allowed",
+   "default": "Allowed"
+  },
+  {
+   "fieldname": "transhipment",
+   "fieldtype": "Select",
+   "label": "Transhipment",
+   "options": "Allowed\nNot Allowed",
+   "default": "Allowed"
+  },
+  {
+   "fieldname": "port_of_loading",
+   "fieldtype": "Data",
+   "label": "Port of Loading"
+  },
+  {
+   "fieldname": "port_of_discharge",
+   "fieldtype": "Data",
+   "label": "Port of Discharge"
+  },
+  {
+   "fieldname": "documents_section",
+   "fieldtype": "Section Break",
+   "label": "Documents Required"
+  },
+  {
+   "fieldname": "documents_required",
+   "fieldtype": "Text",
+   "label": "Documents Required",
+   "default": "Bill of Lading / Airway Bill\nCommercial Invoice\nPacking List\nCertificate of Origin\nBill of Exchange"
+  },
+  {
+   "fieldname": "margin_section",
+   "fieldtype": "Section Break",
+   "label": "Margin & Bank Charges"
+  },
+  {
+   "fieldname": "margin_percent",
+   "fieldtype": "Percent",
+   "label": "Margin %"
+  },
+  {
+   "fieldname": "margin_amount",
+   "fieldtype": "Currency",
+   "label": "Margin Amount (Company Currency)",
+   "options": "company_currency",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "cb_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_charges",
+   "fieldtype": "Currency",
+   "label": "Total Bank Charges",
+   "options": "company_currency",
+   "read_only": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Margin / Charges Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "charges",
+   "fieldtype": "Table",
+   "label": "Bank Charges",
+   "options": "LC Charge"
+  },
+  {
+   "fieldname": "amendment_section",
+   "fieldtype": "Section Break",
+   "label": "Amendments",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "amendments",
+   "fieldtype": "Table",
+   "label": "Amendments",
+   "options": "LC Amendment",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "utilization_section",
+   "fieldtype": "Section Break",
+   "label": "Utilization"
+  },
+  {
+   "fieldname": "shipped_amount",
+   "fieldtype": "Currency",
+   "label": "Shipped Amount",
+   "options": "currency",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "retired_amount",
+   "fieldtype": "Currency",
+   "label": "Retired Amount",
+   "options": "currency",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "cb_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "balance_amount",
+   "fieldtype": "Currency",
+   "label": "Balance (Unshipped)",
+   "options": "currency",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Letter of Credit",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Letter of Credit",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "lc_no",
+ "search_fields": "lc_no,supplier,purchase_order",
+ "show_title_field_in_link": 1
+}

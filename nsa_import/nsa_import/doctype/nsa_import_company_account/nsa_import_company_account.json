@@ -1,0 +1,97 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "company",
+  "lc_margin_account",
+  "bank_charges_account",
+  "customs_duty_account",
+  "cb1",
+  "sales_tax_account",
+  "income_tax_account",
+  "freight_account",
+  "clearing_account",
+  "other_import_expense_account"
+ ],
+ "fields": [
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "lc_margin_account",
+   "fieldtype": "Link",
+   "label": "LC Margin Account",
+   "options": "Account",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "bank_charges_account",
+   "fieldtype": "Link",
+   "label": "LC / Bank Charges Account",
+   "options": "Account",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "customs_duty_account",
+   "fieldtype": "Link",
+   "label": "Customs Duty Account (Valuation)",
+   "options": "Account",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sales_tax_account",
+   "fieldtype": "Link",
+   "label": "Input Sales Tax Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "income_tax_account",
+   "fieldtype": "Link",
+   "label": "Advance Income Tax Account",
+   "options": "Account"
+  },
+  {
+   "fieldname": "freight_account",
+   "fieldtype": "Link",
+   "label": "Freight & Insurance Account (Valuation)",
+   "options": "Account"
+  },
+  {
+   "fieldname": "clearing_account",
+   "fieldtype": "Link",
+   "label": "Clearing / Port Charges Account (Valuation)",
+   "options": "Account"
+  },
+  {
+   "fieldname": "other_import_expense_account",
+   "fieldtype": "Link",
+   "label": "Other Import Expense Account (Valuation)",
+   "options": "Account"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "NSA Import Company Account",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1
+}

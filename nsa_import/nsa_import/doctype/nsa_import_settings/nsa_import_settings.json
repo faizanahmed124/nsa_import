@@ -1,0 +1,121 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_section",
+  "hs_code_mandatory",
+  "shipment_qty_tolerance",
+  "default_distribution",
+  "cb1",
+  "landing_charges_percent",
+  "include_sales_tax_in_landed_cost",
+  "accounts_section",
+  "company_accounts"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "hs_code_mandatory",
+   "fieldtype": "Check",
+   "label": "HS Code Mandatory for Import Stock Items",
+   "default": "1"
+  },
+  {
+   "fieldname": "shipment_qty_tolerance",
+   "fieldtype": "Percent",
+   "label": "Over-Shipment Tolerance (%)"
+  },
+  {
+   "fieldname": "default_distribution",
+   "fieldtype": "Select",
+   "label": "Default Charge Distribution",
+   "options": "Amount\nQty\nWeight",
+   "default": "Amount"
+  },
+  {
+   "fieldname": "cb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "landing_charges_percent",
+   "fieldtype": "Percent",
+   "label": "Customs Landing Charges (%)",
+   "default": "1",
+   "description": "Added to CIF value to arrive at Assessable Value"
+  },
+  {
+   "fieldname": "include_sales_tax_in_landed_cost",
+   "fieldtype": "Check",
+   "label": "Include Import Sales Tax in Landed Cost",
+   "description": "Enable only if import sales tax is NOT adjustable (e.g. unregistered)."
+  },
+  {
+   "fieldname": "accounts_section",
+   "fieldtype": "Section Break",
+   "label": "Company-wise Accounts"
+  },
+  {
+   "fieldname": "company_accounts",
+   "fieldtype": "Table",
+   "label": "Accounts",
+   "options": "NSA Import Company Account"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "NSA Import Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "issingle": 1
+}

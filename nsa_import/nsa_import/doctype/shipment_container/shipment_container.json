@@ -1,0 +1,61 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "container_no",
+  "container_size",
+  "seal_no",
+  "packages",
+  "gross_weight"
+ ],
+ "fields": [
+  {
+   "fieldname": "container_no",
+   "fieldtype": "Data",
+   "label": "Container No.",
+   "reqd": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "container_size",
+   "fieldtype": "Select",
+   "label": "Size",
+   "options": "20 ft\n40 ft\n40 ft HC\n45 ft\nLCL\nReefer 20 ft\nReefer 40 ft",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "seal_no",
+   "fieldtype": "Data",
+   "label": "Seal No.",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "packages",
+   "fieldtype": "Int",
+   "label": "Packages",
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "gross_weight",
+   "fieldtype": "Float",
+   "label": "Gross Weight",
+   "in_list_view": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Shipment Container",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1
+}

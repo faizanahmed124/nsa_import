@@ -1,0 +1,81 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "amendment_no",
+  "amendment_date",
+  "amount_change",
+  "new_expiry_date",
+  "new_latest_shipment_date",
+  "amendment_charges",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "amendment_no",
+   "fieldtype": "Data",
+   "label": "Amendment No.",
+   "reqd": 1,
+   "in_list_view": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "amendment_date",
+   "fieldtype": "Date",
+   "label": "Amendment Date",
+   "reqd": 1,
+   "in_list_view": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "amount_change",
+   "fieldtype": "Currency",
+   "label": "Amount Increase / (Decrease)",
+   "options": "currency",
+   "in_list_view": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "new_expiry_date",
+   "fieldtype": "Date",
+   "label": "New Expiry Date",
+   "in_list_view": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "new_latest_shipment_date",
+   "fieldtype": "Date",
+   "label": "New Latest Shipment Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "amendment_charges",
+   "fieldtype": "Currency",
+   "label": "Amendment Charges (Company Currency)",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description",
+   "in_list_view": 1,
+   "allow_on_submit": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "LC Amendment",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1
+}

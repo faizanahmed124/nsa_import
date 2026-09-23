@@ -1,0 +1,530 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "import_shipment",
+  "purchase_order",
+  "letter_of_credit",
+  "cb_1",
+  "company",
+  "company_currency",
+  "supplier",
+  "status",
+  "cb_2",
+  "posting_date",
+  "clearing_agent",
+  "gd_section",
+  "gd_no",
+  "gd_date",
+  "gd_type",
+  "cb_3",
+  "customs_station",
+  "igm_no",
+  "igm_date",
+  "index_no",
+  "cb_4",
+  "bl_awb_no",
+  "currency",
+  "exchange_rate",
+  "assessment_section",
+  "landing_charges_percent",
+  "cb_5",
+  "freight_for_assessment",
+  "insurance_for_assessment",
+  "items_section",
+  "items",
+  "totals_section",
+  "total_assessable_value",
+  "total_customs_duty",
+  "total_acd",
+  "total_rd",
+  "cb_6",
+  "total_sales_tax",
+  "total_additional_sales_tax",
+  "total_income_tax",
+  "cb_7",
+  "total_duties_landed",
+  "total_adjustable_taxes",
+  "total_duties_and_taxes",
+  "payment_section",
+  "psid_no",
+  "payment_date",
+  "cb_8",
+  "paid_through",
+  "journal_entry",
+  "release_section",
+  "release_date",
+  "examination_remarks",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "GD-.YYYY.-",
+   "reqd": 1,
+   "default": "GD-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "import_shipment",
+   "fieldtype": "Link",
+   "label": "Import Shipment",
+   "options": "Import Shipment",
+   "reqd": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "options": "Purchase Order",
+   "fetch_from": "import_shipment.purchase_order",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "letter_of_credit",
+   "fieldtype": "Link",
+   "label": "Letter of Credit",
+   "options": "Letter of Credit",
+   "fetch_from": "import_shipment.letter_of_credit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "fetch_from": "import_shipment.company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "fetch_from": "import_shipment.supplier",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nFiled\nAssessed\nDuty Paid\nReleased\nCancelled",
+   "default": "Draft",
+   "allow_on_submit": 1,
+   "no_copy": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "clearing_agent",
+   "fieldtype": "Link",
+   "label": "Clearing Agent",
+   "options": "Supplier",
+   "fetch_from": "import_shipment.clearing_agent",
+   "fetch_if_empty": 1
+  },
+  {
+   "fieldname": "gd_section",
+   "fieldtype": "Section Break",
+   "label": "Goods Declaration (GD)"
+  },
+  {
+   "fieldname": "gd_no",
+   "fieldtype": "Data",
+   "label": "GD No.",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "gd_date",
+   "fieldtype": "Date",
+   "label": "GD Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "gd_type",
+   "fieldtype": "Select",
+   "label": "GD Type",
+   "options": "Home Consumption\nInto-Bond\nEx-Bond\nTemporary Import\nOther",
+   "default": "Home Consumption"
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "customs_station",
+   "fieldtype": "Data",
+   "label": "Collectorate / Customs Station"
+  },
+  {
+   "fieldname": "igm_no",
+   "fieldtype": "Data",
+   "label": "IGM No."
+  },
+  {
+   "fieldname": "igm_date",
+   "fieldtype": "Date",
+   "label": "IGM Date"
+  },
+  {
+   "fieldname": "index_no",
+   "fieldtype": "Data",
+   "label": "Index No."
+  },
+  {
+   "fieldname": "cb_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bl_awb_no",
+   "fieldtype": "Data",
+   "label": "B/L / AWB No.",
+   "fetch_from": "import_shipment.bl_awb_no",
+   "read_only": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Invoice Currency",
+   "options": "Currency",
+   "fetch_from": "import_shipment.currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Customs Exchange Rate",
+   "reqd": 1,
+   "precision": "9"
+  },
+  {
+   "fieldname": "assessment_section",
+   "fieldtype": "Section Break",
+   "label": "Assessment Basis"
+  },
+  {
+   "fieldname": "landing_charges_percent",
+   "fieldtype": "Percent",
+   "label": "Landing Charges %",
+   "default": "1"
+  },
+  {
+   "fieldname": "cb_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "freight_for_assessment",
+   "fieldtype": "Currency",
+   "label": "Freight for Assessment (FOB/EXW)",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "insurance_for_assessment",
+   "fieldtype": "Currency",
+   "label": "Insurance for Assessment",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Item-wise Duties & Taxes",
+   "description": "AV = (CIF + freight/insurance share) \u00d7 (1 + landing %). ST base = AV + CD + ACD + RD. IT base = ST base + ST + AST."
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Customs Clearance Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "totals_section",
+   "fieldtype": "Section Break",
+   "label": "Totals (Company Currency)"
+  },
+  {
+   "fieldname": "total_assessable_value",
+   "fieldtype": "Currency",
+   "label": "Total Assessable Value",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_customs_duty",
+   "fieldtype": "Currency",
+   "label": "Customs Duty",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_acd",
+   "fieldtype": "Currency",
+   "label": "Additional Customs Duty",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_rd",
+   "fieldtype": "Currency",
+   "label": "Regulatory Duty",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_sales_tax",
+   "fieldtype": "Currency",
+   "label": "Sales Tax",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_additional_sales_tax",
+   "fieldtype": "Currency",
+   "label": "Additional Sales Tax",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_income_tax",
+   "fieldtype": "Currency",
+   "label": "Income Tax",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_duties_landed",
+   "fieldtype": "Currency",
+   "label": "Duties for Landed Cost (CD+ACD+RD)",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_adjustable_taxes",
+   "fieldtype": "Currency",
+   "label": "Adjustable Taxes (ST+AST+IT)",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_duties_and_taxes",
+   "fieldtype": "Currency",
+   "label": "Total Duties & Taxes",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "payment_section",
+   "fieldtype": "Section Break",
+   "label": "Duty Payment"
+  },
+  {
+   "fieldname": "psid_no",
+   "fieldtype": "Data",
+   "label": "PSID / Challan No."
+  },
+  {
+   "fieldname": "payment_date",
+   "fieldtype": "Date",
+   "label": "Payment Date"
+  },
+  {
+   "fieldname": "cb_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "paid_through",
+   "fieldtype": "Link",
+   "label": "Paid Through (Bank GL Account)",
+   "options": "Account"
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Duty Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "release_section",
+   "fieldtype": "Section Break",
+   "label": "Release"
+  },
+  {
+   "fieldname": "release_date",
+   "fieldtype": "Date",
+   "label": "Release Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "examination_remarks",
+   "fieldtype": "Small Text",
+   "label": "Examination / Release Remarks",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Customs Clearance",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Customs Clearance",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "gd_no",
+ "search_fields": "gd_no,import_shipment,purchase_order",
+ "show_title_field_in_link": 1
+}
