@@ -27,6 +27,10 @@
   "allow_shipping_without_lc",
   "cb_sd1",
   "default_shipment_commission_percent",
+  "insurance_settings_section",
+  "insured_value_markup_percent",
+  "cb_si1",
+  "insurance_override_role",
   "accounts_section",
   "company_accounts"
  ],
@@ -149,6 +153,29 @@
    "fieldname": "default_shipment_commission_percent",
    "fieldtype": "Percent",
    "label": "Default Shipment Commission (%)"
+  },
+  {
+   "fieldname": "insurance_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Shipping Insurance"
+  },
+  {
+   "fieldname": "insured_value_markup_percent",
+   "fieldtype": "Percent",
+   "label": "Default Insured Value Markup (%)",
+   "default": "10",
+   "description": "Default Insurance Amount = Invoice Value x (1 + markup %). Common practice: invoice + 10%."
+  },
+  {
+   "fieldname": "cb_si1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "insurance_override_role",
+   "fieldtype": "Link",
+   "label": "Role Allowed to Exceed Insurance Balance",
+   "options": "Role",
+   "default": "Accounts Manager"
   },
   {
    "fieldname": "accounts_section",

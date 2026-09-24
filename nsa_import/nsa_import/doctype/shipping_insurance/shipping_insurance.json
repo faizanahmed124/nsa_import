@@ -1,0 +1,583 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "source_section",
+  "naming_series",
+  "shipping_document",
+  "purchase_order",
+  "letter_of_credit",
+  "cb_1",
+  "lc_no",
+  "supplier",
+  "supplier_name",
+  "bank",
+  "cb_2",
+  "posting_date",
+  "status",
+  "company",
+  "company_currency",
+  "policy_section",
+  "insurance_company",
+  "policy_number",
+  "policy_date",
+  "cb_3",
+  "insurance_type",
+  "coverage_type",
+  "release_date",
+  "cb_4",
+  "policy_start_date",
+  "policy_expiry_date",
+  "amount_section",
+  "currency",
+  "exchange_rate",
+  "insurance_total_policy",
+  "invoice_currency",
+  "invoice_value_fc",
+  "marine_bill_value",
+  "cb_5",
+  "insurance_amount",
+  "utilized_before",
+  "balance_insurance",
+  "allow_over_insurance",
+  "cb_6",
+  "premium_rate",
+  "premium_amount",
+  "base_insurance_amount",
+  "base_premium_amount",
+  "policy_key",
+  "shipment_section",
+  "vessel_name",
+  "bl_awb_no",
+  "cb_7",
+  "eta",
+  "port_of_loading",
+  "cb_8",
+  "port_of_discharge",
+  "items_section",
+  "allocate_insurance",
+  "items",
+  "related_section",
+  "related_documents_html",
+  "remarks_section",
+  "remarks",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "source_section",
+   "fieldtype": "Section Break",
+   "label": "Source Documents"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "SI-.YYYY.-",
+   "reqd": 1,
+   "default": "SI-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "shipping_document",
+   "fieldtype": "Link",
+   "label": "Shipping Document",
+   "options": "Shipping Document",
+   "reqd": 1,
+   "set_only_once": 1,
+   "bold": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "PO No.",
+   "options": "Purchase Order",
+   "reqd": 1,
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "letter_of_credit",
+   "fieldtype": "Link",
+   "label": "Letter Of Credit",
+   "options": "Letter of Credit",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lc_no",
+   "fieldtype": "Data",
+   "label": "LC No.",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "bank",
+   "fieldtype": "Link",
+   "label": "Bank",
+   "options": "Bank",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nSubmitted\nPolicy Issued\nPartially Utilized\nFully Utilized\nCancelled",
+   "default": "Draft",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "policy_section",
+   "fieldtype": "Section Break",
+   "label": "Insurance Policy"
+  },
+  {
+   "fieldname": "insurance_company",
+   "fieldtype": "Data",
+   "label": "Insurance Company Name",
+   "reqd": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "policy_number",
+   "fieldtype": "Data",
+   "label": "Policy Number",
+   "allow_on_submit": 1,
+   "in_standard_filter": 1,
+   "bold": 1,
+   "description": "Unique policy / cover note reference. Can be entered after submit."
+  },
+  {
+   "fieldname": "policy_date",
+   "fieldtype": "Date",
+   "label": "Policy Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "insurance_type",
+   "fieldtype": "Select",
+   "label": "Insurance Type",
+   "options": "Marine\nCargo\nOther",
+   "default": "Marine"
+  },
+  {
+   "fieldname": "coverage_type",
+   "fieldtype": "Select",
+   "label": "Coverage Type",
+   "options": "\nAll Risk\nICC-A\nICC-B\nICC-C\nOther"
+  },
+  {
+   "fieldname": "release_date",
+   "fieldtype": "Date",
+   "label": "Release Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "cb_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "policy_start_date",
+   "fieldtype": "Date",
+   "label": "Policy Start Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "policy_expiry_date",
+   "fieldtype": "Date",
+   "label": "Policy Expiry Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "amount_section",
+   "fieldtype": "Section Break",
+   "label": "Insurance Amounts"
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "reqd": 1,
+   "description": "Policy currency"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "reqd": 1,
+   "default": "1",
+   "precision": "9",
+   "description": "Policy currency to company currency (PKR)"
+  },
+  {
+   "fieldname": "insurance_total_policy",
+   "fieldtype": "Currency",
+   "label": "Insurance Total Policy",
+   "options": "currency",
+   "reqd": 1,
+   "description": "Total policy limit"
+  },
+  {
+   "fieldname": "invoice_currency",
+   "fieldtype": "Link",
+   "label": "Invoice Currency",
+   "options": "Currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "invoice_value_fc",
+   "fieldtype": "Currency",
+   "label": "Invoice Value in FC",
+   "options": "invoice_currency",
+   "reqd": 1,
+   "read_only": 1,
+   "description": "S/QTY Amount of the Shipping Document"
+  },
+  {
+   "fieldname": "marine_bill_value",
+   "fieldtype": "Currency",
+   "label": "Marine Bill Value",
+   "options": "currency"
+  },
+  {
+   "fieldname": "cb_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "insurance_amount",
+   "fieldtype": "Currency",
+   "label": "Insurance Amount",
+   "options": "currency",
+   "reqd": 1,
+   "bold": 1,
+   "in_list_view": 1,
+   "description": "Amount insured for this shipment"
+  },
+  {
+   "fieldname": "utilized_before",
+   "fieldtype": "Currency",
+   "label": "Utilized by Other Shipments",
+   "options": "currency",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "balance_insurance",
+   "fieldtype": "Currency",
+   "label": "Balance Insurance",
+   "options": "currency",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1,
+   "bold": 1,
+   "description": "Insurance Total Policy - all insured amounts on this policy"
+  },
+  {
+   "fieldname": "allow_over_insurance",
+   "fieldtype": "Check",
+   "label": "Allow Insurance Amount above Balance",
+   "no_copy": 1,
+   "description": "Authorized override (role set in NSA Import Settings)"
+  },
+  {
+   "fieldname": "cb_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "premium_rate",
+   "fieldtype": "Percent",
+   "label": "Premium Rate (%)"
+  },
+  {
+   "fieldname": "premium_amount",
+   "fieldtype": "Currency",
+   "label": "Premium Amount",
+   "options": "currency",
+   "read_only": 1,
+   "description": "Insurance Amount x Premium Rate / 100"
+  },
+  {
+   "fieldname": "base_insurance_amount",
+   "fieldtype": "Currency",
+   "label": "Insurance Amount (PKR)",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "base_premium_amount",
+   "fieldtype": "Currency",
+   "label": "Premium Amount (PKR)",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "policy_key",
+   "fieldtype": "Data",
+   "label": "Policy Key",
+   "read_only": 1,
+   "hidden": 1,
+   "search_index": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "shipment_section",
+   "fieldtype": "Section Break",
+   "label": "Shipment Details"
+  },
+  {
+   "fieldname": "vessel_name",
+   "fieldtype": "Data",
+   "label": "Name Of Vessel"
+  },
+  {
+   "fieldname": "bl_awb_no",
+   "fieldtype": "Data",
+   "label": "BL NO / AWB NO",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Date",
+   "label": "ETA",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "port_of_loading",
+   "fieldtype": "Data",
+   "label": "Port Of Loading"
+  },
+  {
+   "fieldname": "cb_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "port_of_discharge",
+   "fieldtype": "Data",
+   "label": "Port Of Discharge"
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "allocate_insurance",
+   "fieldtype": "Button",
+   "label": "Allocate Insurance Amount to Items",
+   "depends_on": "eval:doc.docstatus===0"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Shipping Insurance Item",
+   "reqd": 1,
+   "cannot_add_rows": 1
+  },
+  {
+   "fieldname": "related_section",
+   "fieldtype": "Section Break",
+   "label": "Related Import Documents",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "related_documents_html",
+   "fieldtype": "HTML",
+   "label": "Related Documents"
+  },
+  {
+   "fieldname": "remarks_section",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Long Text",
+   "label": "Remarks",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Shipping Insurance",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Shipping Insurance",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "insurance_company",
+ "search_fields": "policy_number,shipping_document,lc_no,purchase_order",
+ "show_title_field_in_link": 0
+}

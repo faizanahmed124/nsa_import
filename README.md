@@ -41,6 +41,7 @@ Custom fields are created on install and re-synced on every `migrate`. Uninstall
 | 1 | Purchase Order (Purchase Type = Import) | Manual / Material Request / Supplier Quotation |
 | 2 | Letter of Credit (opening, margin, charges, amendments) | PO → *Import → Letter of Credit* |
 | 3 | Shipping Document (PO items, packing list, charges, Bill of Lading, original documents tracking) | Letter of Credit |
+| 3a | Shipping Insurance (policy, insured amount, premium, balance, item allocation) | Shipping Document |
 | 4 | Customs Clearance / GD (AV = CIF × (1 + landing %), CD, ACD, RD, ST, AST, IT) | Shipping Document |
 | 5 | Purchase Receipt / GRN | Shipment or Customs Clearance |
 | 6 | Import Cost Sheet (actual freight, insurance, duties, clearing, port, other) | Purchase Receipt / Shipment |
@@ -148,6 +149,40 @@ B/L Date, Packing, QTY, Net Weight, Weight UOM. Rows with zero Shipped Qty are d
 Account; on submit these lines appear in the LC's Expense Booked tab (heads "Shipment ..."). Shipment charges are
 also picked up by the Import Cost Sheet (pro-rata to the received value). Receiving warehouse on the GRN comes
 from the Shipping Document row.
+
+## Shipping Insurance
+
+Created from a submitted Shipping Document → *Create → Shipping Insurance*. PO, Letter of Credit, LC No., Supplier,
+Bank, Invoice Value in FC and items come from the Shipping Document and are read-only; vessel, BL/AWB, ETA and ports
+are pre-filled from its Bill of Lading tab. Insurance Company, Policy Number, Insurance Total Policy and Policy
+Expiry default from the LC's Insurance section.
+
+| Field | Formula / rule |
+|---|---|
+| Insurance Amount (default) | Invoice Value × (1 + Insured Value Markup %) — Settings, default 10% |
+| Premium Amount | Insurance Amount × Premium Rate % ÷ 100 |
+| PKR amounts | amount × Exchange Rate |
+| Utilized by Other Shipments | Σ Insurance Amount of other submitted Shipping Insurance on the same policy |
+| Balance Insurance | Insurance Total Policy − Utilized by others − this Insurance Amount (system calculated) |
+| Item Insurance Amount | auto-allocated by item Amount (button to re-allocate); must add up to Insurance Amount |
+
+A policy is identified by its Policy Number; until the number is known, by Letter of Credit + Insurance Company.
+Insurance Amount cannot exceed the balance unless *Allow Insurance Amount above Balance* is ticked by the role
+set in Settings (default Accounts Manager). Policy Number, dates, ETA, Release Date and Remarks can be entered
+after submit; all changes are kept in the document's version history.
+
+Status: Draft → Submitted (no policy number yet) → Policy Issued (policy number, balance left, only shipment on
+the policy) → Partially Utilized (more shipments on the policy) → Fully Utilized (no balance) / Cancelled. Statuses
+and balances of every document on a policy are refreshed whenever one of them is submitted, changed or cancelled.
+
+The *Related Import Documents* section shows the LC, Shipping Document (with its Packing List and Bill of Lading
+tabs), Goods Declaration, Purchase Receipt and Import Cost Sheet. Freight Bill, Clearance Bill, Shipment Check And
+Delays and Local Transporter show "Not set up yet" until those documents exist; they are picked up automatically
+once they have a Shipping Document link. The Import Cost Sheet uses the actual insurance premium (PKR) instead
+of the PO estimate.
+
+Reports: **Insurance Tracking** (filter by LC, PO, supplier, shipping document or policy; tick *Show Items* for
+item-wise allocation) and **Insurance Balance** (policy total, utilized, balance per policy).
 
 ## Dynamic rules on Purchase Order
 

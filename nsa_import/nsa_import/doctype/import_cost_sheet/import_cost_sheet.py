@@ -102,13 +102,25 @@ class ImportCostSheet(Document):
 			add("LC / Bank Charges", flt(shp.total_charges) * share, acc.get("bank_charges_account"),
 				f"Shipping Doc {self.import_shipment}", f"Shipment charges CI {shp.commercial_invoice_no or ''}")
 
+		has_insurance = False
+		if self.import_shipment:
+			ins = frappe.db.sql(
+				"""select coalesce(sum(base_premium_amount), 0), group_concat(name) from `tabShipping Insurance`
+				where shipping_document=%s and docstatus=1""", self.import_shipment)[0]
+			if flt(ins[0]):
+				has_insurance = True
+				sd_value = flt(frappe.db.get_value("Shipping Document", self.import_shipment, "base_invoice_amount"))
+				share = min(receipt_value / sd_value, 1) if sd_value else 1
+				add("Insurance", flt(ins[0]) * share, acc.get("freight_account"), f"Insurance {ins[1]}",
+					"Marine insurance premium")
+
 		if self.purchase_order:
 			po = frappe.get_doc("Purchase Order", self.purchase_order)
 			share = min(receipt_value / flt(po.base_net_total), 1) if flt(po.base_net_total) else 0
 			src = "PO Estimate"
 			if po.get("shipping_term") in BUYER_PAYS_FREIGHT:
 				add("Freight", flt(po.get("est_freight")) * share, acc.get("freight_account"), src)
-			if po.get("shipping_term") not in SELLER_PAYS_INSURANCE:
+			if po.get("shipping_term") not in SELLER_PAYS_INSURANCE and not has_insurance:
 				add("Insurance", flt(po.get("est_insurance")) * share, acc.get("freight_account"), src)
 			if not has_gd:
 				add("Customs Duty", flt(po.get("est_customs_duty")) * share, acc.get("customs_duty_account"), src)

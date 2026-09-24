@@ -21,7 +21,7 @@
    "fieldname": "charge_head",
    "fieldtype": "Select",
    "label": "Charge Head",
-   "options": "\nLC Commission\nFED on Commission\nLC AFTER\nSWIFT Charges\nAmendment Commission\nSWIFT Charges Amended\nOther Bank Charges\nRetirement Charges\nOther",
+   "options": "\nLC Commission\nFED on Commission\nLC AFTER\nSWIFT Charges\nAmendment Commission\nSWIFT Charges Amended\nOther Bank Charges\nShipment Commission\nShipment FED\nShipment SWIFT Charges\nRetirement Charges\nOther",
    "in_list_view": 1,
    "allow_on_submit": 1
   },

@@ -229,6 +229,72 @@ def make_shipment_journal_entry(source_name):
 
 
 # ----------------------------------------------------------------------------
+# Shipping Insurance (created from Shipping Document)
+# ----------------------------------------------------------------------------
+@frappe.whitelist()
+def make_shipping_insurance(source_name, target_doc=None, args=None):
+	"""Shipping Document -> Create -> Shipping Insurance."""
+	sd = _submitted("Shipping Document", source_name)
+	if frappe.db.get_value("Purchase Order", sd.purchase_order, "purchase_type") != "Import":
+		frappe.throw(_("Shipping Insurance is only for the Import flow."))
+	si = frappe.new_doc("Shipping Insurance")
+	si.shipping_document = sd.name
+	for d in sd.items:
+		si.append("items", {
+			"item_code": d.item_code, "item_name": d.item_name, "qty": d.qty, "uom": d.get("po_uom") or d.uom,
+			"rate": d.rate, "amount": d.amount, "country_of_origin": d.country_of_origin, "hs_code": d.hs_code,
+			"shipping_document_item": d.name, "po_detail": d.po_detail,
+		})
+	si.set_source_values()
+	si.set_defaults()
+	si.allocate_items(force=True)
+	return si
+
+
+RELATED_FUTURE_DOCTYPES = ("Freight Bill", "Clearance Bill", "Shipment Check And Delays", "Local Transporter")
+
+
+@frappe.whitelist()
+def get_insurance_related_documents(shipping_document):
+	"""Connections for Shipping Insurance: import documents around its Shipping Document."""
+	frappe.has_permission("Shipping Document", "read", shipping_document, throw=True)
+	sd = frappe.db.get_value("Shipping Document", shipping_document,
+							 ["name", "letter_of_credit", "purchase_order", "bl_awb_no", "packing"], as_dict=True)
+	if not sd:
+		return []
+
+	def names(doctype, filters):
+		if not frappe.db.exists("DocType", doctype) or not frappe.has_permission(doctype, "read"):
+			return None
+		return frappe.get_all(doctype, filters=filters, pluck="name", limit=20)
+
+	rows = [
+		{"label": "Letter Of Credit", "doctype": "Letter of Credit",
+		 "names": [sd.letter_of_credit] if sd.letter_of_credit else []},
+		{"label": "Shipping Document", "doctype": "Shipping Document", "names": [sd.name]},
+		{"label": "Packing List", "doctype": "Shipping Document", "names": [sd.name] if sd.packing else [],
+		 "note": "Packing List tab"},
+		{"label": "Bill Of Lading", "doctype": "Shipping Document", "names": [sd.name] if sd.bl_awb_no else [],
+		 "note": "Bill of Lading tab"},
+		{"label": "Goods Declaration", "doctype": "Customs Clearance",
+		 "names": names("Customs Clearance", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or []},
+		{"label": "Purchase Receipt", "doctype": "Purchase Receipt",
+		 "names": names("Purchase Receipt", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or []},
+		{"label": "Import Cost Sheet", "doctype": "Import Cost Sheet",
+		 "names": names("Import Cost Sheet", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or []},
+	]
+	for dt in RELATED_FUTURE_DOCTYPES:
+		row = {"label": dt, "doctype": dt, "names": [], "missing": True}
+		if frappe.db.exists("DocType", dt):
+			meta = frappe.get_meta(dt)
+			field = next((f for f in ("shipping_document", "import_shipment") if meta.has_field(f)), None)
+			if field:
+				row.update({"names": names(dt, {field: sd.name}) or [], "missing": False, "link_field": field})
+		rows.append(row)
+	return rows
+
+
+# ----------------------------------------------------------------------------
 # Customs Clearance (GD)
 # ----------------------------------------------------------------------------
 DUTY_MAP = {

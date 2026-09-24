@@ -87,6 +87,7 @@ frappe.ui.form.on("Shipping Document", {
 		if (["Arrived", "Cleared"].includes(frm.doc.status)) {
 			frm.add_custom_button(__("Purchase Receipt"), () => open("nsa_import.api.make_purchase_receipt_from_shipment"), __("Create"));
 		}
+		frm.add_custom_button(__("Shipping Insurance"), () => open("nsa_import.api.make_shipping_insurance"), __("Create"));
 		if (frm.doc.letter_of_credit) {
 			frm.add_custom_button(__("LC Retirement"), () => open("nsa_import.api.make_lc_retirement_from_shipment"), __("Create"));
 		}
