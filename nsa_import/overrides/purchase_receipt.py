@@ -29,7 +29,7 @@ def validate(doc, method=None):
 
 def on_submit(doc, method=None):
 	if doc.get("import_shipment"):
-		frappe.db.set_value("Import Shipment", doc.import_shipment, "status", "Received", update_modified=False)
+		frappe.db.set_value("Shipping Document", doc.import_shipment, "status", "Received", update_modified=False)
 	for po in {d.purchase_order for d in doc.items if d.get("purchase_order")}:
 		refresh_po_import_status(po)
 
@@ -38,8 +38,8 @@ def on_cancel(doc, method=None):
 	if doc.get("import_shipment"):
 		shp = doc.import_shipment
 		cleared = frappe.db.exists("Customs Clearance", {"import_shipment": shp, "docstatus": 1})
-		arrived = frappe.db.get_value("Import Shipment", shp, "actual_arrival_date")
+		arrived = frappe.db.get_value("Shipping Document", shp, "actual_arrival_date")
 		status = "Cleared" if cleared else ("Arrived" if arrived else "In Transit")
-		frappe.db.set_value("Import Shipment", shp, "status", status, update_modified=False)
+		frappe.db.set_value("Shipping Document", shp, "status", status, update_modified=False)
 	for po in {d.purchase_order for d in doc.items if d.get("purchase_order")}:
 		refresh_po_import_status(po)

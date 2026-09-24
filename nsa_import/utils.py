@@ -26,6 +26,19 @@ def require_account(account, label, company):
 	return account
 
 
+def get_uom_factor(item_code, from_uom, to_uom):
+	"""How many `to_uom` are in one `from_uom` for this item (via the item's stock UOM conversions)."""
+	if not from_uom or not to_uom or from_uom == to_uom:
+		return 1.0
+	from erpnext.stock.get_item_details import get_conversion_factor
+
+	cf_from = flt((get_conversion_factor(item_code, from_uom) or {}).get("conversion_factor"))
+	cf_to = flt((get_conversion_factor(item_code, to_uom) or {}).get("conversion_factor"))
+	if not cf_from or not cf_to:
+		return 0.0
+	return flt(cf_from / cf_to, 9)
+
+
 def is_lc_payment_term(term):
 	return (term or "").strip().upper().startswith("LC")
 
@@ -39,8 +52,8 @@ def update_po_shipped_qty(purchase_order):
 	rows = frappe.get_all("Purchase Order Item", filters={"parent": purchase_order}, fields=["name", "qty"])
 	shipped = dict(
 		frappe.db.sql(
-			"""select i.po_detail, sum(i.qty) from `tabImport Shipment Item` i
-			join `tabImport Shipment` s on s.name = i.parent
+			"""select i.po_detail, sum(i.qty) from `tabShipping Document Item` i
+			join `tabShipping Document` s on s.name = i.parent
 			where s.docstatus = 1 and s.purchase_order = %s group by i.po_detail""",
 			purchase_order,
 		)
@@ -69,10 +82,10 @@ def refresh_po_import_status(purchase_order):
 	elif frappe.db.exists("Customs Clearance", {"purchase_order": purchase_order, "docstatus": 1}):
 		status = "Cleared"
 	elif frappe.db.exists(
-		"Import Shipment", {"purchase_order": purchase_order, "docstatus": 1, "actual_arrival_date": ["is", "set"]}
+		"Shipping Document", {"purchase_order": purchase_order, "docstatus": 1, "actual_arrival_date": ["is", "set"]}
 	):
 		status = "Arrived"
-	elif frappe.db.exists("Import Shipment", {"purchase_order": purchase_order, "docstatus": 1}):
+	elif frappe.db.exists("Shipping Document", {"purchase_order": purchase_order, "docstatus": 1}):
 		status = "Shipped"
 	elif frappe.db.exists("Letter of Credit", {"purchase_order": purchase_order, "docstatus": 1}):
 		status = "LC Opened"

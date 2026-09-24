@@ -59,7 +59,7 @@ def get_data(filters):
 			continue
 		lc = frappe.db.get_value("Letter of Credit", {"purchase_order": po.name, "docstatus": 1},
 								 ["name", "lc_no", "status", "expiry_date"], as_dict=True) or frappe._dict()
-		shipments = frappe.get_all("Import Shipment", filters={"purchase_order": po.name, "docstatus": 1},
+		shipments = frappe.get_all("Shipping Document", filters={"purchase_order": po.name, "docstatus": 1},
 								   fields=["name", "bl_awb_no", "eta"], order_by="posting_date asc")
 		gds = frappe.get_all("Customs Clearance", filters={"purchase_order": po.name, "docstatus": 1}, pluck="gd_no")
 		data.append({

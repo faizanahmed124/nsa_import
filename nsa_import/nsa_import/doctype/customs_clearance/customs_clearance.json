@@ -76,8 +76,8 @@
   {
    "fieldname": "import_shipment",
    "fieldtype": "Link",
-   "label": "Import Shipment",
-   "options": "Import Shipment",
+   "label": "Shipping Document",
+   "options": "Shipping Document",
    "reqd": 1,
    "in_standard_filter": 1
   },

@@ -95,6 +95,13 @@ class ImportCostSheet(Document):
 			share = min(receipt_value / flt(lc.base_lc_amount), 1) if flt(lc.base_lc_amount) else 1
 			add("LC / Bank Charges", flt(lc.total_charges) * share, acc.get("bank_charges_account"), f"LC {lc.lc_no}")
 
+		if self.import_shipment and frappe.db.get_value("Shipping Document", self.import_shipment, "docstatus") == 1:
+			shp = frappe.db.get_value("Shipping Document", self.import_shipment,
+									  ["total_charges", "base_invoice_amount", "commercial_invoice_no"], as_dict=True)
+			share = min(receipt_value / flt(shp.base_invoice_amount), 1) if flt(shp.base_invoice_amount) else 1
+			add("LC / Bank Charges", flt(shp.total_charges) * share, acc.get("bank_charges_account"),
+				f"Shipping Doc {self.import_shipment}", f"Shipment charges CI {shp.commercial_invoice_no or ''}")
+
 		if self.purchase_order:
 			po = frappe.get_doc("Purchase Order", self.purchase_order)
 			share = min(receipt_value / flt(po.base_net_total), 1) if flt(po.base_net_total) else 0

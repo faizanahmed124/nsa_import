@@ -23,6 +23,10 @@
   "default_fed_percent",
   "fed_on_amendment_commission",
   "include_lc_after_in_charges",
+  "shipping_section",
+  "allow_shipping_without_lc",
+  "cb_sd1",
+  "default_shipment_commission_percent",
   "accounts_section",
   "company_accounts"
  ],
@@ -125,6 +129,26 @@
    "fieldtype": "Check",
    "label": "Include 'LC AFTER' in Total LC Charges",
    "default": "1"
+  },
+  {
+   "fieldname": "shipping_section",
+   "fieldtype": "Section Break",
+   "label": "Shipping Document"
+  },
+  {
+   "fieldname": "allow_shipping_without_lc",
+   "fieldtype": "Check",
+   "label": "Allow Shipping Document without Letter of Credit",
+   "description": "Keep unchecked: Shipping Documents are created only from a Letter of Credit."
+  },
+  {
+   "fieldname": "cb_sd1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_shipment_commission_percent",
+   "fieldtype": "Percent",
+   "label": "Default Shipment Commission (%)"
   },
   {
    "fieldname": "accounts_section",

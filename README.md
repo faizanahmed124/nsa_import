@@ -40,8 +40,8 @@ Custom fields are created on install and re-synced on every `migrate`. Uninstall
 |---|---|---|
 | 1 | Purchase Order (Purchase Type = Import) | Manual / Material Request / Supplier Quotation |
 | 2 | Letter of Credit (opening, margin, charges, amendments) | PO → *Import → Letter of Credit* |
-| 3 | Import Shipment (B/L / AWB, invoice, packing list, containers, shipping documents checklist) | PO or LC |
-| 4 | Customs Clearance / GD (AV = CIF × (1 + landing %), CD, ACD, RD, ST, AST, IT) | Import Shipment |
+| 3 | Shipping Document (PO items, packing list, charges, Bill of Lading, original documents tracking) | Letter of Credit |
+| 4 | Customs Clearance / GD (AV = CIF × (1 + landing %), CD, ACD, RD, ST, AST, IT) | Shipping Document |
 | 5 | Purchase Receipt / GRN | Shipment or Customs Clearance |
 | 6 | Import Cost Sheet (actual freight, insurance, duties, clearing, port, other) | Purchase Receipt / Shipment |
 | 7 | Landed Cost Voucher | Import Cost Sheet |
@@ -101,6 +101,53 @@ charge head not yet booked. Each line is tagged with its charge head, and the JE
 submitted, its lines are copied to the **Expense Booked** tab automatically; cancelling the JE removes them. Any
 manual JE can be linked the same way by selecting the Letter of Credit on it. Rows for other vouchers
 (Payment Entry, Purchase Invoice) can be added by hand.
+
+## Shipping Document
+
+Replaces the earlier "Import Shipment" (existing records are renamed automatically by a migration patch).
+Created from a submitted **Letter of Credit** → *Create → Shipping Document* (or PO → *Import → Shipping Document*,
+which opens it through the PO's LC). The LC must have its bank LC Number. Creating one without an LC is blocked
+unless *Allow Shipping Document without Letter of Credit* is ticked in NSA Import Settings (for TT / open-account imports).
+
+Tabs:
+
+- **Details**: Letter of Credit, Purchase Order, Supplier Name, LC No. (all fetched, read-only), Commercial Invoice
+  No., Conversion Rate; Shipped Qty, S/QTY Amount, S/QTY Amount (PKR), PO Qty / Amount, Remaining Qty;
+  **PO Items** table (only from the PO via *Get Items from Purchase Order*; rows cannot be added by hand);
+  Original Documents Tracking (DOC Received in Bank, Sent to Agent, Received in ATS, Paid, DHL No., Arrival Notes
+  Created — all editable after submit).
+- **Packing List**: Packing, QTY, Number of Packages, Package Description, Net / Gross Weight, Weight UOM, Remarks;
+  Container / Shipment Tracking table (container, size, seal, packages, package type, weight, remarks).
+- **Charges**: Commission %, Commission, FED %, FED on Commission, SWIFT Charges, Total Charges, Remarks.
+  PO Amount, Currency and Conversion Rate are not repeated here.
+- **Bill of Lading**: B/L No., B/L Date, B/L Type, Shipping Line, Vessel, Voyage, ports, Final Destination, ETD, ETA,
+  actual departure / arrival, Notify Party, B/L Remarks; Insurance; Documents Checklist.
+
+PO Item columns: Item Code, Item Name, Qty (PO), Shipped Qty UOM, Rate, Amount (PO), Shipped Qty, Shipped Amount,
+Origin, HS Code, Warehouse; Quantity Tracking: PO UOM, UOM factor, Shipped Qty (PO UOM), Previously Shipped,
+Remaining Qty.
+
+| Field | Formula |
+|---|---|
+| Shipped Qty (PO UOM) | Shipped Qty × Shipped-UOM-to-PO-UOM factor (1 when same UOM; from Item UOM conversions otherwise) |
+| Shipped Amount | Shipped Qty (PO UOM) × PO Rate |
+| Remaining Qty | PO Qty − previously shipped (submitted docs) − this document |
+| Header Shipped Qty | Σ item Shipped Qty |
+| S/QTY Amount | Σ item Shipped Amount (foreign currency) |
+| S/QTY Amount (PKR) | S/QTY Amount × Conversion Rate |
+| Commission | S/QTY Amount (PKR) × Commission % ÷ 100 |
+| FED on Commission | Commission × FED % ÷ 100 |
+| Total Charges | Commission + FED + SWIFT |
+
+Controls: shipped qty cannot exceed the open PO quantity (+ over-shipment tolerance % from Settings); S/QTY Amount
+cannot exceed the LC balance (incl. tolerance and amendments); partial shipments are supported and PO
+*Shipped %* is updated on submit / cancel. Before submit these must be filled: Commercial Invoice No., B/L No.,
+B/L Date, Packing, QTY, Net Weight, Weight UOM. Rows with zero Shipped Qty are dropped on submit.
+
+*Create → Book Charges (Journal Entry)* makes a draft JE for Commission, FED and SWIFT, credited to the LC's Bank GL
+Account; on submit these lines appear in the LC's Expense Booked tab (heads "Shipment ..."). Shipment charges are
+also picked up by the Import Cost Sheet (pro-rata to the received value). Receiving warehouse on the GRN comes
+from the Shipping Document row.
 
 ## Dynamic rules on Purchase Order
 

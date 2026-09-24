@@ -15,24 +15,24 @@ class CustomsClearance(Document):
 
 	def on_submit(self):
 		self.db_set({"status": "Released", "release_date": self.release_date or nowdate()})
-		frappe.db.set_value("Import Shipment", self.import_shipment, "status", "Cleared", update_modified=False)
+		frappe.db.set_value("Shipping Document", self.import_shipment, "status", "Cleared", update_modified=False)
 		refresh_po_import_status(self.purchase_order)
 
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ("Journal Entry", "GL Entry")
 		self.db_set("status", "Cancelled")
-		arrived = frappe.db.get_value("Import Shipment", self.import_shipment, "actual_arrival_date")
-		frappe.db.set_value("Import Shipment", self.import_shipment, "status",
+		arrived = frappe.db.get_value("Shipping Document", self.import_shipment, "actual_arrival_date")
+		frappe.db.set_value("Shipping Document", self.import_shipment, "status",
 							"Arrived" if arrived else "In Transit", update_modified=False)
 		refresh_po_import_status(self.purchase_order)
 
 	def validate_shipment(self):
 		shp = frappe.db.get_value(
-			"Import Shipment", self.import_shipment,
+			"Shipping Document", self.import_shipment,
 			["docstatus", "purchase_order", "letter_of_credit", "company", "supplier", "currency", "exchange_rate",
 			 "bl_awb_no"], as_dict=True)
 		if not shp or shp.docstatus != 1:
-			frappe.throw(_("Import Shipment {0} must be submitted.").format(self.import_shipment))
+			frappe.throw(_("Shipping Document {0} must be submitted.").format(self.import_shipment))
 		for f in ("purchase_order", "letter_of_credit", "company", "supplier", "currency", "bl_awb_no"):
 			self.set(f, shp.get(f))
 		if not flt(self.exchange_rate):

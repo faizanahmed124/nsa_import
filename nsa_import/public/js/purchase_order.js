@@ -52,8 +52,13 @@ nsa_import.po = {
 		if (!frm.doc.letter_of_credit) {
 			frm.add_custom_button(__("Letter of Credit"), () => open("nsa_import.api.make_letter_of_credit"), group);
 		}
-		if (flt(frm.doc.per_shipped) < 100) {
-			frm.add_custom_button(__("Import Shipment"), () => open("nsa_import.api.make_import_shipment"), group);
+		// Shipping Document is created from the Letter of Credit (source document)
+		if (flt(frm.doc.per_shipped) < 100 && frm.doc.letter_of_credit) {
+			frm.add_custom_button(__("Shipping Document"), () =>
+				frappe.model.open_mapped_doc({
+					method: "nsa_import.api.make_shipping_document_from_lc",
+					source_name: frm.doc.letter_of_credit,
+				}), group);
 		}
 		frm.add_custom_button(__("Import Tracker"), () =>
 			frappe.set_route("query-report", "Import Tracker", { purchase_order: frm.doc.name }), group);

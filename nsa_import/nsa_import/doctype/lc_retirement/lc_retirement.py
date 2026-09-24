@@ -15,9 +15,9 @@ class LCRetirement(Document):
 			self.set(f, lc.get(f))
 		if not flt(self.exchange_rate):
 			self.exchange_rate = lc.exchange_rate
-		if self.import_shipment and frappe.db.get_value("Import Shipment", self.import_shipment,
+		if self.import_shipment and frappe.db.get_value("Shipping Document", self.import_shipment,
 														"letter_of_credit") != self.letter_of_credit:
-			frappe.throw(_("Import Shipment {0} is not against this LC.").format(self.import_shipment))
+			frappe.throw(_("Shipping Document {0} is not against this LC.").format(self.import_shipment))
 
 		other = flt(frappe.db.sql(
 			"select coalesce(sum(amount),0) from `tabLC Retirement` where letter_of_credit=%s and docstatus=1 and name!=%s",

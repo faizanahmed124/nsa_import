@@ -17,5 +17,6 @@ LC_PAYMENT_TERMS = ("LC at Sight", "LC Usance")
 # Charge heads used on LC Expense Booked rows and Journal Entry Account.nsa_lc_charge_head
 LC_CHARGE_HEADS = (
 	"\nLC Commission\nFED on Commission\nLC AFTER\nSWIFT Charges\nAmendment Commission"
-	"\nSWIFT Charges Amended\nOther Bank Charges\nRetirement Charges\nOther"
+	"\nSWIFT Charges Amended\nOther Bank Charges\nShipment Commission\nShipment FED\nShipment SWIFT Charges"
+	"\nRetirement Charges\nOther"
 )

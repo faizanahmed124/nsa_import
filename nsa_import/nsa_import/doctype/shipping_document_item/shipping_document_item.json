@@ -6,71 +6,204 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "document_type",
-  "document_no",
-  "document_date",
-  "original_received",
-  "copies_received",
-  "received_date",
-  "attachment",
-  "remarks"
+  "item_code",
+  "item_name",
+  "ordered_qty",
+  "uom",
+  "rate",
+  "po_amount",
+  "shipped_qty",
+  "amount",
+  "cb_1",
+  "country_of_origin",
+  "hs_code",
+  "warehouse",
+  "qty_tracking_section",
+  "po_uom",
+  "uom_conversion_factor",
+  "qty",
+  "cb_2",
+  "already_shipped_qty",
+  "remaining_qty",
+  "weight_section",
+  "net_weight",
+  "cb_3",
+  "gross_weight",
+  "purchase_order",
+  "po_detail"
  ],
  "fields": [
   {
-   "fieldname": "document_type",
-   "fieldtype": "Select",
-   "label": "Document Type",
-   "options": "Bill of Lading\nAirway Bill\nTruck Receipt / CMR\nCourier Receipt\nCommercial Invoice\nPacking List\nCertificate of Origin\nInsurance Certificate\nBill of Exchange\nInspection Certificate\nPhytosanitary Certificate\nFumigation Certificate\nMill Test Certificate\nOther",
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "Item Code",
+   "options": "Item",
+   "reqd": 1,
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "ordered_qty",
+   "fieldtype": "Float",
+   "label": "Qty",
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 1,
+   "description": "Original Purchase Order quantity"
+  },
+  {
+   "fieldname": "uom",
+   "fieldtype": "Link",
+   "label": "Shipped Qty UOM",
+   "options": "UOM",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "label": "Rate",
+   "options": "currency",
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "po_amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "options": "currency",
+   "read_only": 1,
+   "columns": 1,
+   "description": "Original Purchase Order amount"
+  },
+  {
+   "fieldname": "shipped_qty",
+   "fieldtype": "Float",
+   "label": "Shipped Qty",
    "reqd": 1,
    "in_list_view": 1,
-   "allow_on_submit": 1
+   "columns": 1,
+   "bold": 1
   },
   {
-   "fieldname": "document_no",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Shipped Amount",
+   "options": "currency",
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 1,
+   "description": "Shipped Qty (in PO UOM) x Rate"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country_of_origin",
+   "fieldtype": "Link",
+   "label": "Origin",
+   "options": "Country"
+  },
+  {
+   "fieldname": "hs_code",
    "fieldtype": "Data",
-   "label": "Document No.",
-   "in_list_view": 1,
-   "allow_on_submit": 1
+   "label": "HS Code"
   },
   {
-   "fieldname": "document_date",
-   "fieldtype": "Date",
-   "label": "Document Date",
-   "in_list_view": 1,
-   "allow_on_submit": 1
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse"
   },
   {
-   "fieldname": "original_received",
-   "fieldtype": "Check",
-   "label": "Original Received",
-   "in_list_view": 1,
-   "allow_on_submit": 1
+   "fieldname": "qty_tracking_section",
+   "fieldtype": "Section Break",
+   "label": "Quantity Tracking"
   },
   {
-   "fieldname": "copies_received",
-   "fieldtype": "Int",
-   "label": "Copies Received",
-   "allow_on_submit": 1
+   "fieldname": "po_uom",
+   "fieldtype": "Link",
+   "label": "PO UOM",
+   "options": "UOM",
+   "read_only": 1
   },
   {
-   "fieldname": "received_date",
-   "fieldtype": "Date",
-   "label": "Received Date",
-   "in_list_view": 1,
-   "allow_on_submit": 1
+   "fieldname": "uom_conversion_factor",
+   "fieldtype": "Float",
+   "label": "Shipped UOM to PO UOM Factor",
+   "default": "1",
+   "precision": "9",
+   "description": "1 Shipped UOM = this many PO UOM"
   },
   {
-   "fieldname": "attachment",
-   "fieldtype": "Attach",
-   "label": "Attachment",
-   "in_list_view": 1,
-   "allow_on_submit": 1
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "label": "Shipped Qty (PO UOM)",
+   "read_only": 1
   },
   {
-   "fieldname": "remarks",
-   "fieldtype": "Small Text",
-   "label": "Remarks",
-   "allow_on_submit": 1
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "already_shipped_qty",
+   "fieldtype": "Float",
+   "label": "Previously Shipped Qty",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "remaining_qty",
+   "fieldtype": "Float",
+   "label": "Remaining Qty",
+   "read_only": 1,
+   "no_copy": 1,
+   "description": "PO Qty - previously shipped - this shipment (PO UOM)"
+  },
+  {
+   "fieldname": "weight_section",
+   "fieldtype": "Section Break",
+   "label": "Weight",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "net_weight",
+   "fieldtype": "Float",
+   "label": "Net Weight"
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gross_weight",
+   "fieldtype": "Float",
+   "label": "Gross Weight"
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "options": "Purchase Order",
+   "read_only": 1
+  },
+  {
+   "fieldname": "po_detail",
+   "fieldtype": "Data",
+   "label": "PO Item Ref",
+   "read_only": 1,
+   "hidden": 1
   }
  ],
  "index_web_pages_for_search": 0,

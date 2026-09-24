@@ -7,7 +7,7 @@ def purchase_order_dashboard(data):
 	data["transactions"].append(
 		{
 			"label": _("Import"),
-			"items": ["Letter of Credit", "Import Shipment", "Customs Clearance", "Import Cost Sheet", "LC Retirement"],
+			"items": ["Letter of Credit", "Shipping Document", "Customs Clearance", "Import Cost Sheet", "LC Retirement"],
 		}
 	)
 	return data

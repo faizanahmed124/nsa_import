@@ -329,7 +329,7 @@ class LetterofCredit(Document):
 		if self.docstatus != 1:
 			return
 		shipped = flt(frappe.db.sql(
-			"select coalesce(sum(invoice_amount),0) from `tabImport Shipment` where letter_of_credit=%s and docstatus=1",
+			"select coalesce(sum(invoice_amount),0) from `tabShipping Document` where letter_of_credit=%s and docstatus=1",
 			self.name)[0][0])
 		retired = flt(frappe.db.sql(
 			"select coalesce(sum(amount),0) from `tabLC Retirement` where letter_of_credit=%s and docstatus=1",

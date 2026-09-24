@@ -10,21 +10,22 @@
   "container_size",
   "seal_no",
   "packages",
-  "gross_weight"
+  "package_type",
+  "gross_weight",
+  "remarks"
  ],
  "fields": [
   {
    "fieldname": "container_no",
    "fieldtype": "Data",
    "label": "Container No.",
-   "reqd": 1,
    "in_list_view": 1
   },
   {
    "fieldname": "container_size",
    "fieldtype": "Select",
    "label": "Size",
-   "options": "20 ft\n40 ft\n40 ft HC\n45 ft\nLCL\nReefer 20 ft\nReefer 40 ft",
+   "options": "\n20 ft\n40 ft\n40 ft HC\n45 ft\nLCL\nReefer 20 ft\nReefer 40 ft",
    "in_list_view": 1
   },
   {
@@ -35,15 +36,27 @@
   },
   {
    "fieldname": "packages",
-   "fieldtype": "Int",
+   "fieldtype": "Float",
    "label": "Packages",
    "in_list_view": 1
+  },
+  {
+   "fieldname": "package_type",
+   "fieldtype": "Data",
+   "label": "Package Type",
+   "in_list_view": 1,
+   "description": "Carton / Bag / Drum etc."
   },
   {
    "fieldname": "gross_weight",
    "fieldtype": "Float",
    "label": "Gross Weight",
    "in_list_view": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
   }
  ],
  "index_web_pages_for_search": 0,

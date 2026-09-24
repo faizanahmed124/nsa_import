@@ -64,8 +64,8 @@
   {
    "fieldname": "import_shipment",
    "fieldtype": "Link",
-   "label": "Import Shipment",
-   "options": "Import Shipment",
+   "label": "Shipping Document",
+   "options": "Shipping Document",
    "read_only": 1
   },
   {

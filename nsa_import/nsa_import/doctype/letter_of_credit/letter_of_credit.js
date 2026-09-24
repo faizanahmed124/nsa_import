@@ -113,7 +113,7 @@ frappe.ui.form.on("Letter of Credit", {
 		const locked = ["Closed", "Expired", "Retired"].includes(frm.doc.status);
 
 		if (!locked) {
-			frm.add_custom_button(__("Import Shipment"), () => open("nsa_import.api.make_import_shipment_from_lc"), __("Create"));
+			frm.add_custom_button(__("Shipping Document"), () => open("nsa_import.api.make_shipping_document_from_lc"), __("Create"));
 		}
 		if (!["Retired", "Closed"].includes(frm.doc.status)) {
 			frm.add_custom_button(__("LC Retirement"), () => open("nsa_import.api.make_lc_retirement"), __("Create"));

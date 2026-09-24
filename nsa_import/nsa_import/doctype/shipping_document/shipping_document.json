@@ -1,0 +1,842 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "details_section",
+  "naming_series",
+  "letter_of_credit",
+  "purchase_order",
+  "supplier",
+  "supplier_name",
+  "lc_no",
+  "cb_1",
+  "posting_date",
+  "commercial_invoice_no",
+  "commercial_invoice_date",
+  "status",
+  "cb_2",
+  "company",
+  "company_currency",
+  "currency",
+  "exchange_rate",
+  "pi_no",
+  "summary_section",
+  "total_shipped_qty",
+  "invoice_amount",
+  "base_invoice_amount",
+  "cb_3",
+  "total_po_qty",
+  "total_po_amount",
+  "total_remaining_qty",
+  "items_section",
+  "get_items",
+  "items",
+  "doc_tracking_section",
+  "docs_received_from_bank_date",
+  "original_doc_sent_to_agent",
+  "original_doc_received_in_ats",
+  "cb_4",
+  "original_doc_paid",
+  "dhl_no",
+  "arrival_notes_created",
+  "bank_section",
+  "discrepancy",
+  "discrepancy_details",
+  "cb_5",
+  "acceptance_date",
+  "maturity_date",
+  "packing_tab",
+  "packing_section",
+  "packing",
+  "packing_qty",
+  "no_of_packages",
+  "package_description",
+  "cb_6",
+  "total_net_weight",
+  "total_gross_weight",
+  "weight_uom",
+  "packing_list_no",
+  "packing_remarks",
+  "container_section",
+  "containers",
+  "charges_tab",
+  "charges_section",
+  "commission_percent",
+  "commission_amount",
+  "fed_percent",
+  "fed_amount",
+  "cb_7",
+  "swift_charges",
+  "total_charges",
+  "journal_entry",
+  "charges_remarks",
+  "bl_tab",
+  "bl_section",
+  "bl_awb_no",
+  "bl_awb_date",
+  "bl_type",
+  "shipping_line",
+  "cb_8",
+  "vessel_flight_no",
+  "voyage_no",
+  "port_of_loading",
+  "port_of_discharge",
+  "final_destination",
+  "cb_9",
+  "etd",
+  "eta",
+  "actual_departure_date",
+  "actual_arrival_date",
+  "notify_party",
+  "bl_more_section",
+  "mode_of_shipment",
+  "shipping_term",
+  "cb_10",
+  "country_of_origin",
+  "clearing_agent",
+  "bl_remarks",
+  "insurance_section",
+  "insurance_policy_no",
+  "cb_11",
+  "insurance_amount",
+  "documents_section",
+  "documents",
+  "remarks",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Shipping Document"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "SD-.YYYY.-",
+   "reqd": 1,
+   "default": "SD-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "letter_of_credit",
+   "fieldtype": "Link",
+   "label": "Letter of Credit",
+   "options": "Letter of Credit",
+   "set_only_once": 1,
+   "bold": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1,
+   "description": "Source document. Mandatory (see NSA Import Settings)"
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "options": "Purchase Order",
+   "reqd": 1,
+   "read_only_depends_on": "eval:doc.letter_of_credit",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name",
+   "read_only": 1,
+   "in_list_view": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "lc_no",
+   "fieldtype": "Data",
+   "label": "LC No.",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "commercial_invoice_no",
+   "fieldtype": "Data",
+   "label": "Commercial Invoice No.",
+   "reqd": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "commercial_invoice_date",
+   "fieldtype": "Date",
+   "label": "Commercial Invoice Date"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nIn Transit\nArrived\nCleared\nReceived\nCancelled",
+   "default": "Draft",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Conversion Rate (PKR / Foreign Currency)",
+   "reqd": 1,
+   "default": "1",
+   "precision": "9"
+  },
+  {
+   "fieldname": "pi_no",
+   "fieldtype": "Data",
+   "label": "PI No.",
+   "read_only": 1
+  },
+  {
+   "fieldname": "summary_section",
+   "fieldtype": "Section Break",
+   "label": "Shipment Quantity & Value"
+  },
+  {
+   "fieldname": "total_shipped_qty",
+   "fieldtype": "Float",
+   "label": "Shipped Qty",
+   "read_only": 1,
+   "bold": 1,
+   "description": "Sum of item Shipped Qty"
+  },
+  {
+   "fieldname": "invoice_amount",
+   "fieldtype": "Currency",
+   "label": "S/QTY Amount",
+   "options": "currency",
+   "read_only": 1,
+   "in_list_view": 1,
+   "bold": 1,
+   "description": "Sum of item Shipped Amount (foreign currency)"
+  },
+  {
+   "fieldname": "base_invoice_amount",
+   "fieldtype": "Currency",
+   "label": "S/QTY Amount (PKR)",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "S/QTY Amount x Conversion Rate"
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_po_qty",
+   "fieldtype": "Float",
+   "label": "PO Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_po_amount",
+   "fieldtype": "Currency",
+   "label": "PO Amount",
+   "options": "currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "total_remaining_qty",
+   "fieldtype": "Float",
+   "label": "Remaining Qty (after this shipment)",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "PO Items"
+  },
+  {
+   "fieldname": "get_items",
+   "fieldtype": "Button",
+   "label": "Get Items from Purchase Order",
+   "depends_on": "eval:doc.docstatus===0"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "PO Items",
+   "options": "Shipping Document Item",
+   "reqd": 1,
+   "cannot_add_rows": 1
+  },
+  {
+   "fieldname": "doc_tracking_section",
+   "fieldtype": "Section Break",
+   "label": "Original Documents Tracking"
+  },
+  {
+   "fieldname": "docs_received_from_bank_date",
+   "fieldtype": "Date",
+   "label": "DOC Received in Bank",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "original_doc_sent_to_agent",
+   "fieldtype": "Date",
+   "label": "Original Doc Send to Agent",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "original_doc_received_in_ats",
+   "fieldtype": "Date",
+   "label": "Original Doc Received in ATS",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "cb_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "original_doc_paid",
+   "fieldtype": "Date",
+   "label": "Original Doc Paid",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "dhl_no",
+   "fieldtype": "Data",
+   "label": "DHL No.",
+   "allow_on_submit": 1,
+   "description": "Courier / tracking number"
+  },
+  {
+   "fieldname": "arrival_notes_created",
+   "fieldtype": "Check",
+   "label": "Arrival Notes Created",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "bank_section",
+   "fieldtype": "Section Break",
+   "label": "Bank Acceptance & Discrepancy",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "discrepancy",
+   "fieldtype": "Check",
+   "label": "Discrepancy in Documents",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "discrepancy_details",
+   "fieldtype": "Small Text",
+   "label": "Discrepancy Details",
+   "depends_on": "discrepancy",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "cb_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "acceptance_date",
+   "fieldtype": "Date",
+   "label": "Acceptance Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "maturity_date",
+   "fieldtype": "Date",
+   "label": "Maturity Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "packing_tab",
+   "fieldtype": "Tab Break",
+   "label": "Packing List"
+  },
+  {
+   "fieldname": "packing_section",
+   "fieldtype": "Section Break",
+   "label": "Packing List"
+  },
+  {
+   "fieldname": "packing",
+   "fieldtype": "Select",
+   "label": "Packing",
+   "options": "\nBulk\nBags\nDrums\nCartons\nPallets\nBales\nRolls\nCases\nCrates\nIBC Tanks\nContainers\nOther",
+   "description": "Mandatory before submit"
+  },
+  {
+   "fieldname": "packing_qty",
+   "fieldtype": "Float",
+   "label": "QTY",
+   "description": "Defaults to total Shipped Qty. Mandatory before submit"
+  },
+  {
+   "fieldname": "no_of_packages",
+   "fieldtype": "Float",
+   "label": "Number of Packages"
+  },
+  {
+   "fieldname": "package_description",
+   "fieldtype": "Data",
+   "label": "Package Description"
+  },
+  {
+   "fieldname": "cb_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_net_weight",
+   "fieldtype": "Float",
+   "label": "Net Weight",
+   "description": "Mandatory before submit"
+  },
+  {
+   "fieldname": "total_gross_weight",
+   "fieldtype": "Float",
+   "label": "Gross Weight"
+  },
+  {
+   "fieldname": "weight_uom",
+   "fieldtype": "Link",
+   "label": "Weight UOM",
+   "options": "UOM",
+   "description": "KG / MT / LB. Mandatory before submit"
+  },
+  {
+   "fieldname": "packing_list_no",
+   "fieldtype": "Data",
+   "label": "Packing List No."
+  },
+  {
+   "fieldname": "packing_remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "container_section",
+   "fieldtype": "Section Break",
+   "label": "Container / Shipment Tracking"
+  },
+  {
+   "fieldname": "containers",
+   "fieldtype": "Table",
+   "label": "Containers",
+   "options": "Shipment Container",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "charges_tab",
+   "fieldtype": "Tab Break",
+   "label": "Charges"
+  },
+  {
+   "fieldname": "charges_section",
+   "fieldtype": "Section Break",
+   "label": "Shipment Charges (PKR)"
+  },
+  {
+   "fieldname": "commission_percent",
+   "fieldtype": "Percent",
+   "label": "Commission (%)"
+  },
+  {
+   "fieldname": "commission_amount",
+   "fieldtype": "Currency",
+   "label": "Commission",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "S/QTY Amount (PKR) x Commission % / 100"
+  },
+  {
+   "fieldname": "fed_percent",
+   "fieldtype": "Percent",
+   "label": "FED (%)"
+  },
+  {
+   "fieldname": "fed_amount",
+   "fieldtype": "Currency",
+   "label": "FED on Commission",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "Commission x FED % / 100"
+  },
+  {
+   "fieldname": "cb_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "swift_charges",
+   "fieldtype": "Currency",
+   "label": "SWIFT Charges",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "total_charges",
+   "fieldtype": "Currency",
+   "label": "Total Charges",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "description": "Commission + FED + SWIFT"
+  },
+  {
+   "fieldname": "journal_entry",
+   "fieldtype": "Link",
+   "label": "Charges Journal Entry",
+   "options": "Journal Entry",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "charges_remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "bl_tab",
+   "fieldtype": "Tab Break",
+   "label": "Bill of Lading"
+  },
+  {
+   "fieldname": "bl_section",
+   "fieldtype": "Section Break",
+   "label": "Bill of Lading"
+  },
+  {
+   "fieldname": "bl_awb_no",
+   "fieldtype": "Data",
+   "label": "Bill of Lading No.",
+   "in_standard_filter": 1,
+   "bold": 1,
+   "description": "B/L or AWB number. Mandatory before submit"
+  },
+  {
+   "fieldname": "bl_awb_date",
+   "fieldtype": "Date",
+   "label": "Bill of Lading Date",
+   "description": "Mandatory before submit"
+  },
+  {
+   "fieldname": "bl_type",
+   "fieldtype": "Select",
+   "label": "B/L Type",
+   "options": "\nOriginal\nTelex Release\nSea Waybill\nExpress Release\nAirway Bill\nTruck Receipt"
+  },
+  {
+   "fieldname": "shipping_line",
+   "fieldtype": "Data",
+   "label": "Shipping Line / Carrier"
+  },
+  {
+   "fieldname": "cb_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "vessel_flight_no",
+   "fieldtype": "Data",
+   "label": "Vessel Name"
+  },
+  {
+   "fieldname": "voyage_no",
+   "fieldtype": "Data",
+   "label": "Voyage No."
+  },
+  {
+   "fieldname": "port_of_loading",
+   "fieldtype": "Data",
+   "label": "Port of Loading"
+  },
+  {
+   "fieldname": "port_of_discharge",
+   "fieldtype": "Data",
+   "label": "Port of Discharge"
+  },
+  {
+   "fieldname": "final_destination",
+   "fieldtype": "Data",
+   "label": "Final Destination"
+  },
+  {
+   "fieldname": "cb_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "etd",
+   "fieldtype": "Date",
+   "label": "ETD"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Date",
+   "label": "ETA",
+   "in_list_view": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "actual_departure_date",
+   "fieldtype": "Date",
+   "label": "Actual Departure Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "actual_arrival_date",
+   "fieldtype": "Date",
+   "label": "Actual Arrival Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "notify_party",
+   "fieldtype": "Data",
+   "label": "Notify Party"
+  },
+  {
+   "fieldname": "bl_more_section",
+   "fieldtype": "Section Break",
+   "label": "Shipment Terms"
+  },
+  {
+   "fieldname": "mode_of_shipment",
+   "fieldtype": "Select",
+   "label": "Mode of Shipment",
+   "options": "\nBy Sea\nBy Air\nBy Road\nBy Rail\nCourier"
+  },
+  {
+   "fieldname": "shipping_term",
+   "fieldtype": "Select",
+   "label": "Shipping Term (Incoterm)",
+   "options": "\nEXW\nFCA\nFAS\nFOB\nCFR\nCIF\nCPT\nCIP\nDAP\nDPU\nDDP"
+  },
+  {
+   "fieldname": "cb_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country_of_origin",
+   "fieldtype": "Link",
+   "label": "Country of Origin",
+   "options": "Country"
+  },
+  {
+   "fieldname": "clearing_agent",
+   "fieldtype": "Link",
+   "label": "Clearing Agent",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "bl_remarks",
+   "fieldtype": "Long Text",
+   "label": "B/L Remarks",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "insurance_section",
+   "fieldtype": "Section Break",
+   "label": "Insurance",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "insurance_policy_no",
+   "fieldtype": "Data",
+   "label": "Insurance Policy / Cover Note No."
+  },
+  {
+   "fieldname": "cb_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "insurance_amount",
+   "fieldtype": "Currency",
+   "label": "Insurance Amount",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "documents_section",
+   "fieldtype": "Section Break",
+   "label": "Documents Checklist",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "documents",
+   "fieldtype": "Table",
+   "label": "Documents",
+   "options": "Shipping Document Checklist",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Shipping Document",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Shipping Document",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "commercial_invoice_no",
+ "search_fields": "commercial_invoice_no,bl_awb_no,lc_no,purchase_order,supplier",
+ "show_title_field_in_link": 1
+}

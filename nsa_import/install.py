@@ -244,7 +244,7 @@ def get_custom_fields():
 			[
 				F("nsa_import_ref_section", "Section Break", "Import References", depends_on=IMPORT, collapsible=1),
 				F("letter_of_credit", "Link", "Letter of Credit", "Letter of Credit"),
-				F("import_shipment", "Link", "Import Shipment", "Import Shipment"),
+				F("import_shipment", "Link", "Shipping Document", "Shipping Document"),
 				F("nsa_import_ref_cb", "Column Break"),
 				F("customs_clearance", "Link", "Customs Clearance (GD)", "Customs Clearance"),
 			],
