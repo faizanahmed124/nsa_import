@@ -107,8 +107,11 @@ def je_row(company, account, debit=0.0, credit=0.0, party_type=None, party=None,
 	return row
 
 
-def build_journal_entry(company, posting_date, rows, balancing_account, remark, reference=None):
+def build_journal_entry(company, posting_date, rows, balancing_account, remark, reference=None,
+						letter_of_credit=None):
 	je = frappe.new_doc("Journal Entry")
+	if letter_of_credit:
+		je.letter_of_credit = letter_of_credit
 	je.voucher_type = "Journal Entry"
 	je.company = company
 	je.posting_date = posting_date

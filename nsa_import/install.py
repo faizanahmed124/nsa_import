@@ -7,6 +7,7 @@ from frappe.custom.doctype.property_setter.property_setter import make_property_
 
 from nsa_import.constants import (
 	IMPORT_PAYMENT_TERMS,
+	LC_CHARGE_HEADS,
 	MODE_OF_SHIPMENT,
 	PAYMENT_METHODS,
 	SHIPPING_TERMS,
@@ -257,6 +258,16 @@ def get_custom_fields():
 		],
 		"company",
 	)
+	# ---------------- Journal Entry -> Letter of Credit (Expense Booked) ----------------
+	fields["Journal Entry"] = [
+		F("letter_of_credit", "Link", "Letter of Credit", "Letter of Credit", insert_after="cheque_date",
+		  in_standard_filter=1, search_index=1,
+		  description="LC expense lines of this entry are copied to the LC's Expense Booked tab on submit"),
+	]
+	fields["Journal Entry Account"] = [
+		F("nsa_lc_charge_head", "Select", "LC Charge Head", LC_CHARGE_HEADS, insert_after="user_remark",
+		  depends_on="eval:parent.letter_of_credit"),
+	]
 	return fields
 
 

@@ -6,72 +6,112 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "lc_po_section",
   "naming_series",
-  "lc_no",
-  "lc_type",
-  "usance_days",
-  "cb_1",
-  "lc_date",
-  "status",
-  "cb_2",
-  "company",
-  "company_currency",
-  "po_section",
   "purchase_order",
-  "pi_no",
-  "pi_date",
-  "cb_3",
   "supplier",
   "supplier_name",
-  "beneficiary_bank",
-  "bank_section",
-  "issuing_bank",
-  "bank_gl_account",
-  "cb_4",
-  "advising_bank",
-  "confirming_bank",
-  "amount_section",
+  "cb_1",
+  "lc_no",
+  "lc_date",
+  "lc_payment_term",
+  "lc_type",
+  "usance_days",
+  "cb_2",
+  "status",
+  "company",
+  "company_currency",
+  "pi_no",
+  "pi_date",
+  "po_amount_section",
+  "po_qty",
+  "po_amount",
   "currency",
-  "exchange_rate",
-  "cb_5",
-  "lc_amount",
+  "cb_3",
   "tolerance_percent",
-  "cb_6",
+  "lc_amount",
+  "exchange_rate",
+  "cb_4",
   "max_lc_amount",
   "base_lc_amount",
-  "validity_section",
+  "banking_section",
+  "issuing_bank",
+  "lc_bank_account",
+  "bank_gl_account",
+  "cb_5",
+  "advising_bank",
+  "confirming_bank",
+  "beneficiary_bank",
+  "insurance_section",
+  "insurance_company",
+  "insurance_policy_no",
+  "cb_6",
+  "insurance_limit",
+  "insurance_expiry_date",
+  "shipment_section",
   "expiry_date",
+  "plan_to_move",
+  "place",
+  "cb_7",
+  "fi_no",
+  "fi_validity",
+  "cb_8",
+  "latest_shipment_date",
+  "terms_section",
   "place_of_expiry",
   "presentation_days",
-  "cb_7",
-  "latest_shipment_date",
   "mode_of_shipment",
   "shipping_term",
-  "cb_8",
+  "cb_9",
   "partial_shipment",
   "transhipment",
   "port_of_loading",
   "port_of_discharge",
-  "documents_section",
   "documents_required",
+  "charges_tab",
+  "lc_charges_section",
+  "lc_commission_percent",
+  "lc_commission_amount",
+  "lc_after",
+  "fed_percent",
+  "cb_10",
+  "swift_charges",
+  "amendment_commission",
+  "swift_charges_amended",
+  "cb_11",
+  "lc_tolerance_amount",
+  "fed_on_commission",
+  "total_lc_charges",
+  "other_charges_section",
+  "charges",
   "margin_section",
   "margin_percent",
   "margin_amount",
-  "cb_9",
+  "cb_12",
   "total_charges",
   "journal_entry",
-  "charges",
+  "amendment_tab",
   "amendment_section",
   "amendments",
   "utilization_section",
   "shipped_amount",
   "retired_amount",
-  "cb_10",
+  "cb_13",
   "balance_amount",
   "remarks",
+  "expense_tab",
+  "expense_section",
+  "expense_booked",
+  "total_expense_booked",
+  "pending_lc_charges",
   "amended_from"
  ],
  "fields": [
+  {
+   "fieldname": "lc_po_section",
+   "fieldtype": "Section Break",
+   "label": "LC / PO Information"
+  },
   {
    "fieldname": "naming_series",
    "fieldtype": "Select",
@@ -83,20 +123,62 @@
    "print_hide": 1
   },
   {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "options": "Purchase Order",
+   "reqd": 1,
+   "set_only_once": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1,
+   "description": "Only Import Purchase Orders"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier Name",
+   "read_only": 1,
+   "in_list_view": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "lc_no",
    "fieldtype": "Data",
-   "label": "LC No.",
-   "reqd": 1,
-   "in_list_view": 1,
+   "label": "LC Number",
    "in_standard_filter": 1,
-   "bold": 1
+   "bold": 1,
+   "no_copy": 1,
+   "description": "Bank-issued LC number"
+  },
+  {
+   "fieldname": "lc_date",
+   "fieldtype": "Date",
+   "label": "LC Date",
+   "description": "LC opening / issue date"
+  },
+  {
+   "fieldname": "lc_payment_term",
+   "fieldtype": "Select",
+   "label": "LC Payment Term",
+   "options": "\nLC at Sight\nLC Usance\nAdvance TT\nTT Against Documents\nTT After Arrival\nDP (Documents against Payment)\nDA (Documents against Acceptance)\nOpen Account"
   },
   {
    "fieldname": "lc_type",
    "fieldtype": "Select",
    "label": "LC Type",
    "options": "Sight\nUsance\nDeferred Payment\nBack to Back\nStandby",
-   "reqd": 1,
    "default": "Sight"
   },
   {
@@ -106,15 +188,8 @@
    "depends_on": "eval:['Usance','Deferred Payment'].includes(doc.lc_type)"
   },
   {
-   "fieldname": "cb_1",
+   "fieldname": "cb_2",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "lc_date",
-   "fieldtype": "Date",
-   "label": "LC Date",
-   "reqd": 1,
-   "default": "Today"
   },
   {
    "fieldname": "status",
@@ -129,15 +204,12 @@
    "in_standard_filter": 1
   },
   {
-   "fieldname": "cb_2",
-   "fieldtype": "Column Break"
-  },
-  {
    "fieldname": "company",
    "fieldtype": "Link",
    "label": "Company",
    "options": "Company",
    "reqd": 1,
+   "read_only": 1,
    "remember_last_selected_value": 1
   },
   {
@@ -150,102 +222,61 @@
    "hidden": 1
   },
   {
-   "fieldname": "po_section",
-   "fieldtype": "Section Break",
-   "label": "Purchase Order & Beneficiary"
-  },
-  {
-   "fieldname": "purchase_order",
-   "fieldtype": "Link",
-   "label": "Purchase Order",
-   "options": "Purchase Order",
-   "reqd": 1,
-   "in_standard_filter": 1
-  },
-  {
    "fieldname": "pi_no",
    "fieldtype": "Data",
    "label": "PI No.",
-   "fetch_from": "purchase_order.pi_no",
    "read_only": 1
   },
   {
    "fieldname": "pi_date",
    "fieldtype": "Date",
    "label": "PI Date",
-   "fetch_from": "purchase_order.pi_date",
    "read_only": 1
   },
   {
-   "fieldname": "cb_3",
-   "fieldtype": "Column Break"
+   "fieldname": "po_amount_section",
+   "fieldtype": "Section Break",
+   "label": "PO Quantity, Amount & Tolerance"
   },
   {
-   "fieldname": "supplier",
-   "fieldtype": "Link",
-   "label": "Supplier (Beneficiary)",
-   "options": "Supplier",
-   "fetch_from": "purchase_order.supplier",
+   "fieldname": "po_qty",
+   "fieldtype": "Float",
+   "label": "PO Qty",
+   "read_only": 1
+  },
+  {
+   "fieldname": "po_amount",
+   "fieldtype": "Currency",
+   "label": "PO Amount",
+   "options": "currency",
    "read_only": 1,
-   "in_list_view": 1,
-   "in_standard_filter": 1
-  },
-  {
-   "fieldname": "supplier_name",
-   "fieldtype": "Data",
-   "label": "Supplier Name",
-   "fetch_from": "supplier.supplier_name",
-   "read_only": 1
-  },
-  {
-   "fieldname": "beneficiary_bank",
-   "fieldtype": "Small Text",
-   "label": "Beneficiary Bank Details"
-  },
-  {
-   "fieldname": "bank_section",
-   "fieldtype": "Section Break",
-   "label": "Banks"
-  },
-  {
-   "fieldname": "issuing_bank",
-   "fieldtype": "Link",
-   "label": "Issuing / Opening Bank",
-   "options": "Bank",
-   "reqd": 1,
-   "in_standard_filter": 1
-  },
-  {
-   "fieldname": "bank_gl_account",
-   "fieldtype": "Link",
-   "label": "Bank GL Account",
-   "options": "Account"
-  },
-  {
-   "fieldname": "cb_4",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "advising_bank",
-   "fieldtype": "Data",
-   "label": "Advising Bank"
-  },
-  {
-   "fieldname": "confirming_bank",
-   "fieldtype": "Data",
-   "label": "Confirming Bank"
-  },
-  {
-   "fieldname": "amount_section",
-   "fieldtype": "Section Break",
-   "label": "LC Amount"
+   "in_list_view": 1
   },
   {
    "fieldname": "currency",
    "fieldtype": "Link",
    "label": "Currency",
    "options": "Currency",
+   "read_only": 1,
    "reqd": 1
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "tolerance_percent",
+   "fieldtype": "Percent",
+   "label": "LC Tolerance %",
+   "description": "Permitted +/- tolerance on PO Amount"
+  },
+  {
+   "fieldname": "lc_amount",
+   "fieldtype": "Currency",
+   "label": "LC Amount",
+   "options": "currency",
+   "reqd": 1,
+   "description": "Defaults to PO Amount. Increase / decrease through Amendments after submission."
   },
   {
    "fieldname": "exchange_rate",
@@ -256,24 +287,7 @@
    "precision": "9"
   },
   {
-   "fieldname": "cb_5",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "lc_amount",
-   "fieldtype": "Currency",
-   "label": "LC Amount",
-   "options": "currency",
-   "reqd": 1,
-   "in_list_view": 1
-  },
-  {
-   "fieldname": "tolerance_percent",
-   "fieldtype": "Percent",
-   "label": "Tolerance (+/-) %"
-  },
-  {
-   "fieldname": "cb_6",
+   "fieldname": "cb_4",
    "fieldtype": "Column Break"
   },
   {
@@ -293,17 +307,138 @@
    "allow_on_submit": 1
   },
   {
-   "fieldname": "validity_section",
+   "fieldname": "banking_section",
    "fieldtype": "Section Break",
-   "label": "Validity & Shipment Terms"
+   "label": "Banking Information"
+  },
+  {
+   "fieldname": "issuing_bank",
+   "fieldtype": "Link",
+   "label": "LC Bank",
+   "options": "Bank",
+   "in_standard_filter": 1,
+   "description": "Issuing / opening bank"
+  },
+  {
+   "fieldname": "lc_bank_account",
+   "fieldtype": "Link",
+   "label": "LC Bank Account",
+   "options": "Bank Account"
+  },
+  {
+   "fieldname": "bank_gl_account",
+   "fieldtype": "Link",
+   "label": "Bank GL Account",
+   "options": "Account",
+   "fetch_from": "lc_bank_account.account",
+   "fetch_if_empty": 1,
+   "description": "Credited when LC margin / charges are booked"
+  },
+  {
+   "fieldname": "cb_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "advising_bank",
+   "fieldtype": "Data",
+   "label": "Advising Bank"
+  },
+  {
+   "fieldname": "confirming_bank",
+   "fieldtype": "Data",
+   "label": "Confirming Bank"
+  },
+  {
+   "fieldname": "beneficiary_bank",
+   "fieldtype": "Small Text",
+   "label": "Beneficiary (Supplier) Bank Details"
+  },
+  {
+   "fieldname": "insurance_section",
+   "fieldtype": "Section Break",
+   "label": "Insurance Information"
+  },
+  {
+   "fieldname": "insurance_company",
+   "fieldtype": "Data",
+   "label": "Insurance Company"
+  },
+  {
+   "fieldname": "insurance_policy_no",
+   "fieldtype": "Data",
+   "label": "Cover Note / Policy No."
+  },
+  {
+   "fieldname": "cb_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "insurance_limit",
+   "fieldtype": "Currency",
+   "label": "Insurance Limit",
+   "options": "currency",
+   "description": "Maximum insured amount"
+  },
+  {
+   "fieldname": "insurance_expiry_date",
+   "fieldtype": "Date",
+   "label": "Insurance Expiry Date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "shipment_section",
+   "fieldtype": "Section Break",
+   "label": "Shipment / FI Information"
   },
   {
    "fieldname": "expiry_date",
    "fieldtype": "Date",
-   "label": "Expiry Date",
-   "reqd": 1,
+   "label": "LC Expiry Date",
    "allow_on_submit": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "plan_to_move",
+   "fieldtype": "Date",
+   "label": "Plan To Move",
+   "description": "Planned movement / shipment date",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "place",
+   "fieldtype": "Data",
+   "label": "Place"
+  },
+  {
+   "fieldname": "cb_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "fi_no",
+   "fieldtype": "Data",
+   "label": "FI No."
+  },
+  {
+   "fieldname": "fi_validity",
+   "fieldtype": "Date",
+   "label": "FI Validity",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "cb_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "latest_shipment_date",
+   "fieldtype": "Date",
+   "label": "Latest Date of Shipment",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "terms_section",
+   "fieldtype": "Section Break",
+   "label": "Additional LC Terms",
+   "collapsible": 1
   },
   {
    "fieldname": "place_of_expiry",
@@ -315,16 +450,6 @@
    "fieldtype": "Int",
    "label": "Documents Presentation Period (Days)",
    "default": "21"
-  },
-  {
-   "fieldname": "cb_7",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "latest_shipment_date",
-   "fieldtype": "Date",
-   "label": "Latest Shipment Date",
-   "allow_on_submit": 1
   },
   {
    "fieldname": "mode_of_shipment",
@@ -339,7 +464,7 @@
    "options": "\nEXW\nFCA\nFAS\nFOB\nCFR\nCIF\nCPT\nCIP\nDAP\nDPU\nDDP"
   },
   {
-   "fieldname": "cb_8",
+   "fieldname": "cb_9",
    "fieldtype": "Column Break"
   },
   {
@@ -367,20 +492,113 @@
    "label": "Port of Discharge"
   },
   {
-   "fieldname": "documents_section",
-   "fieldtype": "Section Break",
-   "label": "Documents Required"
-  },
-  {
    "fieldname": "documents_required",
    "fieldtype": "Text",
    "label": "Documents Required",
    "default": "Bill of Lading / Airway Bill\nCommercial Invoice\nPacking List\nCertificate of Origin\nBill of Exchange"
   },
   {
+   "fieldname": "charges_tab",
+   "fieldtype": "Tab Break",
+   "label": "Charges"
+  },
+  {
+   "fieldname": "lc_charges_section",
+   "fieldtype": "Section Break",
+   "label": "LC Charges (Company Currency)"
+  },
+  {
+   "fieldname": "lc_commission_percent",
+   "fieldtype": "Percent",
+   "label": "LC Commission Charges (%)"
+  },
+  {
+   "fieldname": "lc_commission_amount",
+   "fieldtype": "Currency",
+   "label": "LC Commission Amount",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "lc_after",
+   "fieldtype": "Currency",
+   "label": "LC AFTER",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "fed_percent",
+   "fieldtype": "Percent",
+   "label": "FED (%)"
+  },
+  {
+   "fieldname": "cb_10",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "swift_charges",
+   "fieldtype": "Currency",
+   "label": "SWIFT Charges",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "amendment_commission",
+   "fieldtype": "Currency",
+   "label": "Amendment Commission",
+   "options": "company_currency",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "swift_charges_amended",
+   "fieldtype": "Currency",
+   "label": "SWIFT Charges Amended",
+   "options": "company_currency",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "cb_11",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lc_tolerance_amount",
+   "fieldtype": "Currency",
+   "label": "LC Tolerance",
+   "options": "currency",
+   "read_only": 1,
+   "description": "PO Amount x LC Tolerance % / 100 (LC currency)"
+  },
+  {
+   "fieldname": "fed_on_commission",
+   "fieldtype": "Currency",
+   "label": "FED on Commission",
+   "options": "company_currency",
+   "read_only": 1,
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "total_lc_charges",
+   "fieldtype": "Currency",
+   "label": "Total LC Charges",
+   "options": "company_currency",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "other_charges_section",
+   "fieldtype": "Section Break",
+   "label": "Other Bank Charges",
+   "collapsible": 1
+  },
+  {
+   "fieldname": "charges",
+   "fieldtype": "Table",
+   "label": "Other Bank Charges",
+   "options": "LC Charge"
+  },
+  {
    "fieldname": "margin_section",
    "fieldtype": "Section Break",
-   "label": "Margin & Bank Charges"
+   "label": "Margin & Accounting"
   },
   {
    "fieldname": "margin_percent",
@@ -391,17 +609,16 @@
    "fieldname": "margin_amount",
    "fieldtype": "Currency",
    "label": "Margin Amount (Company Currency)",
-   "options": "company_currency",
-   "allow_on_submit": 1
+   "options": "company_currency"
   },
   {
-   "fieldname": "cb_9",
+   "fieldname": "cb_12",
    "fieldtype": "Column Break"
   },
   {
    "fieldname": "total_charges",
    "fieldtype": "Currency",
-   "label": "Total Bank Charges",
+   "label": "Total Bank Charges (LC + Other)",
    "options": "company_currency",
    "read_only": 1,
    "allow_on_submit": 1
@@ -416,16 +633,14 @@
    "no_copy": 1
   },
   {
-   "fieldname": "charges",
-   "fieldtype": "Table",
-   "label": "Bank Charges",
-   "options": "LC Charge"
+   "fieldname": "amendment_tab",
+   "fieldtype": "Tab Break",
+   "label": "Amendments & Utilization"
   },
   {
    "fieldname": "amendment_section",
    "fieldtype": "Section Break",
-   "label": "Amendments",
-   "collapsible": 1
+   "label": "Amendments"
   },
   {
    "fieldname": "amendments",
@@ -458,7 +673,7 @@
    "no_copy": 1
   },
   {
-   "fieldname": "cb_10",
+   "fieldname": "cb_13",
    "fieldtype": "Column Break"
   },
   {
@@ -475,6 +690,43 @@
    "fieldtype": "Small Text",
    "label": "Remarks",
    "allow_on_submit": 1
+  },
+  {
+   "fieldname": "expense_tab",
+   "fieldtype": "Tab Break",
+   "label": "Expense Booked"
+  },
+  {
+   "fieldname": "expense_section",
+   "fieldtype": "Section Break",
+   "label": "Expenses Booked against this LC"
+  },
+  {
+   "fieldname": "expense_booked",
+   "fieldtype": "Table",
+   "label": "Expense Booked",
+   "options": "LC Expense Booked",
+   "allow_on_submit": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "total_expense_booked",
+   "fieldtype": "Currency",
+   "label": "Total Expense Booked",
+   "options": "company_currency",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "bold": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "pending_lc_charges",
+   "fieldtype": "Currency",
+   "label": "LC Charges Not Yet Booked",
+   "options": "company_currency",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "no_copy": 1
   },
   {
    "fieldname": "amended_from",

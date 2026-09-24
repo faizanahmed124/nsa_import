@@ -27,6 +27,10 @@ doc_events = {
     "Purchase Invoice": {
         "validate": "nsa_import.overrides.purchase_receipt.validate",
     },
+    "Journal Entry": {
+        "on_submit": "nsa_import.overrides.journal_entry.on_submit",
+        "on_cancel": "nsa_import.overrides.journal_entry.on_cancel",
+    },
 }
 
 override_doctype_dashboards = {

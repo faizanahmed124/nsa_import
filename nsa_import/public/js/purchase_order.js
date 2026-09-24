@@ -59,6 +59,26 @@ nsa_import.po = {
 			frappe.set_route("query-report", "Import Tracker", { purchase_order: frm.doc.name }), group);
 	},
 
+	// Connections -> Letter of Credit (+) : only for Import POs, opens the LC with PO data prefilled
+	setup_lc_connection(frm) {
+		frm.make_methods = frm.make_methods || {};
+		frm.make_methods["Letter of Credit"] = () => {
+			if (!this.is_import(frm)) {
+				frappe.msgprint(__("Letter of Credit can only be created from an Import Purchase Order."));
+				return;
+			}
+			frappe.model.open_mapped_doc({ method: "nsa_import.api.make_letter_of_credit", frm });
+		};
+		const toggle = () => {
+			const area = frm.dashboard && frm.dashboard.transactions_area;
+			if (area && area.find) {
+				area.find('.document-link[data-doctype="Letter of Credit"]').toggle(this.is_import(frm));
+			}
+		};
+		toggle();
+		setTimeout(toggle, 600);
+	},
+
 	show_status(frm) {
 		if (frm.doc.docstatus === 1 && this.is_import(frm) && frm.doc.import_status) {
 			frm.dashboard.add_indicator(__("Import: {0}", [__(frm.doc.import_status)]), "blue");
@@ -76,6 +96,7 @@ frappe.ui.form.on("Purchase Order", {
 	refresh(frm) {
 		nsa_import.po.apply_layout(frm);
 		nsa_import.po.add_buttons(frm);
+		nsa_import.po.setup_lc_connection(frm);
 		nsa_import.po.show_status(frm);
 	},
 	purchase_type(frm) {

@@ -9,6 +9,7 @@
   "company",
   "lc_margin_account",
   "bank_charges_account",
+  "fed_account",
   "customs_duty_account",
   "cb1",
   "sales_tax_account",
@@ -39,6 +40,13 @@
    "label": "LC / Bank Charges Account",
    "options": "Account",
    "in_list_view": 1
+  },
+  {
+   "fieldname": "fed_account",
+   "fieldtype": "Link",
+   "label": "FED on LC Commission Account",
+   "options": "Account",
+   "description": "Leave empty to book FED in the LC / Bank Charges Account"
   },
   {
    "fieldname": "customs_duty_account",

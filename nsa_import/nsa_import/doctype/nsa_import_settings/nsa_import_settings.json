@@ -13,6 +13,16 @@
   "cb1",
   "landing_charges_percent",
   "include_sales_tax_in_landed_cost",
+  "lc_section",
+  "allow_lc_on_draft_po",
+  "lc_no_unique",
+  "lc_commission_base",
+  "lc_closed_edit_role",
+  "cb_lc1",
+  "default_lc_commission_percent",
+  "default_fed_percent",
+  "fed_on_amendment_commission",
+  "include_lc_after_in_charges",
   "accounts_section",
   "company_accounts"
  ],
@@ -56,6 +66,65 @@
    "fieldtype": "Check",
    "label": "Include Import Sales Tax in Landed Cost",
    "description": "Enable only if import sales tax is NOT adjustable (e.g. unregistered)."
+  },
+  {
+   "fieldname": "lc_section",
+   "fieldtype": "Section Break",
+   "label": "Letter of Credit"
+  },
+  {
+   "fieldname": "allow_lc_on_draft_po",
+   "fieldtype": "Check",
+   "label": "Allow LC against Draft Purchase Order",
+   "description": "By default an LC can be created only from a submitted Import Purchase Order."
+  },
+  {
+   "fieldname": "lc_no_unique",
+   "fieldtype": "Check",
+   "label": "LC Number must be Unique",
+   "default": "1",
+   "description": "Checked across all non-cancelled Letters of Credit."
+  },
+  {
+   "fieldname": "lc_commission_base",
+   "fieldtype": "Select",
+   "label": "LC Commission Calculated On",
+   "options": "LC Amount\nPO Amount\nLC Amount incl. Tolerance",
+   "default": "LC Amount"
+  },
+  {
+   "fieldname": "lc_closed_edit_role",
+   "fieldtype": "Link",
+   "label": "Role Allowed to Edit Closed / Expired LC",
+   "options": "Role",
+   "default": "Accounts Manager"
+  },
+  {
+   "fieldname": "cb_lc1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "default_lc_commission_percent",
+   "fieldtype": "Percent",
+   "label": "Default LC Commission (%)"
+  },
+  {
+   "fieldname": "default_fed_percent",
+   "fieldtype": "Percent",
+   "label": "Default FED (%)",
+   "default": "16"
+  },
+  {
+   "fieldname": "fed_on_amendment_commission",
+   "fieldtype": "Check",
+   "label": "Apply FED on Amendment Commission",
+   "default": "1"
+  },
+  {
+   "fieldname": "include_lc_after_in_charges",
+   "fieldtype": "Check",
+   "label": "Include 'LC AFTER' in Total LC Charges",
+   "default": "1"
   },
   {
    "fieldname": "accounts_section",

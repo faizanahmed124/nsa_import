@@ -10,3 +10,12 @@ PAYMENT_METHODS = "\nLC\nTT\nCash\nBank Transfer\nCheque\nPay Order"
 BUYER_PAYS_FREIGHT = ("EXW", "FCA", "FAS", "FOB")
 # Incoterms where insurance is already covered by the seller
 SELLER_PAYS_INSURANCE = ("CIF", "CIP", "DAP", "DPU", "DDP")
+
+# LC payment terms (subset of IMPORT_PAYMENT_TERMS that need a Letter of Credit)
+LC_PAYMENT_TERMS = ("LC at Sight", "LC Usance")
+
+# Charge heads used on LC Expense Booked rows and Journal Entry Account.nsa_lc_charge_head
+LC_CHARGE_HEADS = (
+	"\nLC Commission\nFED on Commission\nLC AFTER\nSWIFT Charges\nAmendment Commission"
+	"\nSWIFT Charges Amended\nOther Bank Charges\nRetirement Charges\nOther"
+)

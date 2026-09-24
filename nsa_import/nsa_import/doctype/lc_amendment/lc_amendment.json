@@ -11,7 +11,6 @@
   "amount_change",
   "new_expiry_date",
   "new_latest_shipment_date",
-  "amendment_charges",
   "description"
  ],
  "fields": [
@@ -50,12 +49,6 @@
    "fieldname": "new_latest_shipment_date",
    "fieldtype": "Date",
    "label": "New Latest Shipment Date",
-   "allow_on_submit": 1
-  },
-  {
-   "fieldname": "amendment_charges",
-   "fieldtype": "Currency",
-   "label": "Amendment Charges (Company Currency)",
    "allow_on_submit": 1
   },
   {

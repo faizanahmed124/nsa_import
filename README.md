@@ -54,6 +54,54 @@ from buttons on each document so accounts can review before submitting.
 Purchase Type and LC / Shipment / GD references are carried to Purchase Receipt, Purchase Invoice and
 Landed Cost Voucher and are available in all reports.
 
+## Letter of Credit
+
+A separate submittable document, always linked to one **Import** Purchase Order.
+
+Create it from the Import PO: *Connections → Letter of Credit → +* or *Import → Letter of Credit*. For Local POs the
+LC link is hidden in Connections and the server blocks creation and linking. By default the PO must be submitted
+(NSA Import Settings → *Allow LC against Draft Purchase Order* relaxes this for creation; the LC itself can only be
+submitted after the PO is submitted).
+
+Tabs and fields:
+
+- **Details**: Purchase Order, Supplier / Supplier Name, LC Number, LC Date, LC Payment Term, LC Type;
+  PO Qty, PO Amount, Currency (read-only, always taken from the PO), LC Tolerance %, LC Amount, Exchange Rate;
+  *Banking*: LC Bank, LC Bank Account (fills Bank GL Account), advising / confirming bank;
+  *Insurance*: Insurance Company, Cover Note No., Insurance Limit, Insurance Expiry Date;
+  *Shipment / FI*: LC Expiry Date, Plan To Move, Place, FI No., FI Validity, Latest Date of Shipment;
+  *Additional LC Terms* (collapsed): ports, Incoterm, partial shipment / transhipment, documents required.
+- **Charges**: LC Commission %, LC Commission Amount, LC AFTER, FED %, SWIFT Charges, Amendment Commission,
+  SWIFT Charges Amended, LC Tolerance, FED on Commission, Total LC Charges; Other Bank Charges table; Margin.
+- **Amendments & Utilization**: amendments (amount change, new expiry / shipment dates), shipped, retired, balance.
+- **Expense Booked**: Charge Head, Expense Account, Amount, Posting Date, Reference Voucher (Dynamic Link), Remarks;
+  Total Expense Booked and LC Charges Not Yet Booked.
+
+Calculations (charges in company currency):
+
+| Field | Formula |
+|---|---|
+| PO Qty / PO Amount / Currency | PO Total Qty / PO Grand Total / PO Currency |
+| LC Tolerance | PO Amount × LC Tolerance % ÷ 100 |
+| Max LC Amount | (LC Amount + amendments) × (1 + Tolerance % ÷ 100) |
+| LC Commission Amount | Commission base × Exchange Rate × Commission % ÷ 100 (base per Settings: LC Amount, PO Amount, or LC Amount incl. Tolerance) |
+| FED on Commission | (Commission + Amendment Commission\*) × FED % ÷ 100 (\*Settings switch) |
+| Total LC Charges | Commission + FED + LC AFTER\* + SWIFT + Amendment Commission + SWIFT Amended (\*Settings switch) |
+| Total Bank Charges | Total LC Charges + Other Bank Charges table (used by Import Cost Sheet) |
+
+Default Commission % and FED % (16) come from NSA Import Settings, so rate changes need no code change.
+
+Validations: PO mandatory, set once and never changed; only Import POs; LC Number unique across non-cancelled LCs
+(switchable); percentages 0–100; amounts not negative; LC Expiry ≥ LC Date; Latest Date of Shipment between LC Date
+and LC Expiry; warnings when Plan To Move is after the latest shipment date, or FI validity / insurance expires
+before it. Closed or Expired LCs can only be edited by the role set in Settings (default Accounts Manager).
+
+Expense booking: *Create → Book LC Charges (Journal Entry)* makes a draft JE for the margin (first time) and every
+charge head not yet booked. Each line is tagged with its charge head, and the JE carries the LC link. When the JE is
+submitted, its lines are copied to the **Expense Booked** tab automatically; cancelling the JE removes them. Any
+manual JE can be linked the same way by selecting the Letter of Credit on it. Rows for other vouchers
+(Payment Entry, Purchase Invoice) can be added by hand.
+
 ## Dynamic rules on Purchase Order
 
 - **Local**: Voucher Number visible; all import sections/fields hidden and not mandatory.

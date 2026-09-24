@@ -38,24 +38,41 @@ def _import_po(name):
 # ----------------------------------------------------------------------------
 @frappe.whitelist()
 def get_lc_defaults(purchase_order):
-	po = _import_po(purchase_order)
-	return {
-		"company": po.company, "supplier": po.supplier, "currency": po.currency,
-		"exchange_rate": po.conversion_rate, "lc_amount": po.grand_total, "lc_no": po.get("lc_no"),
-		"lc_date": po.get("lc_date"), "issuing_bank": po.get("lc_bank"), "shipping_term": po.get("shipping_term"),
-		"mode_of_shipment": po.get("mode_of_shipment"), "port_of_loading": po.get("port_of_loading"),
-		"port_of_discharge": po.get("port_of_discharge"), "latest_shipment_date": po.get("expected_shipment_date"),
-		"beneficiary_bank": po.get("supplier_bank"),
-		"lc_type": "Usance" if po.get("import_payment_term") == "LC Usance" else "Sight",
-	}
+	"""Values for a new Letter of Credit. `fixed` are read-only on the LC, `defaults` fill empty fields."""
+	from nsa_import.nsa_import.doctype.letter_of_credit.letter_of_credit import get_po_values
+
+	frappe.has_permission("Purchase Order", "read", purchase_order, throw=True)
+	po, fixed, defaults = get_po_values(purchase_order)
+	_check_lc_allowed(purchase_order, po)
+	return {"fixed": fixed, "defaults": defaults}
+
+
+@frappe.whitelist()
+def get_lc_settings():
+	"""LC calculation settings for the client (no read permission on NSA Import Settings needed)."""
+	s = get_settings()
+	keys = ("allow_lc_on_draft_po", "lc_commission_base", "default_lc_commission_percent", "default_fed_percent",
+			"fed_on_amendment_commission", "include_lc_after_in_charges")
+	return {k: s.get(k) for k in keys}
+
+
+def _check_lc_allowed(name, po):
+	if po.purchase_type != "Import":
+		frappe.throw(_("Letter of Credit can only be created from an Import Purchase Order. {0} is a {1} Purchase Order.")
+					 .format(name, po.purchase_type or "Local"))
+	allowed = (0, 1) if get_settings().allow_lc_on_draft_po else (1,)
+	if po.docstatus not in allowed:
+		frappe.throw(_("Purchase Order {0} must be submitted before creating a Letter of Credit.").format(name))
 
 
 @frappe.whitelist()
 def make_letter_of_credit(source_name, target_doc=None, args=None):
+	"""Used by PO -> Import -> Letter of Credit and by PO Connections -> Letter of Credit (+)."""
+	data = get_lc_defaults(source_name)
 	lc = frappe.new_doc("Letter of Credit")
 	lc.purchase_order = source_name
-	for k, v in get_lc_defaults(source_name).items():
-		if v:
+	for k, v in {**data["defaults"], **data["fixed"]}.items():
+		if v not in (None, ""):
 			lc.set(k, v)
 	return lc
 
@@ -330,28 +347,64 @@ def make_lc_retirement_from_shipment(source_name, target_doc=None, args=None):
 # ----------------------------------------------------------------------------
 @frappe.whitelist()
 def make_lc_journal_entry(source_name):
+	"""Draft Journal Entry for LC margin (first time) and all LC charges not yet booked.
+
+	Charge lines are tagged with their charge head; when the JE is submitted they are copied to the
+	LC's Expense Booked tab automatically.
+	"""
 	lc = _submitted("Letter of Credit", source_name)
-	if lc.journal_entry:
-		return lc.journal_entry
+	lc.check_permission("write")
+	draft = frappe.db.get_value("Journal Entry", {"letter_of_credit": lc.name, "docstatus": 0}, "name")
+	if draft:
+		frappe.msgprint(_("Draft Journal Entry {0} already exists for this LC.").format(draft), alert=True)
+		return draft
+
 	acc = get_company_accounts(lc.company)
 	bank = require_account(lc.bank_gl_account, "Bank GL Account (on the LC)", lc.company)
+	ref = lc.lc_no or lc.name
 	rows = []
-	if flt(lc.margin_amount):
+
+	# margin is booked once, with the first LC journal entry
+	if flt(lc.margin_amount) and not lc.journal_entry:
 		rows.append(je_row(lc.company, require_account(acc.get("lc_margin_account"), "LC Margin Account", lc.company),
-						   debit=lc.margin_amount, remark=f"LC Margin {lc.lc_no}"))
-	for c in lc.charges:
-		account = c.account or require_account(acc.get("bank_charges_account"), "LC / Bank Charges Account", lc.company)
-		rows.append(je_row(lc.company, account, debit=c.amount, remark=f"{c.charge_type} - LC {lc.lc_no}"))
-	for a in lc.amendments:
-		if flt(a.amendment_charges):
-			account = require_account(acc.get("bank_charges_account"), "LC / Bank Charges Account", lc.company)
-			rows.append(je_row(lc.company, account, debit=a.amendment_charges,
-							   remark=f"Amendment {a.amendment_no} - LC {lc.lc_no}"))
+						   debit=lc.margin_amount, remark=f"LC Margin {ref}"))
+
+	def charges_account():
+		return require_account(acc.get("bank_charges_account"), "LC / Bank Charges Account", lc.company)
+
+	def tagged(row, head):
+		row["nsa_lc_charge_head"] = head
+		return row
+
+	pending = lc.pending_by_head()
+	booked = lc.booked_by_head()
+	for head, amount in pending.items():
+		if head == "Other Bank Charges" and not flt(booked.get(head)):
+			for c in lc.charges:  # nothing booked yet: book row by row with their own accounts
+				if flt(c.amount):
+					rows.append(tagged(je_row(lc.company, c.account or charges_account(), debit=c.amount,
+											  remark=f"{c.charge_type} - LC {ref}"), head))
+			continue
+		account = charges_account()
+		if head == "FED on Commission" and acc.get("fed_account"):
+			account = acc.get("fed_account")
+		rows.append(tagged(je_row(lc.company, account, debit=amount, remark=f"{head} - LC {ref}"), head))
+
 	if not rows:
-		frappe.throw(_("No margin or charges to book."))
-	je = build_journal_entry(lc.company, lc.lc_date, rows, bank, f"LC {lc.lc_no} margin & charges ({lc.name})", lc.lc_no)
-	lc.db_set("journal_entry", je.name)
+		frappe.throw(_("Nothing to book: margin is already booked and all LC charges are in Expense Booked."))
+	je = build_journal_entry(lc.company, lc.lc_date or nowdate(), rows, bank,
+							 f"LC {ref} margin & charges ({lc.name})", ref, letter_of_credit=lc.name)
+	if not lc.journal_entry:
+		lc.db_set("journal_entry", je.name)
 	return je.name
+
+
+@frappe.whitelist()
+def sync_lc_expenses(name):
+	lc = frappe.get_doc("Letter of Credit", name)
+	lc.check_permission("write")
+	lc.sync_expense_booked()
+	return lc.total_expense_booked
 
 
 @frappe.whitelist()
@@ -403,13 +456,16 @@ def make_retirement_journal_entry(source_name):
 				   amount_in_account_currency=doc.amount if payable_ccy == doc.currency else None,
 				   remark=f"LC {doc.lc_no} retirement")]
 	if flt(doc.bank_charges):
-		rows.append(je_row(doc.company, require_account(acc.get("bank_charges_account"), "LC / Bank Charges Account",
-														doc.company), debit=doc.bank_charges,
-						   remark=f"Retirement charges LC {doc.lc_no}"))
+		charge_row = je_row(doc.company, require_account(acc.get("bank_charges_account"), "LC / Bank Charges Account",
+															  doc.company), debit=doc.bank_charges,
+							 remark=f"Retirement charges LC {doc.lc_no}")
+		charge_row["nsa_lc_charge_head"] = "Retirement Charges"
+		rows.append(charge_row)
 	if flt(doc.margin_adjusted):
 		rows.append(je_row(doc.company, require_account(acc.get("lc_margin_account"), "LC Margin Account", doc.company),
 						   credit=doc.margin_adjusted, remark=f"Margin adjusted LC {doc.lc_no}"))
 	je = build_journal_entry(doc.company, doc.posting_date, rows, paid_from,
-							 f"LC {doc.lc_no} retirement ({doc.name})", doc.lc_no)
+							 f"LC {doc.lc_no} retirement ({doc.name})", doc.lc_no,
+							 letter_of_credit=doc.letter_of_credit)
 	doc.db_set("journal_entry", je.name)
 	return je.name
