@@ -21,7 +21,7 @@ frappe.ui.form.on("Import Cost Sheet", {
 	},
 	get_charges(frm) {
 		if (!frm.doc.purchase_receipt) {
-			frappe.msgprint(__("Select Purchase Receipt first."));
+			frappe.msgprint(__("Select GRN (Purchase Receipt) first."));
 			return;
 		}
 		frm.call("fetch_charges");

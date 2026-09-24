@@ -30,9 +30,53 @@ def after_migrate():
 
 
 def setup():
-	create_custom_fields(get_custom_fields(), update=True)
-	make_property_setters()
+	"""Create custom fields doctype by doctype, so one failing doctype does not block the others.
+
+	Run manually to see the result:  bench --site <site> execute nsa_import.install.setup
+	"""
+	errors = []
+	for doctype, fields in get_custom_fields().items():
+		if not frappe.db.exists("DocType", doctype):
+			errors.append(f"{doctype}: DocType not found (skipped)")
+			continue
+		clashes = _clashing_user_fields(doctype, fields)
+		if clashes:
+			errors.append(f"{doctype}: other fields already use these labels, check for duplicates: {', '.join(clashes)}")
+		try:
+			create_custom_fields({doctype: fields}, update=True)
+			frappe.db.commit()
+		except Exception as e:
+			frappe.db.rollback()
+			errors.append(f"{doctype}: {e}")
+			frappe.log_error(title=f"NSA Import: custom fields for {doctype}", message=frappe.get_traceback())
+	try:
+		make_property_setters()
+	except Exception as e:
+		errors.append(f"Property setters: {e}")
+		frappe.log_error(title="NSA Import: property setters", message=frappe.get_traceback())
+	try:
+		from nsa_import.grn import sync as sync_grn
+
+		sync_grn()
+	except Exception as e:
+		errors.append(f"GRN labels: {e}")
+		frappe.log_error(title="NSA Import: GRN labels", message=frappe.get_traceback())
 	frappe.clear_cache()
+
+	print("NSA Import: custom fields synced." if not errors else "NSA Import: finished with warnings:")
+	for msg in errors:
+		print("  - " + msg)
+	return errors
+
+
+def _clashing_user_fields(doctype, fields):
+	"""Labels of our fields that also exist on another (e.g. manually created custom_...) field."""
+	ours = {df["fieldname"] for df in fields}
+	labels = {(df.get("label") or "").strip().lower(): df["fieldname"] for df in fields
+			  if df.get("label") and df.get("fieldtype") not in ("Section Break", "Column Break", "Tab Break")}
+	others = frappe.get_all("Custom Field", filters={"dt": doctype}, fields=["fieldname", "label"])
+	return sorted({f"{o.label} ({o.fieldname})" for o in others
+				   if o.fieldname not in ours and (o.label or "").strip().lower() in labels})
 
 
 def before_uninstall():

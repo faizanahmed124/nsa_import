@@ -13,6 +13,7 @@
   "cb1",
   "landing_charges_percent",
   "include_sales_tax_in_landed_cost",
+  "show_purchase_receipt_as_grn",
   "lc_section",
   "allow_lc_on_draft_po",
   "lc_no_unique",
@@ -74,6 +75,13 @@
    "fieldtype": "Check",
    "label": "Include Import Sales Tax in Landed Cost",
    "description": "Enable only if import sales tax is NOT adjustable (e.g. unregistered)."
+  },
+  {
+   "fieldname": "show_purchase_receipt_as_grn",
+   "fieldtype": "Check",
+   "label": "Show Purchase Receipt as GRN",
+   "default": "1",
+   "description": "Shows ERPNext Purchase Receipt as 'GRN' in all labels, titles, lists, buttons and prints, and adds the GRN-.YYYY.- naming series. The DocType itself is not renamed."
   },
   {
    "fieldname": "lc_section",

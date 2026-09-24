@@ -94,11 +94,24 @@ nsa_import.po = {
 	},
 };
 
+// Custom fields not synced yet (bench migrate not run / failed): show one warning, do nothing else.
+nsa_import.po.ready = function (frm) {
+	if (frm.fields_dict.purchase_type) return true;
+	if (frappe.user.has_role("System Manager")) {
+		frm.dashboard.set_headline_alert(
+			__("NSA Import fields are missing on Purchase Order. Run: bench --site {0} execute nsa_import.install.setup",
+				[frappe.boot.sitename || "your-site"]), "red");
+	}
+	return false;
+};
+
 frappe.ui.form.on("Purchase Order", {
 	onload(frm) {
+		if (!nsa_import.po.ready(frm)) return;
 		if (frm.is_new() && !frm.doc.purchase_type) frm.set_value("purchase_type", "Local");
 	},
 	refresh(frm) {
+		if (!nsa_import.po.ready(frm)) return;
 		nsa_import.po.apply_layout(frm);
 		nsa_import.po.add_buttons(frm);
 		nsa_import.po.setup_lc_connection(frm);

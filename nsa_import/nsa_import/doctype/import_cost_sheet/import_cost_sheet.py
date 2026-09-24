@@ -33,7 +33,7 @@ class ImportCostSheet(Document):
 			"Purchase Receipt", self.purchase_receipt,
 			["docstatus", "company", "supplier", "import_shipment", "customs_clearance", "letter_of_credit"], as_dict=True)
 		if not pr or pr.docstatus != 1:
-			frappe.throw(_("Purchase Receipt {0} must be submitted.").format(self.purchase_receipt))
+			frappe.throw(_("GRN (Purchase Receipt) {0} must be submitted.").format(self.purchase_receipt))
 		self.company = pr.company
 		self.supplier = pr.supplier
 		for f in ("import_shipment", "customs_clearance", "letter_of_credit"):

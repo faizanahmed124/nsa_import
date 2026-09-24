@@ -184,6 +184,15 @@ of the PO estimate.
 Reports: **Insurance Tracking** (filter by LC, PO, supplier, shipping document or policy; tick *Show Items* for
 item-wise allocation) and **Insurance Balance** (policy total, utilized, balance per policy).
 
+## Purchase Receipt shown as GRN
+
+ERPNext's Purchase Receipt is shown as **GRN** everywhere in the UI (titles, breadcrumbs, lists, link fields,
+buttons, connections, workspace, print headings) through user translations, and new receipts use the
+`GRN-.YYYY.-` naming series. The DocType itself stays "Purchase Receipt", because ERPNext's stock, accounting,
+Landed Cost Voucher, Purchase Invoice and report code refers to it by that name; renaming it breaks those and is
+undone by every ERPNext update. Switch off in NSA Import Settings, or run
+`bench --site <site> execute nsa_import.grn.apply` / `nsa_import.grn.remove`.
+
 ## Dynamic rules on Purchase Order
 
 - **Local**: Voucher Number visible; all import sections/fields hidden and not mandatory.
