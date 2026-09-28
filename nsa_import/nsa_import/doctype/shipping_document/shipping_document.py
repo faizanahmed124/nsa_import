@@ -18,7 +18,6 @@ from frappe.model.document import Document
 from frappe.utils import flt
 
 from nsa_import.utils import (
-	get_company_currency,
 	get_settings,
 	get_uom_factor,
 	refresh_po_import_status,
@@ -99,7 +98,7 @@ class ShippingDocument(Document):
 			self.purchase_order = lc.purchase_order
 			self.update({"supplier": lc.supplier, "supplier_name": lc.supplier_name, "company": lc.company,
 						 "currency": lc.currency, "lc_no": lc.lc_no})
-			if not flt(self.exchange_rate) or (self.is_new() and flt(self.exchange_rate) == 1):
+			if not flt(self.exchange_rate):
 				self.exchange_rate = lc.exchange_rate
 		elif self.purchase_order:
 			self.lc_no = None
@@ -112,7 +111,7 @@ class ShippingDocument(Document):
 			if not self.letter_of_credit:
 				self.update({"supplier": po.supplier, "supplier_name": po.supplier_name, "company": po.company,
 							 "currency": po.currency})
-				if not flt(self.exchange_rate) or (self.is_new() and flt(self.exchange_rate) == 1):
+				if not flt(self.exchange_rate):
 					self.exchange_rate = po.conversion_rate
 
 	def validate_source(self):
@@ -136,8 +135,6 @@ class ShippingDocument(Document):
 			frappe.throw(_("Purchase Order {0} must be submitted.").format(self.purchase_order))
 		if po.purchase_type != "Import":
 			frappe.throw(_("Shipping Document can only be created for an Import Purchase Order."))
-		if self.currency and self.company and self.currency == get_company_currency(self.company):
-			self.exchange_rate = 1
 		if flt(self.exchange_rate) <= 0:
 			frappe.throw(_("Conversion Rate must be greater than zero."))
 
@@ -256,9 +253,16 @@ class ShippingDocument(Document):
 				frappe.throw(_("{0} must be between 0 and 100.").format(_(self.meta.get_label(f))))
 		if flt(self.swift_charges) < 0:
 			frappe.throw(_("SWIFT Charges cannot be negative."))
-		self.charges_po_amount = flt(self.total_po_amount)
-		self.charges_currency = self.currency
-		self.charges_amount_pkr = flt(flt(self.total_po_amount) * flt(self.exchange_rate), 2)
+		# editable fields: filled only when empty, never overwritten
+		if not flt(self.charges_po_amount):
+			self.charges_po_amount = flt(self.total_po_amount)
+		if not self.charges_currency:
+			self.charges_currency = self.currency
+		if not flt(self.charges_amount_pkr):
+			self.charges_amount_pkr = flt(flt(self.charges_po_amount) * flt(self.exchange_rate), 2)
+		for f in ("charges_po_amount", "charges_amount_pkr"):
+			if flt(self.get(f)) < 0:
+				frappe.throw(_("{0} cannot be negative.").format(_(self.meta.get_label(f))))
 		self.commission_amount = flt(flt(self.base_invoice_amount) * flt(self.commission_percent) / 100, 2)
 		self.fed_amount = flt(self.commission_amount * flt(self.fed_percent) / 100, 2)
 		self.total_charges = flt(self.commission_amount + self.fed_amount + flt(self.swift_charges), 2)

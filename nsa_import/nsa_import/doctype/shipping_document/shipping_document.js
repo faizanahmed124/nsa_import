@@ -21,6 +21,11 @@ nsa_import.sd.get_items = function (frm) {
 		(data.items || []).forEach((row) => frm.add_child("items", row));
 		frm.refresh_field("items");
 		nsa_import.sd.calculate(frm);
+		// Charges tab: fill only empty fields; all of them stay editable
+		if (!flt(frm.doc.charges_po_amount)) {
+			frm.set_value("charges_po_amount", flt((data.items || []).reduce((a, r) => a + flt(r.po_amount), 0), 2));
+		}
+		if (!frm.doc.charges_currency) frm.set_value("charges_currency", frm.doc.currency);
 		if (!(data.items || []).length) frappe.msgprint(__("All items of this Purchase Order are already shipped."));
 	});
 };
@@ -32,6 +37,12 @@ nsa_import.sd.calculate_row = function (frm, cdt, cdn) {
 	frappe.model.set_value(cdt, cdn, "amount", flt(qty * flt(d.rate), 2));
 	frappe.model.set_value(cdt, cdn, "remaining_qty", flt(flt(d.ordered_qty) - flt(d.already_shipped_qty) - qty, 6));
 	nsa_import.sd.calculate(frm);
+};
+
+// Charges tab: Amount = PO Amount x Conversion Rate (user can still change Amount afterwards)
+nsa_import.sd.set_charges_amount = function (frm) {
+	if (frm.doc.docstatus !== 0) return;
+	frm.set_value("charges_amount_pkr", flt(flt(frm.doc.charges_po_amount) * flt(frm.doc.exchange_rate), 2));
 };
 
 nsa_import.sd.calculate = function (frm) {
@@ -47,12 +58,6 @@ nsa_import.sd.calculate = function (frm) {
 	set("total_shipped_qty", flt(shipped_qty, 6));
 	set("invoice_amount", amount);
 	set("base_invoice_amount", base);
-	const seen = {};
-	items.forEach((r) => (seen[r.po_detail || r.name] = flt(r.po_amount)));
-	const po_amount = flt(Object.values(seen).reduce((a, v) => a + v, 0), 2);
-	set("charges_po_amount", po_amount);
-	set("charges_amount_pkr", flt(po_amount * flt(d.exchange_rate), 2));
-	if (d.charges_currency !== d.currency) frm.set_value("charges_currency", d.currency);
 	const commission = flt((base * flt(d.commission_percent)) / 100, 2);
 	const fed = flt((commission * flt(d.fed_percent)) / 100, 2);
 	set("commission_amount", commission);
@@ -148,7 +153,13 @@ frappe.ui.form.on("Shipping Document", {
 	purchase_order(frm) {
 		if (frm.doc.purchase_order && !frm.doc.letter_of_credit && !(frm.doc.items || []).length) nsa_import.sd.get_items(frm);
 	},
-	exchange_rate: (frm) => nsa_import.sd.calculate(frm),
+	exchange_rate(frm) {
+		nsa_import.sd.set_charges_amount(frm);
+		nsa_import.sd.calculate(frm);
+	},
+	charges_po_amount(frm) {
+		nsa_import.sd.set_charges_amount(frm);
+	},
 	commission_percent: (frm) => nsa_import.sd.calculate(frm),
 	fed_percent: (frm) => nsa_import.sd.calculate(frm),
 	swift_charges: (frm) => nsa_import.sd.calculate(frm),

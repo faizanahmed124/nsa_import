@@ -120,7 +120,8 @@ Tabs:
 - **Packing List**: Packing, QTY, Number of Packages, Package Description, Net / Gross Weight, Weight UOM, Remarks;
   Container / Shipment Tracking table (container, size, seal, packages, package type, weight, remarks).
 - **Charges**: PO Amount, Currency, Conversion Rate and Amount (PKR = PO Amount × Conversion Rate) shown
-  (Conversion Rate is edited here; the others are read-only); Commission %, Commission, FED %, FED on Commission, SWIFT Charges,
+  — all editable; Amount is recalculated when PO Amount or Conversion Rate changes and can still be
+  overwritten; Commission %, Commission, FED %, FED on Commission, SWIFT Charges,
   Total Charges, Remarks.
 - **Bill of Lading**: B/L No., B/L Date, B/L Type, Shipping Line, Vessel, Voyage, ports, Final Destination, ETD, ETA,
   actual departure / arrival, Notify Party, B/L Remarks; Insurance; Documents Checklist.
