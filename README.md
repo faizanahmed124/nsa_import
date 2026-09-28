@@ -261,14 +261,18 @@ undone by every ERPNext update. Switch off in NSA Import Settings, or run
 ## Dynamic rules on Purchase Order
 
 - **Local**: Voucher Number visible; all import sections/fields hidden and not mandatory.
-- **Import**: Mode of Shipment, PI No., PI Date, Shipping Term, Payment Term mandatory; Import Details tab,
-  item HS Code / Country of Origin / weights / item-wise freight & insurance / import rate shown.
-- **LC No. / LC Date** mandatory only when Payment Term is *LC at Sight* or *LC Usance*. If the LC is
-  opened later from the PO, the Letter of Credit document fills these fields back into the PO.
+- **Import**: Import Information section (Mode of Shipment, PI No., PI Date, Shipping Term, Payment Term —
+  all mandatory) and item HS Code / Country of Origin / weights / item-wise freight & insurance / import rate.
+- There is no "Import Details" tab on the PO: LC, ports, banks, freight and costing live on the Letter of Credit,
+  Shipping Document, Shipping Insurance, Duty Calculation and Import Cost Sheet. The LC is found from its PO link
+  (Connections / Import buttons).
 - **HS Code** mandatory on import items (can be switched off in Settings).
 - **Exchange Rate** mandatory when currency ≠ company currency.
-- Estimated landed cost (freight, insurance, duty, taxes, clearing, port, other) is calculated on the PO;
-  actual cost goes through Import Cost Sheet → Landed Cost Voucher.
+- Item *Final Cost* = net rate + item-wise freight and insurance (company currency); actual landed cost goes
+  through Import Cost Sheet → Landed Cost Voucher.
+- `bench --site <site> execute nsa_import.install.setup` also removes the old Import Details tab and any manually
+  created Purchase Order fields that duplicate NSA Import fields (Purchase Type, PI No, PI Date, Department,
+  Payment Term, Voucher Number…). Their data is copied into the NSA Import field first; database columns are kept.
 
 ## Reports
 

@@ -28,9 +28,7 @@ NON_NEGATIVE_FIELDS = ("insurance_limit", "lc_after", "swift_charges", "amendmen
 					   "swift_charges_amended", "margin_amount")
 
 PO_FIELDS = ["docstatus", "purchase_type", "company", "supplier", "supplier_name", "currency", "conversion_rate",
-			 "grand_total", "total_qty", "pi_no", "pi_date", "import_payment_term", "lc_no", "lc_date", "lc_bank",
-			 "shipping_term", "mode_of_shipment", "port_of_loading", "port_of_discharge",
-			 "expected_shipment_date", "supplier_bank"]
+			 "grand_total", "total_qty", "pi_no", "pi_date", "import_payment_term", "shipping_term", "mode_of_shipment"]
 
 
 def get_po_values(purchase_order):
@@ -51,10 +49,8 @@ def get_po_values(purchase_order):
 	term = po.import_payment_term if po.import_payment_term in LC_PAYMENT_TERMS else None
 	defaults = {
 		"exchange_rate": po.conversion_rate, "lc_amount": po.grand_total, "lc_payment_term": term,
-		"lc_type": "Usance" if term == "LC Usance" else "Sight", "lc_no": po.lc_no, "lc_date": po.lc_date,
-		"issuing_bank": po.lc_bank, "shipping_term": po.shipping_term, "mode_of_shipment": po.mode_of_shipment,
-		"port_of_loading": po.port_of_loading, "port_of_discharge": po.port_of_discharge,
-		"latest_shipment_date": po.expected_shipment_date, "beneficiary_bank": po.supplier_bank,
+		"lc_type": "Usance" if term == "LC Usance" else "Sight",
+		"shipping_term": po.shipping_term, "mode_of_shipment": po.mode_of_shipment,
 		"lc_commission_percent": settings.default_lc_commission_percent,
 		"fed_percent": settings.default_fed_percent,
 	}
@@ -92,19 +88,11 @@ class LetterofCredit(Document):
 
 	def on_submit(self):
 		self.db_set("status", "Opened")
-		values = {"letter_of_credit": self.name}
-		if self.lc_no:
-			values["lc_no"] = self.lc_no
-		if self.lc_date:
-			values["lc_date"] = self.lc_date
-		frappe.db.set_value("Purchase Order", self.purchase_order, values, update_modified=False)
 		refresh_po_import_status(self.purchase_order)
 
 	def on_cancel(self):
 		self.ignore_linked_doctypes = ("Purchase Order", "Journal Entry", "GL Entry")
 		self.db_set("status", "Cancelled")
-		if frappe.db.get_value("Purchase Order", self.purchase_order, "letter_of_credit") == self.name:
-			frappe.db.set_value("Purchase Order", self.purchase_order, "letter_of_credit", None, update_modified=False)
 		refresh_po_import_status(self.purchase_order)
 
 	# ------------------------------------------------------------ PO values

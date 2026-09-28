@@ -11,7 +11,9 @@ def _first_po(doc):
 def validate(doc, method=None):
 	po = _first_po(doc)
 	if po:
-		po_data = frappe.db.get_value("Purchase Order", po, ["purchase_type", "letter_of_credit"], as_dict=True) or {}
+		po_data = frappe._dict(purchase_type=frappe.db.get_value("Purchase Order", po, "purchase_type"),
+									letter_of_credit=frappe.db.get_value(
+										"Letter of Credit", {"purchase_order": po, "docstatus": 1}, "name"))
 		if po_data.get("purchase_type"):
 			doc.purchase_type = po_data.purchase_type
 		if not doc.get("letter_of_credit") and po_data.get("letter_of_credit"):

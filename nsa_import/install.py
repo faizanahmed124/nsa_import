@@ -1,6 +1,8 @@
 """Custom fields / property setters that extend ERPNext Purchase Order into the
 NSA Local / Import Purchase Order, plus downstream documents."""
 
+import re
+
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
@@ -49,6 +51,13 @@ def setup():
 			frappe.db.rollback()
 			errors.append(f"{doctype}: {e}")
 			frappe.log_error(title=f"NSA Import: custom fields for {doctype}", message=frappe.get_traceback())
+	try:
+		removed = remove_import_details_tab() + remove_duplicate_po_fields()
+		if removed:
+			print("NSA Import: removed Purchase Order fields: " + ", ".join(removed))
+	except Exception as e:
+		errors.append(f"Removing old / duplicate Purchase Order fields: {e}")
+		frappe.log_error(title="NSA Import: remove PO fields", message=frappe.get_traceback())
 	try:
 		make_property_setters()
 	except Exception as e:
@@ -196,47 +205,6 @@ def get_custom_fields():
 		before_section_of(po, "currency", "schedule_date"),
 	)
 
-	po_fields += chain(
-		[
-			F("nsa_import_tab", "Tab Break", "Import Details", depends_on=IMPORT),
-			F("nsa_shipping_section", "Section Break", "Shipping & Ports"),
-			F("port_of_loading", "Data", "Port of Loading"),
-			F("port_of_discharge", "Data", "Port of Discharge"),
-			F("import_country_of_origin", "Link", "Country of Origin", "Country"),
-			F("nsa_shipping_cb", "Column Break"),
-			F("shipment_booking_no", "Data", "Shipment / Booking No.", allow_on_submit=1),
-			F("expected_shipment_date", "Date", "Expected Shipment Date", allow_on_submit=1),
-			F("expected_arrival_date", "Date", "Expected Arrival Date", allow_on_submit=1),
-			F("nsa_lc_section", "Section Break", "Letter of Credit / Bank"),
-			F("lc_no", "Data", "LC No.", mandatory_depends_on=LC_REQUIRED, depends_on=LC_REQUIRED, allow_on_submit=1),
-			F("lc_date", "Date", "LC Date", mandatory_depends_on=LC_REQUIRED, depends_on=LC_REQUIRED, allow_on_submit=1),
-			F("letter_of_credit", "Link", "Letter of Credit", "Letter of Credit", read_only=1, allow_on_submit=1, no_copy=1),
-			F("nsa_lc_cb", "Column Break"),
-			F("lc_bank", "Link", "LC Bank (Issuing)", "Bank"),
-			F("supplier_bank", "Small Text", "Supplier Bank Details"),
-			F("nsa_freight_section", "Section Break", "Freight, Insurance & Clearing"),
-			F("freight_currency", "Link", "Freight Currency", "Currency"),
-			F("freight_amount", "Currency", "Freight Amount", "freight_currency"),
-			F("insurance_amount", "Currency", "Insurance Amount (Transaction Currency)", "currency"),
-			F("nsa_freight_cb", "Column Break"),
-			F("customs_clearing_agent", "Link", "Customs / Clearing Agent", "Supplier"),
-			F("nsa_costing_section", "Section Break", "Import Costing / Landed Cost Estimate (Company Currency)",
-			  description="Freight & insurance are auto-filled from the fields above (or item-wise values) when entered."),
-			F("est_freight", "Currency", "Freight", COMPANY_CCY),
-			F("est_insurance", "Currency", "Insurance", COMPANY_CCY),
-			F("est_customs_duty", "Currency", "Customs Duty", COMPANY_CCY),
-			F("est_import_taxes", "Currency", "Import Taxes", COMPANY_CCY),
-			F("nsa_costing_cb", "Column Break"),
-			F("est_clearing_charges", "Currency", "Clearing Charges", COMPANY_CCY),
-			F("est_port_charges", "Currency", "Port Charges", COMPANY_CCY),
-			F("est_other_import_expenses", "Currency", "Other Import Expenses", COMPANY_CCY),
-			F("estimated_landed_cost", "Currency", "Estimated Landed Cost", COMPANY_CCY, read_only=1, bold=1),
-			F("nsa_import_remarks_section", "Section Break"),
-			F("import_remarks", "Long Text", "Import Remarks"),
-		],
-		before_next_tab(po, "currency", "terms"),
-	)
-
 	# Address & Contact tab
 	po_fields += chain(
 		[
@@ -332,3 +300,95 @@ def make_property_setters():
 				changed = True
 		if changed:
 			make_property_setter("Purchase Order", "naming_series", "options", "\n".join(options), "Text")
+
+
+# ----------------------------------------------------------------------------
+# Purchase Order clean-up: old "Import Details" tab and duplicate (manually created) fields
+# ----------------------------------------------------------------------------
+REMOVED_PO_FIELDS = (
+	"nsa_import_tab", "nsa_shipping_section", "port_of_loading", "port_of_discharge", "import_country_of_origin",
+	"nsa_shipping_cb", "shipment_booking_no", "expected_shipment_date", "expected_arrival_date", "nsa_lc_section",
+	"lc_no", "lc_date", "letter_of_credit", "nsa_lc_cb", "lc_bank", "supplier_bank", "nsa_freight_section",
+	"freight_currency", "freight_amount", "insurance_amount", "nsa_freight_cb", "customs_clearing_agent",
+	"nsa_costing_section", "est_freight", "est_insurance", "est_customs_duty", "est_import_taxes", "nsa_costing_cb",
+	"est_clearing_charges", "est_port_charges", "est_other_import_expenses", "estimated_landed_cost",
+	"nsa_import_remarks_section", "import_remarks",
+)
+
+# label of a manually created field -> NSA Import field it duplicates
+DUPLICATE_ALIASES = {
+	"purchase type": "purchase_type",
+	"pi no": "pi_no", "pi number": "pi_no", "proforma invoice no": "pi_no",
+	"pi date": "pi_date", "proforma invoice date": "pi_date",
+	"department": "department",
+	"payment term": "import_payment_term", "payment terms": "import_payment_term",
+	"voucher number": "voucher_number", "voucher no": "voucher_number",
+	"mode of shipment": "mode_of_shipment",
+	"shipping term": "shipping_term", "incoterm": "shipping_term",
+}
+
+
+def _norm(label):
+	return " ".join(re.sub(r"[^a-z0-9]+", " ", (label or "").lower()).split())
+
+
+def remove_import_details_tab():
+	removed = []
+	for fieldname in REMOVED_PO_FIELDS:
+		name = f"Purchase Order-{fieldname}"
+		if frappe.db.exists("Custom Field", name):
+			frappe.delete_doc("Custom Field", name, ignore_permissions=True)
+			removed.append(fieldname)
+	frappe.db.commit()
+	return removed
+
+
+def _copy_values(doctype, old, target):
+	"""Copy data from a duplicate field into the NSA Import field where that is still empty."""
+	table = f"tab{doctype}"
+	if not (frappe.db.has_column(doctype, old.fieldname) and frappe.db.has_column(doctype, target.fieldname)):
+		return
+	same_kind = old.fieldtype == target.fieldtype or (target.fieldtype == "Select" and old.fieldtype in ("Select", "Data"))
+	if not same_kind:
+		return
+	condition = ""
+	values = {}
+	if target.fieldtype == "Select":
+		options = [o for o in (target.options or "").split("\n") if o]
+		if not options:
+			return
+		condition = f" and `{old.fieldname}` in %(options)s"
+		values["options"] = options
+	if target.fieldtype == "Link" and target.options:
+		condition = f" and `{old.fieldname}` in (select name from `tab{target.options}`)"
+	frappe.db.sql(
+		f"""update `{table}` set `{target.fieldname}` = `{old.fieldname}`
+		where ifnull(`{target.fieldname}`, '') = '' and ifnull(`{old.fieldname}`, '') != ''{condition}""", values)
+
+
+def remove_duplicate_po_fields():
+	"""Delete manually created Purchase Order fields that duplicate NSA Import fields (data is copied first).
+
+	The database columns are not dropped, so no data is lost.
+	"""
+	doctype = "Purchase Order"
+	ours = {df["fieldname"] for df in get_custom_fields().get(doctype, [])}
+	meta = frappe.get_meta(doctype)
+	removed = []
+	for cf in frappe.get_all("Custom Field", filters={"dt": doctype},
+							 fields=["name", "fieldname", "label", "fieldtype", "options"]):
+		if cf.fieldname in ours:
+			continue
+		target_name = DUPLICATE_ALIASES.get(_norm(cf.label))
+		target = meta.get_field(target_name) if target_name else None
+		if not target:
+			continue
+		try:
+			_copy_values(doctype, cf, target)
+		except Exception:
+			frappe.log_error(title=f"NSA Import: copy {cf.fieldname} -> {target_name}", message=frappe.get_traceback())
+		frappe.delete_doc("Custom Field", cf.name, ignore_permissions=True)
+		removed.append(f"{cf.label} ({cf.fieldname})")
+	frappe.db.commit()
+	frappe.clear_cache(doctype=doctype)
+	return removed

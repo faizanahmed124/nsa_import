@@ -26,8 +26,6 @@ nsa_import.po = {
 		}
 		frm.toggle_reqd(nsa_import.IMPORT_MANDATORY, is_import);
 
-		const lc_required = is_import && (frm.doc.import_payment_term || "").toUpperCase().startsWith("LC");
-		frm.toggle_reqd(["lc_no", "lc_date"], lc_required);
 
 		const company_currency = frm.doc.company ? erpnext.get_currency(frm.doc.company) : null;
 		const is_fx = !!(frm.doc.currency && company_currency && frm.doc.currency !== company_currency);
@@ -49,17 +47,16 @@ nsa_import.po = {
 		const group = __("Import");
 		const open = (method) => frappe.model.open_mapped_doc({ method, frm });
 
-		if (!frm.doc.letter_of_credit) {
-			frm.add_custom_button(__("Letter of Credit"), () => open("nsa_import.api.make_letter_of_credit"), group);
-		}
-		// Shipping Document is created from the Letter of Credit (source document)
-		if (flt(frm.doc.per_shipped) < 100 && frm.doc.letter_of_credit) {
-			frm.add_custom_button(__("Shipping Document"), () =>
-				frappe.model.open_mapped_doc({
-					method: "nsa_import.api.make_shipping_document_from_lc",
-					source_name: frm.doc.letter_of_credit,
-				}), group);
-		}
+		// LC linked to this PO (the LC holds the PO link; the PO has no LC fields)
+		frappe.db.get_value("Letter of Credit", { purchase_order: frm.doc.name, docstatus: 1 }, "name").then((r) => {
+			const lc = (r.message || {}).name;
+			if (!lc) {
+				frm.add_custom_button(__("Letter of Credit"), () => open("nsa_import.api.make_letter_of_credit"), group);
+			} else if (flt(frm.doc.per_shipped) < 100) {
+				frm.add_custom_button(__("Shipping Document"), () =>
+					frappe.model.open_mapped_doc({ method: "nsa_import.api.make_shipping_document_from_lc", source_name: lc }), group);
+			}
+		});
 		frm.add_custom_button(__("Import Tracker"), () =>
 			frappe.set_route("query-report", "Import Tracker", { purchase_order: frm.doc.name }), group);
 	},
@@ -135,11 +132,6 @@ frappe.ui.form.on("Purchase Order", {
 	},
 	company(frm) {
 		nsa_import.po.apply_layout(frm);
-	},
-	shipping_term(frm) {
-		if (["CFR", "CIF", "CPT", "CIP", "DAP", "DPU", "DDP"].includes(frm.doc.shipping_term) && flt(frm.doc.freight_amount)) {
-			frappe.show_alert({ message: __("Freight is normally included in the price for {0}.", [frm.doc.shipping_term]), indicator: "orange" });
-		}
 	},
 });
 

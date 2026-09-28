@@ -106,16 +106,14 @@ class ShippingDocument(Document):
 		if self.purchase_order:
 			po = frappe.db.get_value(
 				"Purchase Order", self.purchase_order,
-				["company", "supplier", "supplier_name", "currency", "conversion_rate", "pi_no",
-				 "customs_clearing_agent"], as_dict=True) or frappe._dict()
+				["company", "supplier", "supplier_name", "currency", "conversion_rate", "pi_no"],
+				as_dict=True) or frappe._dict()
 			self.pi_no = po.pi_no
 			if not self.letter_of_credit:
 				self.update({"supplier": po.supplier, "supplier_name": po.supplier_name, "company": po.company,
 							 "currency": po.currency})
 				if not flt(self.exchange_rate) or (self.is_new() and flt(self.exchange_rate) == 1):
 					self.exchange_rate = po.conversion_rate
-			if not self.clearing_agent and po.customs_clearing_agent:
-				self.clearing_agent = po.customs_clearing_agent
 
 	def validate_source(self):
 		settings = get_settings()
