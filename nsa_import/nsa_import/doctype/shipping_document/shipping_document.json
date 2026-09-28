@@ -65,11 +65,15 @@
   "containers",
   "charges_tab",
   "charges_section",
+  "charges_po_amount",
+  "charges_currency",
+  "charges_conversion_rate",
+  "charges_amount_pkr",
+  "cb_7",
   "commission_percent",
   "commission_amount",
   "fed_percent",
   "fed_amount",
-  "cb_7",
   "swift_charges",
   "total_charges",
   "journal_entry",
@@ -489,6 +493,46 @@
    "label": "Shipment Charges (PKR)"
   },
   {
+   "fieldname": "charges_po_amount",
+   "fieldtype": "Currency",
+   "label": "PO Amount",
+   "options": "currency",
+   "read_only": 1,
+   "no_copy": 1,
+   "description": "PO amount of the items in this shipment (foreign currency)"
+  },
+  {
+   "fieldname": "charges_currency",
+   "fieldtype": "Link",
+   "label": "Currency",
+   "options": "Currency",
+   "read_only": 1,
+   "no_copy": 1
+  },
+  {
+   "fieldname": "charges_conversion_rate",
+   "fieldtype": "Float",
+   "label": "Conversion Rate",
+   "read_only": 1,
+   "no_copy": 1,
+   "precision": "9",
+   "description": "Change it on the Details tab"
+  },
+  {
+   "fieldname": "charges_amount_pkr",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "options": "company_currency",
+   "read_only": 1,
+   "no_copy": 1,
+   "bold": 1,
+   "description": "PO Amount x Conversion Rate"
+  },
+  {
+   "fieldname": "cb_7",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "commission_percent",
    "fieldtype": "Percent",
    "label": "Commission (%)"
@@ -513,10 +557,6 @@
    "options": "company_currency",
    "read_only": 1,
    "description": "Commission x FED % / 100"
-  },
-  {
-   "fieldname": "cb_7",
-   "fieldtype": "Column Break"
   },
   {
    "fieldname": "swift_charges",

@@ -256,6 +256,10 @@ class ShippingDocument(Document):
 				frappe.throw(_("{0} must be between 0 and 100.").format(_(self.meta.get_label(f))))
 		if flt(self.swift_charges) < 0:
 			frappe.throw(_("SWIFT Charges cannot be negative."))
+		self.charges_po_amount = flt(self.total_po_amount)
+		self.charges_currency = self.currency
+		self.charges_conversion_rate = flt(self.exchange_rate)
+		self.charges_amount_pkr = flt(flt(self.total_po_amount) * flt(self.exchange_rate), 2)
 		self.commission_amount = flt(flt(self.base_invoice_amount) * flt(self.commission_percent) / 100, 2)
 		self.fed_amount = flt(self.commission_amount * flt(self.fed_percent) / 100, 2)
 		self.total_charges = flt(self.commission_amount + self.fed_amount + flt(self.swift_charges), 2)

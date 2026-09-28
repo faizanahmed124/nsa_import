@@ -47,6 +47,13 @@ nsa_import.sd.calculate = function (frm) {
 	set("total_shipped_qty", flt(shipped_qty, 6));
 	set("invoice_amount", amount);
 	set("base_invoice_amount", base);
+	const seen = {};
+	items.forEach((r) => (seen[r.po_detail || r.name] = flt(r.po_amount)));
+	const po_amount = flt(Object.values(seen).reduce((a, v) => a + v, 0), 2);
+	set("charges_po_amount", po_amount);
+	set("charges_conversion_rate", flt(d.exchange_rate));
+	set("charges_amount_pkr", flt(po_amount * flt(d.exchange_rate), 2));
+	if (d.charges_currency !== d.currency) frm.set_value("charges_currency", d.currency);
 	const commission = flt((base * flt(d.commission_percent)) / 100, 2);
 	const fed = flt((commission * flt(d.fed_percent)) / 100, 2);
 	set("commission_amount", commission);
