@@ -55,6 +55,7 @@
   "psid_no",
   "payment_date",
   "cb_8",
+  "bank_account",
   "paid_through",
   "journal_entry",
   "release_section",
@@ -380,10 +381,18 @@
    "fieldtype": "Column Break"
   },
   {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account",
+   "options": "Bank Account"
+  },
+  {
    "fieldname": "paid_through",
    "fieldtype": "Link",
    "label": "Paid Through (Bank GL Account)",
-   "options": "Account"
+   "options": "Account",
+   "fetch_from": "bank_account.account",
+   "fetch_if_empty": 1
   },
   {
    "fieldname": "journal_entry",

@@ -22,7 +22,9 @@ from frappe.utils import flt, getdate
 from nsa_import.utils import get_company_currency, get_settings
 
 
-def policy_key(policy_number, letter_of_credit, insurance_company, company=None):
+def policy_key(policy_number, letter_of_credit, insurance_company, company=None, insurance_policy=None):
+	if insurance_policy:
+		return f"IP:{insurance_policy}"
 	number = (policy_number or "").strip().upper()
 	if number:
 		return f"POL:{company or ''}:{number}"
@@ -30,9 +32,12 @@ def policy_key(policy_number, letter_of_credit, insurance_company, company=None)
 
 
 def refresh_policy(key):
-	"""Recompute utilisation, balance and status of every submitted document on a policy."""
+	"""Recompute utilisation, balance and status of every submitted document on a policy,
+	and the balance / status of the Insurance Policy master."""
 	if not key:
 		return
+	if key.startswith("IP:") and frappe.db.exists("Insurance Policy", key[3:]):
+		frappe.get_doc("Insurance Policy", key[3:]).update_balance()
 	docs = frappe.get_all("Shipping Insurance", filters={"policy_key": key, "docstatus": 1},
 						  fields=["name", "insurance_amount", "insurance_total_policy", "policy_number"])
 	total_used = sum(flt(d.insurance_amount) for d in docs)
@@ -59,6 +64,7 @@ class ShippingInsurance(Document):
 		self.set_source_values()
 		self.validate_source()
 		self.set_defaults()
+		self.set_policy_values()
 		self.validate_dates()
 		self.calculate_amounts()
 		self.allocate_items()
@@ -67,8 +73,12 @@ class ShippingInsurance(Document):
 			self.status = "Draft"
 
 	def before_update_after_submit(self):
+		if self.insurance_policy:  # policy data is controlled by the Insurance Policy master
+			before = self.get_doc_before_save()
+			for f in ("policy_number", "policy_date", "policy_expiry_date"):
+				self.set(f, before.get(f) if before else self.get(f))
 		self.validate_dates()
-		self.policy_key = policy_key(self.policy_number, self.letter_of_credit, self.insurance_company, self.company)
+		self.policy_key = self.get_policy_key()
 		self.validate_unique_policy_company()
 
 	def on_update_after_submit(self):
@@ -105,8 +115,6 @@ class ShippingInsurance(Document):
 							  ("port_of_loading", sd.port_of_loading), ("port_of_discharge", sd.port_of_discharge)):
 			if not self.get(target) and value:
 				self.set(target, value)
-		if self.letter_of_credit:
-			self.bank = frappe.db.get_value("Letter of Credit", self.letter_of_credit, "issuing_bank")
 		self._sd = sd
 
 	def validate_source(self):
@@ -133,10 +141,13 @@ class ShippingInsurance(Document):
 									  "insurance_expiry_date", "currency"], as_dict=True) or frappe._dict()
 		if not self.insurance_company and lc.insurance_company:
 			self.insurance_company = lc.insurance_company
-		if not self.policy_number and lc.insurance_policy_no:
-			self.policy_number = lc.insurance_policy_no
+		if not self.insurance_policy and self.insurance_company and lc.insurance_policy_no:
+			self.insurance_policy = frappe.db.get_value(
+				"Insurance Policy", {"insurance_company": self.insurance_company, "policy_no": lc.insurance_policy_no,
+									 "status": "Active"}, "name")
 		if not self.policy_expiry_date and lc.insurance_expiry_date:
 			self.policy_expiry_date = lc.insurance_expiry_date
+		self.set_policy_values(require=False)
 		if not self.currency:
 			self.currency = self.invoice_currency or company_ccy
 		if self.currency == company_ccy:
@@ -146,11 +157,53 @@ class ShippingInsurance(Document):
 				flt(frappe.db.get_value("Shipping Document", self.shipping_document, "exchange_rate"))
 		if flt(self.exchange_rate) <= 0:
 			frappe.throw(_("Exchange Rate must be greater than zero."))
-		if not flt(self.insurance_total_policy) and lc.insurance_limit and lc.currency == self.currency:
+		if not self.insurance_policy and not flt(self.insurance_total_policy) and lc.insurance_limit \
+				and lc.currency == self.currency:
 			self.insurance_total_policy = lc.insurance_limit
 		if not flt(self.insurance_amount):
 			self.insurance_amount = flt(self.invoice_value_in_policy_currency()
 										* (1 + flt(get_settings().insured_value_markup_percent) / 100), 2)
+
+	def get_policy_key(self):
+		return policy_key(self.policy_number, self.letter_of_credit, self.insurance_company, self.company,
+						  self.insurance_policy)
+
+	def set_policy_values(self, require=True):
+		"""Insurance Company -> Bank -> Policy: limit, currency, dates and bank come from the policy."""
+		if self.docstatus != 0:
+			return
+		if not self.insurance_policy:
+			if not require:
+				return
+			frappe.throw(_("Select the Policy (only Active policies of Insurance Company {0} can be used).")
+						 .format(self.insurance_company or ""), title=_("Policy Required"))
+		pol = frappe.get_doc("Insurance Policy", self.insurance_policy)
+		if pol.insurance_company != self.insurance_company:
+			frappe.throw(_("Policy {0} belongs to Insurance Company {1}.").format(pol.policy_no, pol.insurance_company))
+		if self.bank and pol.bank != self.bank:
+			frappe.throw(_("Policy {0} is configured for bank {1}, not {2}.").format(pol.policy_no, pol.bank, self.bank))
+		if self.company and pol.company != self.company:
+			frappe.throw(_("Policy {0} belongs to company {1}.").format(pol.policy_no, pol.company))
+		status = pol.get_status()
+		if status != "Active":
+			frappe.throw(_("Policy {0} is {1} and cannot be used for new Shipping Insurance.").format(pol.policy_no, status))
+		old_currency = self.currency
+		self.update({
+			"bank": pol.bank, "bank_account": self.bank_account or pol.bank_account, "policy_number": pol.policy_no,
+			"insurance_total_policy": pol.insurance_limit, "currency": pol.currency, "policy_date": pol.policy_date,
+			"policy_expiry_date": pol.expiry_date,
+		})
+		if self.bank_account:
+			ba_bank = frappe.db.get_value("Bank Account", self.bank_account, "bank")
+			if ba_bank and ba_bank != self.bank:
+				frappe.throw(_("Bank Account {0} is not an account of bank {1}.").format(self.bank_account, self.bank))
+		if old_currency != self.currency:
+			company_ccy = get_company_currency(self.company) if self.company else None
+			if self.currency == company_ccy:
+				self.exchange_rate = 1
+			elif self.currency == self.invoice_currency:
+				self.exchange_rate = flt(frappe.db.get_value("Shipping Document", self.shipping_document,
+															 "exchange_rate")) or self.exchange_rate
 
 	def invoice_value_in_policy_currency(self):
 		if self.currency == self.invoice_currency:
@@ -169,7 +222,7 @@ class ShippingInsurance(Document):
 
 	def validate_unique_policy_company(self):
 		"""The same policy number must belong to one insurance company."""
-		if not self.policy_number:
+		if not self.policy_number or self.insurance_policy:
 			return
 		other = frappe.db.get_value(
 			"Shipping Insurance",
@@ -193,7 +246,7 @@ class ShippingInsurance(Document):
 		self.premium_amount = flt(flt(self.insurance_amount) * flt(self.premium_rate) / 100, 2)
 		self.base_insurance_amount = flt(flt(self.insurance_amount) * flt(self.exchange_rate), 2)
 		self.base_premium_amount = flt(self.premium_amount * flt(self.exchange_rate), 2)
-		self.policy_key = policy_key(self.policy_number, self.letter_of_credit, self.insurance_company, self.company)
+		self.policy_key = self.get_policy_key()
 		self.validate_unique_policy_company()
 
 	def allocate_items(self, force=False):

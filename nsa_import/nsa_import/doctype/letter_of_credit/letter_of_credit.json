@@ -360,8 +360,9 @@
   },
   {
    "fieldname": "insurance_company",
-   "fieldtype": "Data",
-   "label": "Insurance Company"
+   "fieldtype": "Link",
+   "label": "Insurance Company",
+   "options": "Insurance Company"
   },
   {
    "fieldname": "insurance_policy_no",

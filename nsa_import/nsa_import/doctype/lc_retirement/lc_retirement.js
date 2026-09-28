@@ -46,3 +46,10 @@ frappe.ui.form.on("LC Retirement", {
 		frm.set_value("net_bank_payment", flt(base - flt(frm.doc.margin_adjusted) + flt(frm.doc.bank_charges), 2));
 	},
 });
+
+// Bank Account: standard ERPNext Bank Account (link only); its GL account fills the paying account.
+frappe.ui.form.on("LC Retirement", {
+	setup(frm) {
+		frm.set_query("bank_account", () => ({ filters: { company: frm.doc.company, is_company_account: 1 } }));
+	},
+});

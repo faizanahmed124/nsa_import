@@ -55,3 +55,10 @@ frappe.ui.form.on("Customs Clearance Item", {
 		});
 	},
 });
+
+// Bank Account: standard ERPNext Bank Account (link only); its GL account fills the paying account.
+frappe.ui.form.on("Customs Clearance", {
+	setup(frm) {
+		frm.set_query("bank_account", () => ({ filters: { company: frm.doc.company, is_company_account: 1 } }));
+	},
+});

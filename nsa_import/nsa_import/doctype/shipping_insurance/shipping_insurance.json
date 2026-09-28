@@ -15,7 +15,6 @@
   "lc_no",
   "supplier",
   "supplier_name",
-  "bank",
   "cb_2",
   "posting_date",
   "status",
@@ -23,15 +22,18 @@
   "company_currency",
   "policy_section",
   "insurance_company",
+  "bank",
+  "bank_account",
+  "insurance_policy",
+  "cb_3",
   "policy_number",
   "policy_date",
-  "cb_3",
+  "policy_expiry_date",
+  "policy_start_date",
+  "cb_4",
   "insurance_type",
   "coverage_type",
   "release_date",
-  "cb_4",
-  "policy_start_date",
-  "policy_expiry_date",
   "amount_section",
   "currency",
   "exchange_rate",
@@ -138,13 +140,6 @@
    "in_list_view": 1
   },
   {
-   "fieldname": "bank",
-   "fieldtype": "Link",
-   "label": "Bank",
-   "options": "Bank",
-   "read_only": 1
-  },
-  {
    "fieldname": "cb_2",
    "fieldtype": "Column Break"
   },
@@ -186,15 +181,41 @@
   {
    "fieldname": "policy_section",
    "fieldtype": "Section Break",
-   "label": "Insurance Policy"
+   "label": "Insurance Company & Policy"
   },
   {
    "fieldname": "insurance_company",
-   "fieldtype": "Data",
-   "label": "Insurance Company Name",
+   "fieldtype": "Link",
+   "label": "Insurance Company",
+   "options": "Insurance Company",
    "reqd": 1,
    "in_standard_filter": 1,
    "in_list_view": 1
+  },
+  {
+   "fieldname": "bank",
+   "fieldtype": "Link",
+   "label": "Bank",
+   "options": "Bank",
+   "description": "Banks configured in this Insurance Company's policies"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account",
+   "options": "Bank Account"
+  },
+  {
+   "fieldname": "insurance_policy",
+   "fieldtype": "Link",
+   "label": "Policy",
+   "options": "Insurance Policy",
+   "in_standard_filter": 1,
+   "description": "Only Active policies of the selected Insurance Company / Bank"
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "policy_number",
@@ -203,16 +224,30 @@
    "allow_on_submit": 1,
    "in_standard_filter": 1,
    "bold": 1,
-   "description": "Unique policy / cover note reference. Can be entered after submit."
+   "read_only_depends_on": "eval:doc.insurance_policy"
   },
   {
    "fieldname": "policy_date",
    "fieldtype": "Date",
    "label": "Policy Date",
+   "allow_on_submit": 1,
+   "read_only_depends_on": "eval:doc.insurance_policy"
+  },
+  {
+   "fieldname": "policy_expiry_date",
+   "fieldtype": "Date",
+   "label": "Expiry Date",
+   "allow_on_submit": 1,
+   "read_only_depends_on": "eval:doc.insurance_policy"
+  },
+  {
+   "fieldname": "policy_start_date",
+   "fieldtype": "Date",
+   "label": "Policy Start Date",
    "allow_on_submit": 1
   },
   {
-   "fieldname": "cb_3",
+   "fieldname": "cb_4",
    "fieldtype": "Column Break"
   },
   {
@@ -235,22 +270,6 @@
    "allow_on_submit": 1
   },
   {
-   "fieldname": "cb_4",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "policy_start_date",
-   "fieldtype": "Date",
-   "label": "Policy Start Date",
-   "allow_on_submit": 1
-  },
-  {
-   "fieldname": "policy_expiry_date",
-   "fieldtype": "Date",
-   "label": "Policy Expiry Date",
-   "allow_on_submit": 1
-  },
-  {
    "fieldname": "amount_section",
    "fieldtype": "Section Break",
    "label": "Insurance Amounts"
@@ -261,7 +280,8 @@
    "label": "Currency",
    "options": "Currency",
    "reqd": 1,
-   "description": "Policy currency"
+   "description": "Policy currency",
+   "read_only_depends_on": "eval:doc.insurance_policy"
   },
   {
    "fieldname": "exchange_rate",
@@ -275,10 +295,11 @@
   {
    "fieldname": "insurance_total_policy",
    "fieldtype": "Currency",
-   "label": "Insurance Total Policy",
+   "label": "Insurance Limit",
    "options": "currency",
    "reqd": 1,
-   "description": "Total policy limit"
+   "description": "Total policy limit (from the selected Policy)",
+   "read_only_depends_on": "eval:doc.insurance_policy"
   },
   {
    "fieldname": "invoice_currency",

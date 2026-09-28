@@ -28,6 +28,7 @@
   "bank_charges",
   "net_bank_payment",
   "accounting_section",
+  "bank_account",
   "paid_from_account",
   "cb_4",
   "journal_entry",
@@ -188,10 +189,18 @@
    "label": "Accounting"
   },
   {
+   "fieldname": "bank_account",
+   "fieldtype": "Link",
+   "label": "Bank Account",
+   "options": "Bank Account"
+  },
+  {
    "fieldname": "paid_from_account",
    "fieldtype": "Link",
    "label": "Paid From (Bank / Loan Account)",
-   "options": "Account"
+   "options": "Account",
+   "fetch_from": "bank_account.account",
+   "fetch_if_empty": 1
   },
   {
    "fieldname": "cb_4",

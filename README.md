@@ -184,6 +184,35 @@ of the PO estimate.
 Reports: **Insurance Tracking** (filter by LC, PO, supplier, shipping document or policy; tick *Show Items* for
 item-wise allocation) and **Insurance Balance** (policy total, utilized, balance per policy).
 
+## Insurance Company, Insurance Policy and Bank Account
+
+**Insurance Company** is a single-field master (name, mandatory and unique). It is a Link on Shipping Insurance
+and on the Letter of Credit. Names already typed on earlier documents are turned into masters by a patch.
+
+**Insurance Policy** is a separate master for the policies of an Insurance Company:
+Insurance Company, Policy (unique within the company), Company, Bank, Bank Account, Currency, Insurance Limit,
+Policy Date, Expiry Date, Suspended; Utilized Amount, Balance Insurance and Policy Status are system calculated.
+
+- Balance Insurance = Insurance Limit − Σ Insurance Amount of submitted Shipping Insurance on the policy;
+  cancelling a Shipping Insurance releases its amount.
+- Status: Suspended (ticked) → Expired (past Expiry Date, checked daily) → Fully Utilized (no balance) → Active.
+- Only Active policies can be selected. Insurance Limit cannot go below the utilized amount; currency cannot
+  change once used. Only Purchase / Accounts / System Managers can create or change companies and policies;
+  users can read them. All changes are kept in version history. Connections list the Shipping Insurance
+  documents that used the policy (utilization history).
+
+Shipping Insurance selection: Insurance Company → Bank (only banks in that company's Active policies) →
+Bank Account (accounts of that bank) → Policy (Active policies of that company / bank). The policy fills Policy
+Number, Insurance Limit, Currency, Policy Date and Expiry Date (read-only), and the Insurance Amount is checked
+against the policy balance.
+
+**Bank Account** fields are plain Links to ERPNext's standard Bank Account (no copy, no sync, no change to the
+standard DocType): Letter of Credit (LC Bank Account), Shipping Insurance, Insurance Policy, Customs Clearance and
+LC Retirement. On Customs Clearance and LC Retirement the Bank Account fills the paying GL account.
+
+Report **Insurance Policy Register**: filter by Insurance Company / Bank / Status (Expired, Fully Utilized…);
+tick *Show Utilization* to list the Shipping Insurance under each policy.
+
 ## Purchase Receipt shown as GRN
 
 ERPNext's Purchase Receipt is shown as **GRN** everywhere in the UI (titles, breadcrumbs, lists, link fields,

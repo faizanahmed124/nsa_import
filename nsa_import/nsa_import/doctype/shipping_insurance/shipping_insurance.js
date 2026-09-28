@@ -59,6 +59,54 @@ nsa_import.si.render_related = function (frm) {
 frappe.ui.form.on("Shipping Insurance", {
 	setup(frm) {
 		frm.set_query("shipping_document", () => ({ filters: { docstatus: 1 } }));
+		frm.set_query("bank", () => ({
+			query: "nsa_import.api.insurance_bank_query",
+			filters: { insurance_company: frm.doc.insurance_company || "" },
+		}));
+		frm.set_query("bank_account", () => {
+			const filters = {};
+			if (frm.doc.bank) filters.bank = frm.doc.bank;
+			if (frm.doc.company) filters.company = frm.doc.company;
+			return { filters };
+		});
+		frm.set_query("insurance_policy", () => {
+			const filters = { insurance_company: frm.doc.insurance_company || "", status: "Active" };
+			if (frm.doc.bank) filters.bank = frm.doc.bank;
+			if (frm.doc.company) filters.company = frm.doc.company;
+			return { filters };
+		});
+	},
+	insurance_company(frm) {
+		if (frm.doc.docstatus !== 0) return;
+		["bank", "bank_account", "insurance_policy"].forEach((f) => frm.doc[f] && frm.set_value(f, null));
+	},
+	bank(frm) {
+		if (frm.doc.docstatus !== 0) return;
+		if (frm.doc.insurance_policy) {
+			frappe.db.get_value("Insurance Policy", frm.doc.insurance_policy, "bank").then((r) => {
+				if ((r.message || {}).bank !== frm.doc.bank) frm.set_value("insurance_policy", null);
+			});
+		}
+		if (frm.doc.bank_account) frm.set_value("bank_account", null);
+	},
+	insurance_policy(frm) {
+		if (frm.doc.docstatus !== 0 || !frm.doc.insurance_policy) return;
+		frappe.call({ method: "nsa_import.api.get_insurance_policy_values", args: { insurance_policy: frm.doc.insurance_policy } })
+			.then((r) => {
+				const v = r.message || {};
+				if (v.status !== "Active") {
+					frappe.msgprint(__("Policy {0} is {1} and cannot be used.", [v.policy_number, v.status]));
+					frm.set_value("insurance_policy", null);
+					return;
+				}
+				["bank", "policy_number", "insurance_total_policy", "currency", "policy_date", "policy_expiry_date", "utilized_before"]
+					.forEach((f) => frm.set_value(f, v[f]));
+				if (!frm.doc.bank_account && v.bank_account) frm.set_value("bank_account", v.bank_account);
+				nsa_import.si.calculate(frm);
+				if (flt(frm.doc.insurance_amount) > flt(v.balance)) {
+					frappe.msgprint(__("Insurance Amount is more than the policy balance ({0}).", [format_currency(v.balance, v.currency)]));
+				}
+			});
 	},
 	refresh(frm) {
 		frm.toggle_enable("shipping_document", frm.is_new());

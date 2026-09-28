@@ -38,5 +38,5 @@ override_doctype_dashboards = {
 }
 
 scheduler_events = {
-    "daily": ["nsa_import.tasks.mark_expired_lcs"],
+    "daily": ["nsa_import.tasks.mark_expired_lcs", "nsa_import.tasks.update_insurance_policies"],
 }

@@ -251,6 +251,32 @@ def make_shipping_insurance(source_name, target_doc=None, args=None):
 	return si
 
 
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def insurance_bank_query(doctype, txt, searchfield, start, page_len, filters):
+	"""Banks configured in the Active policies of an Insurance Company."""
+	filters = frappe._dict(filters or {})
+	return frappe.db.sql(
+		"""select distinct p.bank from `tabInsurance Policy` p
+		where p.insurance_company = %(company)s and p.status = 'Active' and p.bank like %(txt)s
+		order by p.bank limit %(start)s, %(page_len)s""",
+		{"company": filters.get("insurance_company") or "", "txt": f"%{txt}%", "start": start,
+		 "page_len": page_len})
+
+
+@frappe.whitelist()
+def get_insurance_policy_values(insurance_policy):
+	pol = frappe.get_doc("Insurance Policy", insurance_policy)
+	pol.check_permission("read")
+	pol.update_balance(save=False)
+	return {
+		"insurance_company": pol.insurance_company, "bank": pol.bank, "bank_account": pol.bank_account,
+		"policy_number": pol.policy_no, "insurance_total_policy": pol.insurance_limit, "currency": pol.currency,
+		"policy_date": pol.policy_date, "policy_expiry_date": pol.expiry_date, "utilized_before": pol.utilized_amount,
+		"balance": pol.balance_insurance, "status": pol.status,
+	}
+
+
 RELATED_FUTURE_DOCTYPES = ("Freight Bill", "Clearance Bill", "Shipment Check And Delays", "Local Transporter")
 
 
