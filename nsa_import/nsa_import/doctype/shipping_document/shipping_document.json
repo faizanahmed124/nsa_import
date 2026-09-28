@@ -22,7 +22,6 @@
   "company",
   "company_currency",
   "currency",
-  "exchange_rate",
   "pi_no",
   "summary_section",
   "total_shipped_qty",
@@ -67,7 +66,7 @@
   "charges_section",
   "charges_po_amount",
   "charges_currency",
-  "charges_conversion_rate",
+  "exchange_rate",
   "charges_amount_pkr",
   "cb_7",
   "commission_percent",
@@ -235,14 +234,6 @@
    "options": "Currency",
    "read_only": 1,
    "reqd": 1
-  },
-  {
-   "fieldname": "exchange_rate",
-   "fieldtype": "Float",
-   "label": "Conversion Rate (PKR / Foreign Currency)",
-   "reqd": 1,
-   "default": "1",
-   "precision": "9"
   },
   {
    "fieldname": "pi_no",
@@ -510,13 +501,15 @@
    "no_copy": 1
   },
   {
-   "fieldname": "charges_conversion_rate",
+   "fieldname": "exchange_rate",
    "fieldtype": "Float",
    "label": "Conversion Rate",
-   "read_only": 1,
-   "no_copy": 1,
+   "reqd": 1,
+   "default": "1",
    "precision": "9",
-   "description": "Change it on the Details tab"
+   "bold": 1,
+   "read_only_depends_on": "eval:doc.currency && doc.currency === doc.company_currency",
+   "description": "PKR per 1 unit of the foreign currency. Defaults from the Letter of Credit"
   },
   {
    "fieldname": "charges_amount_pkr",

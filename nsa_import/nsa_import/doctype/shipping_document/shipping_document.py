@@ -258,7 +258,6 @@ class ShippingDocument(Document):
 			frappe.throw(_("SWIFT Charges cannot be negative."))
 		self.charges_po_amount = flt(self.total_po_amount)
 		self.charges_currency = self.currency
-		self.charges_conversion_rate = flt(self.exchange_rate)
 		self.charges_amount_pkr = flt(flt(self.total_po_amount) * flt(self.exchange_rate), 2)
 		self.commission_amount = flt(flt(self.base_invoice_amount) * flt(self.commission_percent) / 100, 2)
 		self.fed_amount = flt(self.commission_amount * flt(self.fed_percent) / 100, 2)

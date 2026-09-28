@@ -62,7 +62,6 @@ def setup():
 		if frappe.db.has_column("Shipping Document", "charges_amount_pkr"):
 			frappe.db.sql("""update `tabShipping Document`
 				set charges_po_amount = total_po_amount, charges_currency = currency,
-					charges_conversion_rate = exchange_rate,
 					charges_amount_pkr = round(ifnull(total_po_amount, 0) * ifnull(exchange_rate, 0), 2)
 				where ifnull(charges_amount_pkr, 0) = 0""")
 			frappe.db.commit()

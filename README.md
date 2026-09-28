@@ -113,14 +113,14 @@ unless *Allow Shipping Document without Letter of Credit* is ticked in NSA Impor
 Tabs:
 
 - **Details**: Letter of Credit, Purchase Order, Supplier Name, LC No. (all fetched, read-only), Commercial Invoice
-  No., Conversion Rate; Shipped Qty, S/QTY Amount, S/QTY Amount (PKR), PO Qty / Amount, Remaining Qty;
+  No.; Shipped Qty, S/QTY Amount, S/QTY Amount (PKR), PO Qty / Amount, Remaining Qty;
   **PO Items** table (only from the PO via *Get Items from Purchase Order*; rows cannot be added by hand);
   Original Documents Tracking (DOC Received in Bank, Sent to Agent, Received in ATS, Paid, DHL No., Arrival Notes
   Created — all editable after submit).
 - **Packing List**: Packing, QTY, Number of Packages, Package Description, Net / Gross Weight, Weight UOM, Remarks;
   Container / Shipment Tracking table (container, size, seal, packages, package type, weight, remarks).
 - **Charges**: PO Amount, Currency, Conversion Rate and Amount (PKR = PO Amount × Conversion Rate) shown
-  read-only (the rate is edited on Details); Commission %, Commission, FED %, FED on Commission, SWIFT Charges,
+  (Conversion Rate is edited here; the others are read-only); Commission %, Commission, FED %, FED on Commission, SWIFT Charges,
   Total Charges, Remarks.
 - **Bill of Lading**: B/L No., B/L Date, B/L Type, Shipping Line, Vessel, Voyage, ports, Final Destination, ETD, ETA,
   actual departure / arrival, Notify Party, B/L Remarks; Insurance; Documents Checklist.
