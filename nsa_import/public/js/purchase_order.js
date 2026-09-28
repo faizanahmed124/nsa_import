@@ -81,6 +81,18 @@ nsa_import.po = {
 		setTimeout(toggle, 600);
 	},
 
+	// Amount in PKR: PO Amount x Conversion Rate (display only; saved again on the server)
+	set_pkr(frm) {
+		if (!frm.fields_dict.po_amount_pkr || frm.doc.docstatus !== 0) return;
+		const d = frm.doc;
+		const pkr = flt(d.base_grand_total) || flt(flt(d.grand_total) * flt(d.conversion_rate), 2);
+		d.po_amount_fc = flt(d.grand_total);
+		d.po_currency = d.currency;
+		d.po_conversion_rate = flt(d.conversion_rate);
+		d.po_amount_pkr = pkr;
+		frm.refresh_fields(["po_amount_fc", "po_currency", "po_conversion_rate", "po_amount_pkr", "nsa_pkr_section"]);
+	},
+
 	show_status(frm) {
 		if (frm.doc.docstatus === 1 && this.is_import(frm) && frm.doc.import_status) {
 			frm.dashboard.add_indicator(__("Import: {0}", [__(frm.doc.import_status)]), "blue");
@@ -110,6 +122,7 @@ frappe.ui.form.on("Purchase Order", {
 	refresh(frm) {
 		if (!nsa_import.po.ready(frm)) return;
 		nsa_import.po.apply_layout(frm);
+		nsa_import.po.set_pkr(frm);
 		nsa_import.po.add_buttons(frm);
 		nsa_import.po.setup_lc_connection(frm);
 		nsa_import.po.show_status(frm);
@@ -129,6 +142,13 @@ frappe.ui.form.on("Purchase Order", {
 	},
 	currency(frm) {
 		nsa_import.po.apply_layout(frm);
+		nsa_import.po.set_pkr(frm);
+	},
+	conversion_rate(frm) {
+		nsa_import.po.set_pkr(frm);
+	},
+	grand_total(frm) {
+		nsa_import.po.set_pkr(frm);
 	},
 	company(frm) {
 		nsa_import.po.apply_layout(frm);
@@ -138,5 +158,15 @@ frappe.ui.form.on("Purchase Order", {
 frappe.ui.form.on("Purchase Order Item", {
 	items_add(frm) {
 		nsa_import.po.apply_layout(frm);
+	},
+	// ERPNext recalculates totals after these; update PKR right after
+	qty(frm) {
+		setTimeout(() => nsa_import.po.set_pkr(frm), 300);
+	},
+	rate(frm) {
+		setTimeout(() => nsa_import.po.set_pkr(frm), 300);
+	},
+	items_remove(frm) {
+		setTimeout(() => nsa_import.po.set_pkr(frm), 300);
 	},
 });

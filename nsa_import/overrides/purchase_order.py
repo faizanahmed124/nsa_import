@@ -21,6 +21,15 @@ def validate(doc, method=None):
 		validate_import_mandatory(doc)
 		validate_hs_codes(doc)
 	calculate_import_estimates(doc)
+	set_pkr_amounts(doc)
+
+
+def set_pkr_amounts(doc):
+	"""PO Amount (transaction currency) x Conversion Rate = Amount (PKR), shown when the PO is not in PKR."""
+	doc.po_amount_fc = flt(doc.grand_total)
+	doc.po_currency = doc.currency
+	doc.po_conversion_rate = flt(doc.conversion_rate)
+	doc.po_amount_pkr = flt(doc.base_grand_total) or flt(flt(doc.grand_total) * flt(doc.conversion_rate), 2)
 
 
 def validate_exchange_rate(doc):

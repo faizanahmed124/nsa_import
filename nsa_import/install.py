@@ -17,6 +17,7 @@ from nsa_import.constants import (
 
 IMPORT = "eval:doc.purchase_type=='Import'"
 LOCAL = "eval:doc.purchase_type=='Local'"
+FOREIGN_CCY = "eval:doc.currency && flt(doc.conversion_rate) != 1"
 LC_REQUIRED = "eval:doc.purchase_type=='Import' && (doc.import_payment_term||'').toUpperCase().indexOf('LC')===0"
 CHILD_IMPORT = "eval:parent.purchase_type=='Import'"
 COMPANY_CCY = "Company:company:default_currency"
@@ -51,6 +52,15 @@ def setup():
 			frappe.db.rollback()
 			errors.append(f"{doctype}: {e}")
 			frappe.log_error(title=f"NSA Import: custom fields for {doctype}", message=frappe.get_traceback())
+	try:
+		if frappe.db.has_column("Purchase Order", "po_amount_pkr"):
+			frappe.db.sql("""update `tabPurchase Order`
+				set po_amount_fc = grand_total, po_currency = currency, po_conversion_rate = conversion_rate,
+					po_amount_pkr = base_grand_total
+				where ifnull(po_amount_pkr, 0) = 0 and docstatus < 2""")
+			frappe.db.commit()
+	except Exception as e:
+		errors.append(f"PKR amounts on Purchase Order: {e}")
 	try:
 		removed = remove_import_details_tab() + remove_duplicate_po_fields()
 		if removed:
@@ -201,6 +211,13 @@ def get_custom_fields():
 			  "\nLC Opened\nShipped\nArrived\nCleared\nPartially Received\nReceived",
 			  read_only=1, allow_on_submit=1, no_copy=1, in_standard_filter=1),
 			F("per_shipped", "Percent", "% Shipped", read_only=1, allow_on_submit=1, no_copy=1),
+			F("nsa_pkr_section", "Section Break", "Amount in PKR", depends_on=FOREIGN_CCY),
+			F("po_amount_fc", "Currency", "PO Amount", "currency", read_only=1, no_copy=1),
+			F("po_currency", "Link", "Currency", "Currency", read_only=1, no_copy=1),
+			F("nsa_pkr_cb", "Column Break"),
+			F("po_conversion_rate", "Float", "Conversion Rate", read_only=1, no_copy=1, precision="9"),
+			F("po_amount_pkr", "Currency", "Amount (PKR)", COMPANY_CCY, read_only=1, no_copy=1, bold=1,
+			  description="PO Amount x Conversion Rate (Grand Total in company currency)"),
 		],
 		before_section_of(po, "currency", "schedule_date"),
 	)

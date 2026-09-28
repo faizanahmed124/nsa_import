@@ -266,6 +266,8 @@ undone by every ERPNext update. Switch off in NSA Import Settings, or run
 - There is no "Import Details" tab on the PO: LC, ports, banks, freight and costing live on the Letter of Credit,
   Shipping Document, Shipping Insurance, Duty Calculation and Import Cost Sheet. The LC is found from its PO link
   (Connections / Import buttons).
+- **Amount in PKR** section (shown when the PO is not in PKR): PO Amount, Currency, Conversion Rate and
+  Amount (PKR) = PO Amount × Conversion Rate (= Grand Total in company currency).
 - **HS Code** mandatory on import items (can be switched off in Settings).
 - **Exchange Rate** mandatory when currency ≠ company currency.
 - Item *Final Cost* = net rate + item-wise freight and insurance (company currency); actual landed cost goes
