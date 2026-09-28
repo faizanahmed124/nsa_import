@@ -165,6 +165,8 @@ def get_custom_fields():
 			F("st_percent", "Percent", "Sales Tax %"),
 			F("ast_percent", "Percent", "Additional Sales Tax %"),
 			F("it_percent", "Percent", "Income Tax (Import) %"),
+			F("add_percent", "Percent", "Anti Dumping Duty %"),
+			F("excise_percent", "Percent", "Excise Charges %"),
 		],
 		"description",
 	)

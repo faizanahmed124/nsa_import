@@ -277,7 +277,7 @@ def get_insurance_policy_values(insurance_policy):
 	}
 
 
-RELATED_FUTURE_DOCTYPES = ("Freight Bill", "Clearance Bill", "Shipment Check And Delays", "Local Transporter")
+RELATED_FUTURE_DOCTYPES = ("Freight Bill", "Clearance Bill", "Local Transporter")
 
 
 @frappe.whitelist()
@@ -308,6 +308,10 @@ def get_insurance_related_documents(shipping_document):
 		 "names": names("Purchase Receipt", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or []},
 		{"label": "Import Cost Sheet", "doctype": "Import Cost Sheet",
 		 "names": names("Import Cost Sheet", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or []},
+		{"label": "Duty Calculation", "doctype": "Duty Calculation",
+		 "names": names("Duty Calculation", {"shipping_document": sd.name, "docstatus": ["<", 2]}) or []},
+		{"label": "Shipment Check And Delays", "doctype": "Shipment Check And Delays",
+		 "names": names("Shipment Check And Delays", {"shipping_document": sd.name}) or []},
 	]
 	for dt in RELATED_FUTURE_DOCTYPES:
 		row = {"label": dt, "doctype": dt, "names": [], "missing": True}
@@ -318,6 +322,104 @@ def get_insurance_related_documents(shipping_document):
 				row.update({"names": names(dt, {field: sd.name}) or [], "missing": False, "link_field": field})
 		rows.append(row)
 	return rows
+
+
+# ----------------------------------------------------------------------------
+# Duty Calculation / Shipment Check And Delays (created from Shipping Document)
+# ----------------------------------------------------------------------------
+DC_TARIFF_MAP = {
+	"custom_duty": "cd_percent", "acd": "acd_percent", "regulatory_duty": "rd_percent",
+	"anti_dumping_duty": "add_percent", "sales_tax": "st_percent", "additional_sales_tax": "ast_percent",
+	"income_tax": "it_percent",
+}
+
+
+@frappe.whitelist()
+def get_duty_calculation_rates(hs_code):
+	"""Base % and Applied rate for a Duty Calculation Item from the HS Code (Customs Tariff Number)."""
+	if not hs_code or not frappe.db.exists("Customs Tariff Number", hs_code):
+		return {}
+	meta = frappe.get_meta("Customs Tariff Number")
+	fields = [f for f in list(DC_TARIFF_MAP.values()) + ["excise_percent"] if meta.has_field(f)]
+	values = frappe.db.get_value("Customs Tariff Number", hs_code, fields, as_dict=True) or {} if fields else {}
+	out = {}
+	for key, field in DC_TARIFF_MAP.items():
+		if field in values:
+			out[f"{key}_percent"] = out[f"applied_{key}_rate"] = flt(values.get(field))
+	if "excise_percent" in values:
+		out["excise_charges_percent"] = flt(values.get("excise_percent"))
+	return out
+
+
+def _port_option(port):
+	options = (frappe.get_meta("Duty Calculation").get_field("clearance_port").options or "").split("\n")
+	port = (port or "").strip().lower()
+	if not port:
+		return None
+	for o in options:
+		if o and (o.lower() == port or o.lower().split(" (")[0] in port or port in o.lower()):
+			return o
+	return None
+
+
+@frappe.whitelist()
+def make_duty_calculation(source_name, target_doc=None, args=None):
+	sd = _submitted("Shipping Document", source_name)
+	dc = frappe.new_doc("Duty Calculation")
+	dc.shipping_document = sd.name
+	c20 = c40 = 0
+	for c in sd.get("containers") or []:
+		size = (c.container_size or "").lower()
+		if "20" in size:
+			c20 += 1
+		elif any(x in size for x in ("40", "45")):
+			c40 += 1
+	gross = flt(sd.total_gross_weight)
+	if (sd.weight_uom or "").upper() in ("MT", "TONNE", "TON"):
+		gross *= 1000
+	dc.update({
+		"purchase_order": sd.purchase_order, "letter_of_credit": sd.letter_of_credit, "lc_no": sd.lc_no,
+		"supplier": sd.supplier, "company": sd.company, "container_20": c20, "container_40": c40,
+		"containers": c20 + c40, "mbl_no": sd.bl_awb_no, "eta": sd.eta, "packing": sd.packing,
+		"qty": sd.total_shipped_qty, "weight_kg": gross if (sd.weight_uom or "").upper() in ("KG", "KGS", "MT", "TONNE", "TON") else None,
+		"clearance_port": _port_option(sd.port_of_discharge),
+	})
+	for d in sd.items:
+		row = {
+			"item_code": d.item_code, "item_name": d.item_name, "shipped_qty": d.qty, "hs_code": d.hs_code
+			if d.hs_code and frappe.db.exists("Customs Tariff Number", d.hs_code) else None,
+			"origin": d.country_of_origin, "warehouse": d.warehouse, "rate": d.rate, "exchange_rate": sd.exchange_rate,
+			"shipping_document_item": d.name,
+		}
+		row.update(get_duty_calculation_rates(row["hs_code"]))
+		dc.append("items", row)
+	dc.calculate()
+	return dc
+
+
+@frappe.whitelist()
+def make_shipment_check_and_delays(source_name, target_doc=None, args=None):
+	from nsa_import.nsa_import.doctype.shipment_check_and_delays.shipment_check_and_delays import milestone_values
+
+	sd = frappe.get_doc("Shipping Document", source_name)
+	if sd.docstatus == 2:
+		frappe.throw(_("Shipping Document {0} is cancelled.").format(sd.name))
+	sd.check_permission("read")
+	doc = frappe.new_doc("Shipment Check And Delays")
+	doc.shipping_document = sd.name
+	doc.supplier, doc.supplier_name = sd.supplier, sd.supplier_name
+	for field, value in milestone_values(sd.name).items():
+		if value:
+			doc.set(field, value)
+	return doc
+
+
+@frappe.whitelist()
+def get_shipment_milestone_dates(shipping_document):
+	from nsa_import.nsa_import.doctype.shipment_check_and_delays.shipment_check_and_delays import milestone_values
+
+	frappe.has_permission("Shipping Document", "read", shipping_document, throw=True)
+	return milestone_values(shipping_document)
 
 
 # ----------------------------------------------------------------------------

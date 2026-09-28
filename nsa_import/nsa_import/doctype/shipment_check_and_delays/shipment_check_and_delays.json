@@ -1,0 +1,344 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "header_section",
+  "naming_series",
+  "shipping_document",
+  "cb_h",
+  "supplier",
+  "supplier_name",
+  "fetch_dates",
+  "pi_to_lc_section",
+  "pi_to_lc_from",
+  "pi_to_lc_cb",
+  "pi_to_lc_to",
+  "lc_to_eta_section",
+  "lc_to_eta_from",
+  "lc_to_eta_cb",
+  "lc_to_eta_to",
+  "eta_to_gd_section",
+  "eta_to_gd_from",
+  "eta_to_gd_cb",
+  "eta_to_gd_to",
+  "gd_to_ats_section",
+  "gd_to_ats_from",
+  "gd_to_ats_cb",
+  "gd_to_ats_to",
+  "pi_to_ats_section",
+  "pi_to_ats_from",
+  "pi_to_ats_cb",
+  "pi_to_ats_to",
+  "eta_to_ats_section",
+  "eta_to_ats_from",
+  "eta_to_ats_cb",
+  "eta_to_ats_to",
+  "eta_to_empty_section",
+  "eta_to_empty_from",
+  "eta_to_empty_cb",
+  "eta_to_empty_to",
+  "ats_to_empty_section",
+  "ats_to_empty_from",
+  "ats_to_empty_cb",
+  "ats_to_empty_to"
+ ],
+ "fields": [
+  {
+   "fieldname": "header_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "SCD-.YYYY.-",
+   "reqd": 1,
+   "default": "SCD-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "shipping_document",
+   "fieldtype": "Link",
+   "label": "Shipping Document",
+   "options": "Shipping Document",
+   "reqd": 1,
+   "set_only_once": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "cb_h",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier Name",
+   "options": "Supplier",
+   "read_only": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "label": "Supplier",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "fetch_dates",
+   "fieldtype": "Button",
+   "label": "Refresh Dates from Import Documents"
+  },
+  {
+   "fieldname": "pi_to_lc_section",
+   "fieldtype": "Section Break",
+   "label": "PI Date to LC Opening Date"
+  },
+  {
+   "fieldname": "pi_to_lc_from",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "pi_to_lc_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pi_to_lc_to",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "lc_to_eta_section",
+   "fieldtype": "Section Break",
+   "label": "LC Opening Date to ETA"
+  },
+  {
+   "fieldname": "lc_to_eta_from",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "lc_to_eta_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "lc_to_eta_to",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "eta_to_gd_section",
+   "fieldtype": "Section Break",
+   "label": "ETA to GD Gate out"
+  },
+  {
+   "fieldname": "eta_to_gd_from",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "eta_to_gd_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "eta_to_gd_to",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "gd_to_ats_section",
+   "fieldtype": "Section Break",
+   "label": "GD Gate out to ATS"
+  },
+  {
+   "fieldname": "gd_to_ats_from",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "gd_to_ats_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gd_to_ats_to",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "pi_to_ats_section",
+   "fieldtype": "Section Break",
+   "label": "PI Date to ATS"
+  },
+  {
+   "fieldname": "pi_to_ats_from",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "pi_to_ats_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "pi_to_ats_to",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "eta_to_ats_section",
+   "fieldtype": "Section Break",
+   "label": "ETA to ATS"
+  },
+  {
+   "fieldname": "eta_to_ats_from",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "eta_to_ats_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "eta_to_ats_to",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "eta_to_empty_section",
+   "fieldtype": "Section Break",
+   "label": "ETA to Empty Return"
+  },
+  {
+   "fieldname": "eta_to_empty_from",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "eta_to_empty_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "eta_to_empty_to",
+   "fieldtype": "Date",
+   "label": "To Date"
+  },
+  {
+   "fieldname": "ats_to_empty_section",
+   "fieldtype": "Section Break",
+   "label": "ATS to Empty Return"
+  },
+  {
+   "fieldname": "ats_to_empty_from",
+   "fieldtype": "Date",
+   "label": "From Date"
+  },
+  {
+   "fieldname": "ats_to_empty_cb",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "ats_to_empty_to",
+   "fieldtype": "Date",
+   "label": "To Date"
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Shipment Check And Delays",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "shipping_document",
+ "search_fields": "shipping_document,supplier"
+}

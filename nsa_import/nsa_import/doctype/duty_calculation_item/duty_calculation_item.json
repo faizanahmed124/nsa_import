@@ -1,0 +1,415 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "item_code",
+  "item_name",
+  "shipped_qty",
+  "cb_1",
+  "hs_code",
+  "origin",
+  "warehouse",
+  "valuation_section",
+  "dv_value",
+  "exchange_rate",
+  "rate",
+  "cf_value_pkr",
+  "cb_2",
+  "scan_av_value",
+  "insurance_amount",
+  "foreign_currency_value",
+  "cb_3",
+  "landing_charges",
+  "freight_amount",
+  "import_value",
+  "cf_value_fcy",
+  "duty_section",
+  "custom_duty_percent",
+  "applied_custom_duty_rate",
+  "total_custom_duty",
+  "cb_d1",
+  "acd_percent",
+  "applied_acd_rate",
+  "total_acd",
+  "cb_d2",
+  "regulatory_duty_percent",
+  "applied_regulatory_duty_rate",
+  "total_regulatory_duty",
+  "duty_section_2",
+  "anti_dumping_duty_percent",
+  "applied_anti_dumping_duty_rate",
+  "total_anti_dumping_duty",
+  "cb_d3",
+  "sales_tax_percent",
+  "applied_sales_tax_rate",
+  "total_sales_tax",
+  "cb_d4",
+  "additional_sales_tax_percent",
+  "applied_additional_sales_tax_rate",
+  "total_additional_sales_tax",
+  "duty_section_3",
+  "income_tax_percent",
+  "applied_income_tax_rate",
+  "total_income_tax",
+  "cb_d5",
+  "excise_charges_percent",
+  "excise_charges",
+  "cb_d6",
+  "stamp_charges",
+  "total_duty_and_taxes",
+  "shipping_document_item"
+ ],
+ "fields": [
+  {
+   "fieldname": "item_code",
+   "fieldtype": "Link",
+   "label": "Item",
+   "options": "Item",
+   "reqd": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "item_name",
+   "fieldtype": "Data",
+   "label": "Item Name",
+   "fetch_from": "item_code.item_name",
+   "read_only": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "shipped_qty",
+   "fieldtype": "Float",
+   "label": "Shipped QTY",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hs_code",
+   "fieldtype": "Link",
+   "label": "HS Code",
+   "options": "Customs Tariff Number",
+   "in_list_view": 1,
+   "columns": 1
+  },
+  {
+   "fieldname": "origin",
+   "fieldtype": "Link",
+   "label": "Origin",
+   "options": "Country"
+  },
+  {
+   "fieldname": "warehouse",
+   "fieldtype": "Link",
+   "label": "Warehouse",
+   "options": "Warehouse"
+  },
+  {
+   "fieldname": "valuation_section",
+   "fieldtype": "Section Break",
+   "label": "Customs Valuation & Import Cost"
+  },
+  {
+   "fieldname": "dv_value",
+   "fieldtype": "Currency",
+   "label": "DV Value",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "C&F PKR + Freight + Insurance + Landing Charges"
+  },
+  {
+   "fieldname": "exchange_rate",
+   "fieldtype": "Float",
+   "label": "Exchange Rate",
+   "precision": "9"
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Float",
+   "label": "Rate",
+   "description": "Item rate in foreign currency",
+   "precision": "6"
+  },
+  {
+   "fieldname": "cf_value_pkr",
+   "fieldtype": "Currency",
+   "label": "CF Value PKR",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "CF Value FCY x Exchange Rate"
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "scan_av_value",
+   "fieldtype": "Currency",
+   "label": "Scan / AV Value",
+   "options": "company_currency",
+   "description": "Customs assessed value (PKR). If higher than DV Value it is used as Import Value"
+  },
+  {
+   "fieldname": "insurance_amount",
+   "fieldtype": "Currency",
+   "label": "Insurance Amount",
+   "options": "company_currency",
+   "description": "PKR. Left empty: 1% of C&F PKR"
+  },
+  {
+   "fieldname": "foreign_currency_value",
+   "fieldtype": "Float",
+   "label": "Foreign Currency Value",
+   "read_only": 1,
+   "precision": "2",
+   "description": "Shipped QTY x Rate"
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "landing_charges",
+   "fieldtype": "Currency",
+   "label": "Landing Charges",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "(C&F PKR + Freight + Insurance) x Landing % (NSA Import Settings)"
+  },
+  {
+   "fieldname": "freight_amount",
+   "fieldtype": "Currency",
+   "label": "Freight Amount",
+   "options": "company_currency",
+   "description": "PKR, when not included in the invoice"
+  },
+  {
+   "fieldname": "import_value",
+   "fieldtype": "Currency",
+   "label": "Import Value",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "description": "Higher of DV Value and Scan / AV Value"
+  },
+  {
+   "fieldname": "cf_value_fcy",
+   "fieldtype": "Float",
+   "label": "CF Value FCY",
+   "precision": "2",
+   "description": "Defaults to Foreign Currency Value"
+  },
+  {
+   "fieldname": "duty_section",
+   "fieldtype": "Section Break",
+   "label": "Duty Taxes Calculations"
+  },
+  {
+   "fieldname": "custom_duty_percent",
+   "fieldtype": "Percent",
+   "label": "Custom Duty %"
+  },
+  {
+   "fieldname": "applied_custom_duty_rate",
+   "fieldtype": "Percent",
+   "label": "Applied rate of Custom Duty"
+  },
+  {
+   "fieldname": "total_custom_duty",
+   "fieldtype": "Currency",
+   "label": "Total Custom Duty",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_d1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "acd_percent",
+   "fieldtype": "Percent",
+   "label": "ACD %"
+  },
+  {
+   "fieldname": "applied_acd_rate",
+   "fieldtype": "Percent",
+   "label": "Applied rate of ACD"
+  },
+  {
+   "fieldname": "total_acd",
+   "fieldtype": "Currency",
+   "label": "Total ACD",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_d2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "regulatory_duty_percent",
+   "fieldtype": "Percent",
+   "label": "Regulatory Duty %"
+  },
+  {
+   "fieldname": "applied_regulatory_duty_rate",
+   "fieldtype": "Percent",
+   "label": "Applied rate of Regulatory Duty"
+  },
+  {
+   "fieldname": "total_regulatory_duty",
+   "fieldtype": "Currency",
+   "label": "Total Regulatory Duty",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "duty_section_2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "anti_dumping_duty_percent",
+   "fieldtype": "Percent",
+   "label": "Anti Dumping Duty %"
+  },
+  {
+   "fieldname": "applied_anti_dumping_duty_rate",
+   "fieldtype": "Percent",
+   "label": "Applied rate of Anti Dumping Duty"
+  },
+  {
+   "fieldname": "total_anti_dumping_duty",
+   "fieldtype": "Currency",
+   "label": "Total Anti Dumping Duty",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_d3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "sales_tax_percent",
+   "fieldtype": "Percent",
+   "label": "Sales Tax %"
+  },
+  {
+   "fieldname": "applied_sales_tax_rate",
+   "fieldtype": "Percent",
+   "label": "Applied rate of Sales Tax"
+  },
+  {
+   "fieldname": "total_sales_tax",
+   "fieldtype": "Currency",
+   "label": "Total Sales Tax",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_d4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "additional_sales_tax_percent",
+   "fieldtype": "Percent",
+   "label": "Additional Sales Tax %"
+  },
+  {
+   "fieldname": "applied_additional_sales_tax_rate",
+   "fieldtype": "Percent",
+   "label": "Applied rate of Additional Sales Tax"
+  },
+  {
+   "fieldname": "total_additional_sales_tax",
+   "fieldtype": "Currency",
+   "label": "Total Additional Sales Tax",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "duty_section_3",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "income_tax_percent",
+   "fieldtype": "Percent",
+   "label": "Income Tax %"
+  },
+  {
+   "fieldname": "applied_income_tax_rate",
+   "fieldtype": "Percent",
+   "label": "Applied rate of Income Tax"
+  },
+  {
+   "fieldname": "total_income_tax",
+   "fieldtype": "Currency",
+   "label": "Total Income Tax",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_d5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "excise_charges_percent",
+   "fieldtype": "Percent",
+   "label": "Excise Charges Percentage"
+  },
+  {
+   "fieldname": "excise_charges",
+   "fieldtype": "Currency",
+   "label": "Excise Charges",
+   "options": "company_currency",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_d6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "stamp_charges",
+   "fieldtype": "Currency",
+   "label": "Stamp Charges",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "total_duty_and_taxes",
+   "fieldtype": "Currency",
+   "label": "Total Duty and Taxes",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "in_list_view": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "shipping_document_item",
+   "fieldtype": "Data",
+   "label": "Shipping Document Item Ref",
+   "read_only": 1,
+   "hidden": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Duty Calculation Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "istable": 1
+}

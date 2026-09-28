@@ -1,0 +1,470 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_section",
+  "naming_series",
+  "purchase_order",
+  "shipping_document",
+  "letter_of_credit",
+  "lc_no",
+  "cb_1",
+  "clearance_type",
+  "rates",
+  "posting_date",
+  "cb_2",
+  "container_20",
+  "container_40",
+  "containers",
+  "supplier",
+  "company",
+  "company_currency",
+  "shipment_section",
+  "mbl_no",
+  "hbl_no",
+  "clearance_port",
+  "cb_3",
+  "eta",
+  "weight_kg",
+  "cb_4",
+  "packing",
+  "qty",
+  "items_section",
+  "items",
+  "summary_section",
+  "total_duty_and_taxes",
+  "cb_5",
+  "total_import_value",
+  "charges_section",
+  "cess_and_token",
+  "duty_amount",
+  "do_amount",
+  "yard_amount",
+  "security_deposit_amount",
+  "other_amount",
+  "total_duty_amount_hc",
+  "cb_6",
+  "do_party",
+  "yard_party",
+  "deposit_party",
+  "others_party",
+  "total",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "DC-.YYYY.-",
+   "reqd": 1,
+   "default": "DC-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "PO No.",
+   "options": "Purchase Order",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "shipping_document",
+   "fieldtype": "Link",
+   "label": "Shipment No.",
+   "options": "Shipping Document",
+   "reqd": 1,
+   "set_only_once": 1,
+   "bold": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "letter_of_credit",
+   "fieldtype": "Link",
+   "label": "LC No.",
+   "options": "Letter of Credit",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "lc_no",
+   "fieldtype": "Data",
+   "label": "Bank LC No.",
+   "read_only": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "clearance_type",
+   "fieldtype": "Select",
+   "label": "Clearance Type",
+   "options": "HC\nIB\nEx-Bond\nTI\nEPZ\nOther",
+   "default": "HC",
+   "description": "HC = Home Consumption, IB = Into-Bond, TI = Temporary Import"
+  },
+  {
+   "fieldname": "rates",
+   "fieldtype": "Select",
+   "label": "Rates",
+   "options": "Tariff Rates\nConcessionary (SRO)\nFTA / PTA\nManual",
+   "default": "Tariff Rates",
+   "description": "Tariff Rates / FTA fill the % from the HS Code; set the Applied rate per item"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "cb_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "container_20",
+   "fieldtype": "Int",
+   "label": "Container Size 20"
+  },
+  {
+   "fieldname": "container_40",
+   "fieldtype": "Int",
+   "label": "Container size 40"
+  },
+  {
+   "fieldname": "containers",
+   "fieldtype": "Int",
+   "label": "Containers",
+   "read_only": 1,
+   "description": "Container Size 20 + Container size 40"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Supplier",
+   "options": "Supplier",
+   "read_only": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "shipment_section",
+   "fieldtype": "Section Break",
+   "label": "Shipment Details"
+  },
+  {
+   "fieldname": "mbl_no",
+   "fieldtype": "Data",
+   "label": "MBL / MAWB No."
+  },
+  {
+   "fieldname": "hbl_no",
+   "fieldtype": "Data",
+   "label": "HBL / HAWB No."
+  },
+  {
+   "fieldname": "clearance_port",
+   "fieldtype": "Select",
+   "label": "Clearance Port",
+   "options": "\nKarachi\nKarachi Port (KICT)\nKarachi Port (PICT)\nKarachi Port (SAPT)\nPort Qasim (QICT)\nKarachi Air Cargo\nLahore Dry Port\nLahore Air Cargo\nIslamabad Dry Port\nFaisalabad Dry Port\nSialkot Dry Port\nMultan Dry Port\nPeshawar Dry Port\nQuetta Dry Port\nTorkham\nWagah\nOther"
+  },
+  {
+   "fieldname": "cb_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "eta",
+   "fieldtype": "Date",
+   "label": "ETA"
+  },
+  {
+   "fieldname": "weight_kg",
+   "fieldtype": "Float",
+   "label": "Weight (Kg)"
+  },
+  {
+   "fieldname": "cb_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "packing",
+   "fieldtype": "Select",
+   "label": "Packing",
+   "options": "\nBulk\nBags\nDrums\nCartons\nPallets\nBales\nRolls\nCases\nCrates\nIBC Tanks\nContainers\nOther"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "label": "QTY"
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Duty Calculation Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "summary_section",
+   "fieldtype": "Section Break",
+   "label": "Summary"
+  },
+  {
+   "fieldname": "total_duty_and_taxes",
+   "fieldtype": "Currency",
+   "label": "Total Duty and Taxes",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "cb_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_import_value",
+   "fieldtype": "Currency",
+   "label": "Total Import Value",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "charges_section",
+   "fieldtype": "Section Break",
+   "label": "Duty & Other Charges"
+  },
+  {
+   "fieldname": "cess_and_token",
+   "fieldtype": "Currency",
+   "label": "Cess and Token",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "duty_amount",
+   "fieldtype": "Currency",
+   "label": "Duty Amount",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "= Total Duty and Taxes"
+  },
+  {
+   "fieldname": "do_amount",
+   "fieldtype": "Currency",
+   "label": "DO Amount",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "yard_amount",
+   "fieldtype": "Currency",
+   "label": "Yard Amount",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "security_deposit_amount",
+   "fieldtype": "Currency",
+   "label": "Security Deposit Amount",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "other_amount",
+   "fieldtype": "Currency",
+   "label": "Other Amount",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "total_duty_amount_hc",
+   "fieldtype": "Currency",
+   "label": "Total Duty Amount HC",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "Duty Amount + Cess and Token"
+  },
+  {
+   "fieldname": "cb_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "do_party",
+   "fieldtype": "Link",
+   "label": "DO Party",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "yard_party",
+   "fieldtype": "Link",
+   "label": "Yard Party",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "deposit_party",
+   "fieldtype": "Link",
+   "label": "Deposit Party",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "others_party",
+   "fieldtype": "Link",
+   "label": "Others Party",
+   "options": "Supplier"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "in_list_view": 1,
+   "description": "Total Duty Amount HC + DO + Yard + Security Deposit + Other"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Duty Calculation",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Duty Calculation",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "shipping_document",
+ "search_fields": "shipping_document,purchase_order,lc_no,mbl_no"
+}

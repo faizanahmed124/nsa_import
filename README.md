@@ -184,6 +184,42 @@ of the PO estimate.
 Reports: **Insurance Tracking** (filter by LC, PO, supplier, shipping document or policy; tick *Show Items* for
 item-wise allocation) and **Insurance Balance** (policy total, utilized, balance per policy).
 
+## Duty Calculation
+
+Created from a submitted Shipping Document → *Create → Duty Calculation* (or its Connections "+"). PO No., LC No.,
+supplier, MBL/MAWB, ETA, packing, QTY, weight (kg), 20/40 ft container counts and clearance port are pre-filled
+from the Shipping Document; items come from its PO Items with HS Code, origin, warehouse, FCY rate and exchange
+rate. Duty % are fetched from the HS Code (Customs Tariff Number: CD, ACD, RD, Anti Dumping, ST, AST, IT, Excise %);
+each duty has a base % and an *Applied rate* (defaults to the base %, change it for SRO / FTA concessions).
+
+| Item field | Formula |
+|---|---|
+| Foreign Currency Value | Shipped QTY × Rate (FCY) |
+| CF Value FCY | Foreign Currency Value (editable) |
+| CF Value PKR | CF Value FCY × Exchange Rate |
+| Insurance Amount | entered, or 1% of CF Value PKR |
+| Landing Charges | (CF PKR + Freight + Insurance) × Landing % (Settings, default 1%) |
+| DV Value | CF PKR + Freight + Insurance + Landing Charges |
+| Import Value | higher of DV Value and Scan / AV Value |
+| Custom Duty, ACD, Regulatory, Anti Dumping | Import Value × Applied rate |
+| Sales Tax, Additional Sales Tax | (Import Value + the four duties) × Applied rate |
+| Income Tax | (value for sales tax + Sales Tax + Additional Sales Tax) × Applied rate |
+| Excise Charges | Import Value × Excise Charges Percentage |
+| Total Duty and Taxes | all duties and taxes + Excise + Stamp Charges |
+
+Header: Total Import Value and Total Duty and Taxes = item sums; Duty Amount = Total Duty and Taxes;
+Total Duty Amount HC = Duty Amount + Cess and Token; Total = HC + DO + Yard + Security Deposit + Other;
+Containers = 20 ft + 40 ft. DO / Yard / Deposit / Others Party link to Supplier. No accounting entries.
+
+## Shipment Check And Delays
+
+Created from a Shipping Document → *Create → Shipment Check And Delays* (naming series `SCD-.YYYY.-`). Eight
+milestones, each with From Date and To Date: PI Date → LC Opening, LC Opening → ETA, ETA → GD Gate out,
+GD Gate out → ATS, PI Date → ATS, ETA → ATS, ETA → Empty Return, ATS → Empty Return. Dates are fetched when
+available: PI Date (PO), LC Opening (LC Date), ETA (Shipping Document), GD Gate out (Customs Clearance Release
+Date), ATS (first submitted GRN posting date). Empty Return is entered by hand (copied between both rows).
+*Refresh Dates from Import Documents* pulls newer dates. The **Shipment Delay Report** shows the days per milestone.
+
 ## Insurance Company, Insurance Policy and Bank Account
 
 **Insurance Company** is a single-field master (name, mandatory and unique). It is a Link on Shipping Insurance

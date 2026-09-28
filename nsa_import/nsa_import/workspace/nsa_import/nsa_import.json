@@ -98,7 +98,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Shipping & Customs",
-   "link_count": 4,
+   "link_count": 6,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -147,6 +147,28 @@
    "type": "Link"
   },
   {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Duty Calculation",
+   "link_count": 0,
+   "link_to": "Duty Calculation",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Shipment Check And Delays",
+   "link_count": 0,
+   "link_to": "Shipment Check And Delays",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
    "hidden": 0,
    "is_query_report": 0,
    "label": "Costing",
@@ -180,7 +202,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Reports",
-   "link_count": 6,
+   "link_count": 7,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -246,6 +268,17 @@
    "label": "Insurance Policy Register",
    "link_count": 0,
    "link_to": "Insurance Policy Register",
+   "link_type": "Report",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 1,
+   "label": "Shipment Delay Report",
+   "link_count": 0,
+   "link_to": "Shipment Delay Report",
    "link_type": "Report",
    "onboard": 0,
    "type": "Link"

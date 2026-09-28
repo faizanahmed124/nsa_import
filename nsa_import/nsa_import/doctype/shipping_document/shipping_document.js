@@ -78,6 +78,12 @@ frappe.ui.form.on("Shipping Document", {
 		});
 	},
 	refresh(frm) {
+		frm.make_methods = Object.assign(frm.make_methods || {}, {
+			"Duty Calculation": () => frappe.model.open_mapped_doc({ method: "nsa_import.api.make_duty_calculation", frm }),
+			"Shipping Insurance": () => frappe.model.open_mapped_doc({ method: "nsa_import.api.make_shipping_insurance", frm }),
+			"Shipment Check And Delays": () =>
+				frappe.model.open_mapped_doc({ method: "nsa_import.api.make_shipment_check_and_delays", frm }),
+		});
 		frm.toggle_enable("letter_of_credit", frm.is_new());
 		if (frm.doc.docstatus !== 1) return;
 		const open = (method) => frappe.model.open_mapped_doc({ method, frm });
@@ -87,7 +93,9 @@ frappe.ui.form.on("Shipping Document", {
 		if (["Arrived", "Cleared"].includes(frm.doc.status)) {
 			frm.add_custom_button(__("Purchase Receipt"), () => open("nsa_import.api.make_purchase_receipt_from_shipment"), __("Create"));
 		}
+		frm.add_custom_button(__("Duty Calculation"), () => open("nsa_import.api.make_duty_calculation"), __("Create"));
 		frm.add_custom_button(__("Shipping Insurance"), () => open("nsa_import.api.make_shipping_insurance"), __("Create"));
+		frm.add_custom_button(__("Shipment Check And Delays"), () => open("nsa_import.api.make_shipment_check_and_delays"), __("Create"));
 		if (frm.doc.letter_of_credit) {
 			frm.add_custom_button(__("LC Retirement"), () => open("nsa_import.api.make_lc_retirement_from_shipment"), __("Create"));
 		}
