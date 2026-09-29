@@ -53,6 +53,16 @@ frappe.ui.form.on("Duty Calculation", {
 		frm.set_query("shipping_document", () => ({ filters: { docstatus: 1 } }));
 		frm.set_query("warehouse", "items", () => ({ filters: { company: frm.doc.company, is_group: 0 } }));
 	},
+	refresh(frm) {
+		if (frm.is_new() || frm.doc.docstatus === 2) return;
+		const make = (method) => () => frappe.model.open_mapped_doc({ method, frm });
+		frm.make_methods = Object.assign(frm.make_methods || {}, {
+			"Freight Bill": make("nsa_import.api.make_freight_bill"),
+			"Transporter Bill": make("nsa_import.api.make_transporter_bill"),
+		});
+		frm.add_custom_button(__("Freight Bill"), make("nsa_import.api.make_freight_bill"), __("Create"));
+		frm.add_custom_button(__("Transporter Bill"), make("nsa_import.api.make_transporter_bill"), __("Create"));
+	},
 	onload(frm) {
 		frappe.db.get_single_value("NSA Import Settings", "landing_charges_percent")
 			.then((v) => { frm.__nsa = { landing_charges_percent: v === null || v === undefined ? 1 : v }; })

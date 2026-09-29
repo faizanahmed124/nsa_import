@@ -1,0 +1,310 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "main_section",
+  "naming_series",
+  "purchase_order",
+  "duty_calculation",
+  "shipping_document",
+  "freight_agent",
+  "freight_bill_received",
+  "freight_bill_paid",
+  "bl_endorsement_fee",
+  "container_size_20",
+  "container_size_40",
+  "cb_1",
+  "bill_no",
+  "freight_value_usd",
+  "conversion_rate",
+  "freight_value_pkr",
+  "do_charges",
+  "fca",
+  "dgm_report",
+  "total",
+  "mode_of_shipment",
+  "company",
+  "company_currency",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "main_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "FB-.YYYY.-",
+   "reqd": 1,
+   "default": "FB-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "Purchase Order",
+   "options": "Purchase Order",
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "duty_calculation",
+   "fieldtype": "Link",
+   "label": "Duty Calculation",
+   "options": "Duty Calculation",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "shipping_document",
+   "fieldtype": "Link",
+   "label": "Shipment Number",
+   "options": "Shipping Document",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "freight_agent",
+   "fieldtype": "Link",
+   "label": "Freight Agent",
+   "options": "Supplier",
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "freight_bill_received",
+   "fieldtype": "Date",
+   "label": "Freight Bill Received",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "freight_bill_paid",
+   "fieldtype": "Date",
+   "label": "Freight Bill Paid",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "bl_endorsement_fee",
+   "fieldtype": "Currency",
+   "label": "BL Endorsement Fee",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "container_size_20",
+   "fieldtype": "Currency",
+   "label": "Container Size 20",
+   "options": "company_currency",
+   "description": "20 ft container charges"
+  },
+  {
+   "fieldname": "container_size_40",
+   "fieldtype": "Currency",
+   "label": "Container Size 40",
+   "options": "company_currency",
+   "description": "40 ft container charges"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bill_no",
+   "fieldtype": "Data",
+   "label": "Bill No",
+   "in_standard_filter": 1,
+   "in_list_view": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "freight_value_usd",
+   "fieldtype": "Float",
+   "label": "Sea / Air Freight Value in USD",
+   "precision": "2"
+  },
+  {
+   "fieldname": "conversion_rate",
+   "fieldtype": "Float",
+   "label": "Conversion Rate",
+   "precision": "9",
+   "description": "PKR per 1 USD"
+  },
+  {
+   "fieldname": "freight_value_pkr",
+   "fieldtype": "Currency",
+   "label": "Sea / Air Freight Value in PKR",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "Freight Value in USD x Conversion Rate"
+  },
+  {
+   "fieldname": "do_charges",
+   "fieldtype": "Currency",
+   "label": "DO Charges",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "fca",
+   "fieldtype": "Currency",
+   "label": "FCA",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "dgm_report",
+   "fieldtype": "Currency",
+   "label": "DGM Report",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "in_list_view": 1,
+   "description": "Freight PKR + DO + FCA + BL Endorsement + DGM Report + Container 20 + Container 40"
+  },
+  {
+   "fieldname": "mode_of_shipment",
+   "fieldtype": "Select",
+   "label": "Mode of Shipment",
+   "options": "\nBy Sea\nBy Air\nBy Road\nBy Rail\nCourier"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Freight Bill",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Freight Bill",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 0,
+   "amend": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "bill_no",
+ "search_fields": "bill_no,purchase_order,shipping_document,freight_agent"
+}

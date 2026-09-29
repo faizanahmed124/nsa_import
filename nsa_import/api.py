@@ -280,7 +280,7 @@ def get_insurance_policy_values(insurance_policy):
 	}
 
 
-RELATED_FUTURE_DOCTYPES = ("Freight Bill", "Clearance Bill", "Local Transporter")
+RELATED_FUTURE_DOCTYPES = ("Freight Bill", "Clearance Bill", "Transporter Bill")
 
 
 @frappe.whitelist()
@@ -412,6 +412,52 @@ def get_shipment_milestone_dates(shipping_document):
 
 	frappe.has_permission("Shipping Document", "read", shipping_document, throw=True)
 	return milestone_values(shipping_document)
+
+
+# ----------------------------------------------------------------------------
+# Freight Bill / Transporter Bill (created from Duty Calculation)
+# ----------------------------------------------------------------------------
+def _duty_calculation_source(name):
+	dc = frappe.get_doc("Duty Calculation", name)
+	dc.check_permission("read")
+	if dc.docstatus == 2:
+		frappe.throw(_("Duty Calculation {0} is cancelled.").format(name))
+	sd = frappe.db.get_value("Shipping Document", dc.shipping_document,
+							 ["name", "currency", "exchange_rate", "mode_of_shipment", "bl_awb_no", "total_gross_weight",
+							  "total_net_weight", "weight_uom"], as_dict=True) or frappe._dict()
+	return dc, sd
+
+
+@frappe.whitelist()
+def make_freight_bill(source_name, target_doc=None, args=None):
+	dc, sd = _duty_calculation_source(source_name)
+	fb = frappe.new_doc("Freight Bill")
+	fb.update({
+		"duty_calculation": dc.name, "shipping_document": dc.shipping_document, "purchase_order": dc.purchase_order,
+		"company": dc.company, "mode_of_shipment": sd.mode_of_shipment,
+		"conversion_rate": sd.exchange_rate if (sd.currency or "").upper() == "USD" else None,
+	})
+	return fb
+
+
+@frappe.whitelist()
+def make_transporter_bill(source_name, target_doc=None, args=None):
+	dc, sd = _duty_calculation_source(source_name)
+	s = get_settings()
+	tb = frappe.new_doc("Transporter Bill")
+	tb.update({
+		"duty_calculation": dc.name, "shipping_document": dc.shipping_document, "purchase_order": dc.purchase_order,
+		"company": dc.company, "bl_no": sd.bl_awb_no or dc.mbl_no, "container_20": dc.container_20,
+		"container_40": dc.container_40, "gross_weight": sd.total_gross_weight or dc.weight_kg,
+		"net_weight": sd.total_net_weight, "sales_tax_percent": s.default_transport_sales_tax_percent,
+		"income_tax_percent": s.default_transport_income_tax_percent,
+	})
+	return tb
+
+
+@frappe.whitelist()
+def get_transport_settings():
+	return {"withhold_transport_sales_tax": get_settings().withhold_transport_sales_tax}
 
 
 # ----------------------------------------------------------------------------

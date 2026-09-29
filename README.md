@@ -221,6 +221,27 @@ Header: Total Import Value and Total Duty and Taxes = item sums; Duty Amount = T
 Total Duty Amount HC = Duty Amount + Cess and Token; Total = HC + DO + Yard + Security Deposit + Other;
 Containers = 20 ft + 40 ft. DO / Yard / Deposit / Others Party link to Supplier. No accounting entries.
 
+## Freight Bill and Transporter Bill
+
+Both are created from a saved Duty Calculation → *Create* (or its Connections "+") and link Purchase Order,
+Shipping Document and Duty Calculation (kept consistent on save). Submit / amend follow NSA Import permissions;
+Purchase Users can submit but only managers cancel.
+
+**Freight Bill** (`FB-.YYYY.-`): Purchase Order, Duty Calculation, Shipment Number, Freight Agent (Supplier),
+Freight Bill Received / Paid (dates, editable after submit), BL Endorsement Fee, Container Size 20 / 40 charges;
+Bill No, Sea / Air Freight Value in USD, Conversion Rate (pre-filled from a USD Shipping Document), DO Charges, FCA,
+DGM Report, Mode of Shipment.
+Freight PKR = USD × Conversion Rate; Total = Freight PKR + DO + FCA + BL Endorsement + DGM + Container 20 + 40.
+
+**Transporter Bill** (`TB-.YYYY.-`): PO No., Ship No., BL No., Duty Calculation, Bill No. (mandatory), Date
+(mandatory), Transporter Name (Supplier, mandatory), 20 / 40 ft container counts, Empty Container Yard, Amended
+From; Total Bill Amount, Sales Tax (Transport) % and amount, Gross Bill, Income Tax (Transport) % and amount, Other
+Deduction, Net Bill Amount, Gross / Net Weight, CBM, ATS Out (date-time). BL No., containers and weights come from
+the Shipping Document / Duty Calculation; default tax % from NSA Import Settings.
+Sales Tax = Total Bill × ST %; Gross Bill = Total Bill + Sales Tax; Income Tax = Gross Bill × IT %;
+Net Bill = Gross Bill − Income Tax − Other Deduction (− Sales Tax too when *Deduct Sales Tax (Transport)* is ticked
+in Settings).
+
 ## Shipment Check And Delays
 
 Created from a Shipping Document → *Create → Shipment Check And Delays* (naming series `SCD-.YYYY.-`). Eight

@@ -1,0 +1,337 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "main_section",
+  "naming_series",
+  "purchase_order",
+  "shipping_document",
+  "bl_no",
+  "duty_calculation",
+  "bill_no",
+  "posting_date",
+  "transporter",
+  "container_20",
+  "container_40",
+  "empty_container_yard",
+  "amended_from",
+  "cb_1",
+  "total_bill_amount",
+  "sales_tax_percent",
+  "sales_tax_amount",
+  "gross_bill",
+  "income_tax_percent",
+  "income_tax_amount",
+  "other_deduction",
+  "net_bill_amount",
+  "gross_weight",
+  "net_weight",
+  "cbm",
+  "ats_out",
+  "company",
+  "company_currency"
+ ],
+ "fields": [
+  {
+   "fieldname": "main_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "TB-.YYYY.-",
+   "reqd": 1,
+   "default": "TB-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "PO No.",
+   "options": "Purchase Order",
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "shipping_document",
+   "fieldtype": "Link",
+   "label": "Ship No.",
+   "options": "Shipping Document",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "bl_no",
+   "fieldtype": "Data",
+   "label": "BL No.",
+   "description": "Bill of Lading No. from the Shipping Document"
+  },
+  {
+   "fieldname": "duty_calculation",
+   "fieldtype": "Link",
+   "label": "Duty Calculation",
+   "options": "Duty Calculation",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "bill_no",
+   "fieldtype": "Data",
+   "label": "Bill No.",
+   "reqd": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "transporter",
+   "fieldtype": "Link",
+   "label": "Transporter Name",
+   "options": "Supplier",
+   "reqd": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "container_20",
+   "fieldtype": "Int",
+   "label": "No. of Container Size 20"
+  },
+  {
+   "fieldname": "container_40",
+   "fieldtype": "Int",
+   "label": "No. of Container Size 40"
+  },
+  {
+   "fieldname": "empty_container_yard",
+   "fieldtype": "Data",
+   "label": "Empty Container Yard"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Transporter Bill",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "total_bill_amount",
+   "fieldtype": "Currency",
+   "label": "Total Bill Amount",
+   "options": "company_currency",
+   "description": "Transport charges before tax"
+  },
+  {
+   "fieldname": "sales_tax_percent",
+   "fieldtype": "Percent",
+   "label": "Sales Tax (Transport) %"
+  },
+  {
+   "fieldname": "sales_tax_amount",
+   "fieldtype": "Currency",
+   "label": "Sales Tax (Transport)",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "Total Bill Amount x Sales Tax %"
+  },
+  {
+   "fieldname": "gross_bill",
+   "fieldtype": "Currency",
+   "label": "Gross Bill",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "description": "Total Bill Amount + Sales Tax (Transport)"
+  },
+  {
+   "fieldname": "income_tax_percent",
+   "fieldtype": "Percent",
+   "label": "Income Tax (Transport) %"
+  },
+  {
+   "fieldname": "income_tax_amount",
+   "fieldtype": "Currency",
+   "label": "Income Tax (Transport)",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "Gross Bill x Income Tax % (withheld)"
+  },
+  {
+   "fieldname": "other_deduction",
+   "fieldtype": "Currency",
+   "label": "Other Deduction",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "net_bill_amount",
+   "fieldtype": "Currency",
+   "label": "Net Bill Amount",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "in_list_view": 1,
+   "description": "Gross Bill - Income Tax - Other Deduction (and - Sales Tax if withheld, see NSA Import Settings)"
+  },
+  {
+   "fieldname": "gross_weight",
+   "fieldtype": "Float",
+   "label": "Gross Weight"
+  },
+  {
+   "fieldname": "net_weight",
+   "fieldtype": "Float",
+   "label": "Net Weight"
+  },
+  {
+   "fieldname": "cbm",
+   "fieldtype": "Float",
+   "label": "CBM",
+   "description": "Shipment volume in cubic metres"
+  },
+  {
+   "fieldname": "ats_out",
+   "fieldtype": "Datetime",
+   "label": "ATS Out",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
+   "read_only": 1,
+   "hidden": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Transporter Bill",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 0,
+   "amend": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "bill_no",
+ "search_fields": "bill_no,purchase_order,shipping_document,transporter"
+}

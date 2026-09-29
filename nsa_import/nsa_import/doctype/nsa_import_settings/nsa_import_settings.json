@@ -28,6 +28,11 @@
   "allow_shipping_without_lc",
   "cb_sd1",
   "default_shipment_commission_percent",
+  "transport_settings_section",
+  "default_transport_sales_tax_percent",
+  "default_transport_income_tax_percent",
+  "cb_tb1",
+  "withhold_transport_sales_tax",
   "insurance_settings_section",
   "insured_value_markup_percent",
   "cb_si1",
@@ -161,6 +166,31 @@
    "fieldname": "default_shipment_commission_percent",
    "fieldtype": "Percent",
    "label": "Default Shipment Commission (%)"
+  },
+  {
+   "fieldname": "transport_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Transporter Bill"
+  },
+  {
+   "fieldname": "default_transport_sales_tax_percent",
+   "fieldtype": "Percent",
+   "label": "Default Sales Tax (Transport) %"
+  },
+  {
+   "fieldname": "default_transport_income_tax_percent",
+   "fieldtype": "Percent",
+   "label": "Default Income Tax (Transport) %"
+  },
+  {
+   "fieldname": "cb_tb1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "withhold_transport_sales_tax",
+   "fieldtype": "Check",
+   "label": "Deduct Sales Tax (Transport) from Net Bill",
+   "description": "Ticked: Net Bill = Gross Bill - Sales Tax - Income Tax - Other Deduction (sales tax withheld)."
   },
   {
    "fieldname": "insurance_settings_section",

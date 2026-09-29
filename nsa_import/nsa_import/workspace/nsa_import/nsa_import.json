@@ -172,7 +172,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Costing",
-   "link_count": 2,
+   "link_count": 4,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -194,6 +194,28 @@
    "label": "Landed Cost Voucher",
    "link_count": 0,
    "link_to": "Landed Cost Voucher",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Freight Bill",
+   "link_count": 0,
+   "link_to": "Freight Bill",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Transporter Bill",
+   "link_count": 0,
+   "link_to": "Transporter Bill",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
