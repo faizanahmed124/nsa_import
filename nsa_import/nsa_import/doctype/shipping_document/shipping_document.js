@@ -98,9 +98,6 @@ frappe.ui.form.on("Shipping Document", {
 		frm.toggle_enable("letter_of_credit", frm.is_new());
 		if (frm.doc.docstatus !== 1) return;
 		const open = (method) => frappe.model.open_mapped_doc({ method, frm });
-		if (["In Transit", "Arrived"].includes(frm.doc.status)) {
-			frm.add_custom_button(__("Customs Clearance (GD)"), () => open("nsa_import.api.make_customs_clearance"), __("Create"));
-		}
 		if (["Arrived", "Cleared"].includes(frm.doc.status)) {
 			frm.add_custom_button(__("Purchase Receipt"), () => open("nsa_import.api.make_purchase_receipt_from_shipment"), __("Create"));
 		}

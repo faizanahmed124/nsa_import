@@ -3,7 +3,6 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
-from nsa_import.constants import BUYER_PAYS_FREIGHT, SELLER_PAYS_INSURANCE
 from nsa_import.utils import get_company_accounts, get_settings
 
 
@@ -114,22 +113,52 @@ class ImportCostSheet(Document):
 				add("Insurance", flt(ins[0]) * share, acc.get("freight_account"), f"Insurance {ins[1]}",
 					"Marine insurance premium")
 
-		if self.purchase_order:
-			po = frappe.get_doc("Purchase Order", self.purchase_order)
-			share = min(receipt_value / flt(po.base_net_total), 1) if flt(po.base_net_total) else 0
-			src = "PO Estimate"
-			if po.get("shipping_term") in BUYER_PAYS_FREIGHT:
-				add("Freight", flt(po.get("est_freight")) * share, acc.get("freight_account"), src)
-			if po.get("shipping_term") not in SELLER_PAYS_INSURANCE and not has_insurance:
-				add("Insurance", flt(po.get("est_insurance")) * share, acc.get("freight_account"), src)
-			if not has_gd:
-				add("Customs Duty", flt(po.get("est_customs_duty")) * share, acc.get("customs_duty_account"), src)
-				add("Import Taxes", flt(po.get("est_import_taxes")) * share, acc.get("customs_duty_account"), src)
-			add("Clearing Charges", flt(po.get("est_clearing_charges")) * share, acc.get("clearing_account"), src)
-			add("Port Charges", flt(po.get("est_port_charges")) * share, acc.get("clearing_account"), src)
-			add("Other Import Expenses", flt(po.get("est_other_import_expenses")) * share,
-				acc.get("other_import_expense_account"), src)
+		if self.import_shipment:
+			self.add_shipment_bills(add, acc, settings, receipt_value, has_gd)
 		self.allocate_charges()
+
+	def add_shipment_bills(self, add, acc, settings, receipt_value, has_gd):
+		"""Actual costs of the shipment: Duty Calculation (when there is no GD), Freight Bills, Transporter Bills.
+
+		Shared pro-rata when this GRN receives only part of the shipment."""
+		sd_value = flt(frappe.db.get_value("Shipping Document", self.import_shipment, "base_invoice_amount"))
+		share = min(receipt_value / sd_value, 1) if sd_value else 1
+		duty_acc, clearing_acc = acc.get("customs_duty_account"), acc.get("clearing_account")
+
+		if not has_gd:
+			for dc in frappe.get_all("Duty Calculation", filters={"shipping_document": self.import_shipment, "docstatus": 1},
+									 fields=["name", "cess_and_token", "do_amount", "yard_amount", "other_amount"]):
+				t = frappe.db.sql("""select sum(total_custom_duty), sum(total_acd), sum(total_regulatory_duty),
+					sum(total_anti_dumping_duty), sum(total_sales_tax) + sum(total_additional_sales_tax),
+					sum(excise_charges) + sum(stamp_charges)
+					from `tabDuty Calculation Item` where parent=%s""", dc.name)[0]
+				src = f"Duty Calculation {dc.name}"
+				add("Customs Duty", flt(t[0]) * share, duty_acc, src)
+				add("Additional Customs Duty", flt(t[1]) * share, duty_acc, src)
+				add("Regulatory Duty", flt(t[2]) * share, duty_acc, src)
+				add("Customs Duty", flt(t[3]) * share, duty_acc, src, "Anti Dumping Duty")
+				if settings.include_sales_tax_in_landed_cost:
+					add("Sales Tax (Non-adjustable)", flt(t[4]) * share, duty_acc, src)
+				add("Import Taxes", (flt(t[5]) + flt(dc.cess_and_token)) * share, duty_acc, src,
+					"Excise, Stamp, Cess and Token")
+				add("Port Charges", flt(dc.do_amount) * share, clearing_acc, src, "DO Amount")
+				add("Port Charges", flt(dc.yard_amount) * share, clearing_acc, src, "Yard Amount")
+				add("Other Import Expenses", flt(dc.other_amount) * share, acc.get("other_import_expense_account"), src)
+
+		for fb in frappe.get_all("Freight Bill", filters={"shipping_document": self.import_shipment, "docstatus": 1},
+								 fields=["name", "bill_no", "freight_value_pkr", "do_charges", "fca", "bl_endorsement_fee",
+										 "dgm_report", "container_size_20", "container_size_40"]):
+			src = f"Freight Bill {fb.name}"
+			add("Freight", flt(fb.freight_value_pkr) * share, acc.get("freight_account"), src,
+				f"Freight {fb.bill_no or ''}".strip())
+			other = sum(flt(fb.get(f)) for f in ("do_charges", "fca", "bl_endorsement_fee", "dgm_report",
+												 "container_size_20", "container_size_40"))
+			add("Clearing Charges", other * share, clearing_acc, src, "DO / FCA / BL / DGM / container charges")
+
+		for tb in frappe.get_all("Transporter Bill", filters={"shipping_document": self.import_shipment, "docstatus": 1},
+								 fields=["name", "bill_no", "gross_bill"]):
+			add("Transportation", flt(tb.gross_bill) * share, clearing_acc, f"Transporter Bill {tb.name}",
+				f"Transport {tb.bill_no or ''}".strip())
 
 	def allocate_charges(self):
 		basis_field = {"Amount": "base_amount", "Qty": "qty", "Weight": "total_weight"}.get(

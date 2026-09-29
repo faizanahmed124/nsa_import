@@ -14,7 +14,7 @@ def get_data():
 		"transactions": [
 			{"label": _("Shipment"), "items": ["Shipment Check And Delays", "Duty Calculation", "Shipping Insurance"]},
 			{"label": _("Bills"), "items": ["Freight Bill", "Transporter Bill"]},
-			{"label": _("Clearance & Receipt"), "items": ["Customs Clearance", "Purchase Receipt"]},
+			{"label": _("Receipt"), "items": ["Purchase Receipt"]},
 			{"label": _("Costing & Settlement"), "items": ["Import Cost Sheet", "LC Retirement", "Purchase Invoice"]},
 		],
 	}

@@ -42,7 +42,7 @@ Custom fields are created on install and re-synced on every `migrate`. Uninstall
 | 2 | Letter of Credit (opening, margin, charges, amendments) | PO → *Import → Letter of Credit* |
 | 3 | Shipping Document (PO items, packing list, charges, Bill of Lading, original documents tracking) | Letter of Credit |
 | 3a | Shipping Insurance (policy, insured amount, premium, balance, item allocation) | Shipping Document |
-| 4 | Customs Clearance / GD (AV = CIF × (1 + landing %), CD, ACD, RD, ST, AST, IT) | Shipping Document |
+| 4 | Duty Calculation (duties & taxes, DO / yard / cess), then Freight Bill and Transporter Bill | Shipping Document / Duty Calculation |
 | 5 | Purchase Receipt / GRN | Shipment or Customs Clearance |
 | 6 | Import Cost Sheet (actual freight, insurance, duties, clearing, port, other) | Purchase Receipt / Shipment |
 | 7 | Landed Cost Voucher | Import Cost Sheet |
@@ -195,6 +195,12 @@ They are Link fields on the Shipping Document (Bill of Lading tab: `port_of_load
 new entries (quick entry from the link field); a patch turns values already typed on old documents into masters.
 
 ## Duty Calculation
+
+Duty Calculation is the one customs-duty document after the Shipping Document. The older *Customs Clearance (GD)*
+DocType is no longer offered on the Shipping Document or in the workspace (existing records stay readable).
+The Import Cost Sheet takes actual costs from submitted Duty Calculation, Freight Bills and Transporter Bills of
+the shipment (pro-rata for partial receipts): duties (CD, ACD, RD, Anti Dumping), sales taxes when *Include
+Sales Tax in Landed Cost* is ticked, Excise / Stamp / Cess, DO / Yard / Other, freight and transport.
 
 Created from a submitted Shipping Document → *Create → Duty Calculation* (or its Connections "+"). PO No., LC No.,
 supplier, MBL/MAWB, ETA, packing, QTY, weight (kg), 20/40 ft container counts and Clearance Port (Port Of Discharge) are pre-filled
