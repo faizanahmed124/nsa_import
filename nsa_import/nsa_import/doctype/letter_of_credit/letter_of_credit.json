@@ -484,13 +484,15 @@
   },
   {
    "fieldname": "port_of_loading",
-   "fieldtype": "Data",
-   "label": "Port of Loading"
+   "fieldtype": "Link",
+   "label": "Port of Loading",
+   "options": "Port Of Loading"
   },
   {
    "fieldname": "port_of_discharge",
-   "fieldtype": "Data",
-   "label": "Port of Discharge"
+   "fieldtype": "Link",
+   "label": "Port of Discharge",
+   "options": "Port Of Discharge"
   },
   {
    "fieldname": "documents_required",

@@ -287,7 +287,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Setup",
-   "link_count": 3,
+   "link_count": 6,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -320,6 +320,39 @@
    "label": "Insurance Policy",
    "link_count": 0,
    "link_to": "Insurance Policy",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Port Of Loading",
+   "link_count": 0,
+   "link_to": "Port Of Loading",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Port Of Discharge",
+   "link_count": 0,
+   "link_to": "Port Of Discharge",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Vessel Name",
+   "link_count": 0,
+   "link_to": "Vessel Name",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"

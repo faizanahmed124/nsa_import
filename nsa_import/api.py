@@ -111,6 +111,9 @@ def get_shipment_defaults(purchase_order, letter_of_credit=None):
 		for f in ("mode_of_shipment", "shipping_term", "port_of_loading", "port_of_discharge"):
 			if lc.get(f):
 				header[f] = lc.get(f)
+	for f, master in (("port_of_loading", "Port Of Loading"), ("port_of_discharge", "Port Of Discharge")):
+		if header.get(f) and not frappe.db.exists(master, header[f]):
+			header[f] = None
 		if lc.get("place"):
 			header["final_destination"] = lc.place
 
@@ -351,17 +354,6 @@ def get_duty_calculation_rates(hs_code):
 	return out
 
 
-def _port_option(port):
-	options = (frappe.get_meta("Duty Calculation").get_field("clearance_port").options or "").split("\n")
-	port = (port or "").strip().lower()
-	if not port:
-		return None
-	for o in options:
-		if o and (o.lower() == port or o.lower().split(" (")[0] in port or port in o.lower()):
-			return o
-	return None
-
-
 @frappe.whitelist()
 def make_duty_calculation(source_name, target_doc=None, args=None):
 	sd = _submitted("Shipping Document", source_name)
@@ -382,7 +374,7 @@ def make_duty_calculation(source_name, target_doc=None, args=None):
 		"supplier": sd.supplier, "company": sd.company, "container_20": c20, "container_40": c40,
 		"containers": c20 + c40, "mbl_no": sd.bl_awb_no, "eta": sd.eta, "packing": sd.packing,
 		"qty": sd.total_shipped_qty, "weight_kg": gross if (sd.weight_uom or "").upper() in ("KG", "KGS", "MT", "TONNE", "TON") else None,
-		"clearance_port": _port_option(sd.port_of_discharge),
+		"clearance_port": sd.port_of_discharge,
 	})
 	for d in sd.items:
 		row = {

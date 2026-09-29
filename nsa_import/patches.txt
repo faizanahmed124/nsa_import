@@ -4,3 +4,4 @@ nsa_import.patches.rename_import_shipment_to_shipping_document
 [post_model_sync]
 nsa_import.patches.backfill_shipping_document_fields
 nsa_import.patches.create_insurance_company_masters
+nsa_import.patches.create_port_and_vessel_masters

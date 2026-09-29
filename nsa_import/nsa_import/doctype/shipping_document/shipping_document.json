@@ -84,7 +84,7 @@
   "bl_type",
   "shipping_line",
   "cb_8",
-  "vessel_flight_no",
+  "vessel_name",
   "voyage_no",
   "port_of_loading",
   "port_of_discharge",
@@ -614,9 +614,10 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "vessel_flight_no",
-   "fieldtype": "Data",
-   "label": "Vessel Name"
+   "fieldname": "vessel_name",
+   "fieldtype": "Link",
+   "label": "Vessel Name",
+   "options": "Vessel Name"
   },
   {
    "fieldname": "voyage_no",
@@ -625,13 +626,15 @@
   },
   {
    "fieldname": "port_of_loading",
-   "fieldtype": "Data",
-   "label": "Port of Loading"
+   "fieldtype": "Link",
+   "label": "Port of Loading",
+   "options": "Port Of Loading"
   },
   {
    "fieldname": "port_of_discharge",
-   "fieldtype": "Data",
-   "label": "Port of Discharge"
+   "fieldtype": "Link",
+   "label": "Port of Discharge",
+   "options": "Port Of Discharge"
   },
   {
    "fieldname": "final_destination",

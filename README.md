@@ -186,10 +186,18 @@ of the PO estimate.
 Reports: **Insurance Tracking** (filter by LC, PO, supplier, shipping document or policy; tick *Show Items* for
 item-wise allocation) and **Insurance Balance** (policy total, utilized, balance per policy).
 
+## Port Of Loading, Port Of Discharge and Vessel Name
+
+Three single-field masters (Port, Port, Vessel Name — mandatory, unique; case / spacing duplicates are blocked).
+They are Link fields on the Shipping Document (Bill of Lading tab: `port_of_loading`, `port_of_discharge`,
+`vessel_name`), and also on the Letter of Credit (ports), Shipping Insurance (ports, vessel) and Duty Calculation
+(Clearance Port → Port Of Discharge), so values flow between documents without free text. Purchase Users can add
+new entries (quick entry from the link field); a patch turns values already typed on old documents into masters.
+
 ## Duty Calculation
 
 Created from a submitted Shipping Document → *Create → Duty Calculation* (or its Connections "+"). PO No., LC No.,
-supplier, MBL/MAWB, ETA, packing, QTY, weight (kg), 20/40 ft container counts and clearance port are pre-filled
+supplier, MBL/MAWB, ETA, packing, QTY, weight (kg), 20/40 ft container counts and Clearance Port (Port Of Discharge) are pre-filled
 from the Shipping Document; items come from its PO Items with HS Code, origin, warehouse, FCY rate and exchange
 rate. Duty % are fetched from the HS Code (Customs Tariff Number: CD, ACD, RD, Anti Dumping, ST, AST, IT, Excise %);
 each duty has a base % and an *Applied rate* (defaults to the base %, change it for SRO / FTA concessions).

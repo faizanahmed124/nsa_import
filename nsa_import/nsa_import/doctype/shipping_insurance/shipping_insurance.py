@@ -102,7 +102,7 @@ class ShippingInsurance(Document):
 		sd = frappe.db.get_value(
 			"Shipping Document", self.shipping_document,
 			["purchase_order", "letter_of_credit", "lc_no", "supplier", "supplier_name", "company", "currency",
-			 "exchange_rate", "invoice_amount", "vessel_flight_no", "bl_awb_no", "eta", "port_of_loading",
+			 "exchange_rate", "invoice_amount", "vessel_name", "bl_awb_no", "eta", "port_of_loading",
 			 "port_of_discharge"], as_dict=True)
 		if not sd:
 			frappe.throw(_("Shipping Document {0} not found.").format(self.shipping_document))
@@ -111,7 +111,7 @@ class ShippingInsurance(Document):
 			"supplier": sd.supplier, "supplier_name": sd.supplier_name, "company": sd.company,
 			"invoice_currency": sd.currency, "invoice_value_fc": flt(sd.invoice_amount),
 		})
-		for target, value in (("vessel_name", sd.vessel_flight_no), ("bl_awb_no", sd.bl_awb_no), ("eta", sd.eta),
+		for target, value in (("vessel_name", sd.vessel_name), ("bl_awb_no", sd.bl_awb_no), ("eta", sd.eta),
 							  ("port_of_loading", sd.port_of_loading), ("port_of_discharge", sd.port_of_discharge)):
 			if not self.get(target) and value:
 				self.set(target, value)

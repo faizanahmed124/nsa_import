@@ -193,9 +193,9 @@
   },
   {
    "fieldname": "clearance_port",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "label": "Clearance Port",
-   "options": "\nKarachi\nKarachi Port (KICT)\nKarachi Port (PICT)\nKarachi Port (SAPT)\nPort Qasim (QICT)\nKarachi Air Cargo\nLahore Dry Port\nLahore Air Cargo\nIslamabad Dry Port\nFaisalabad Dry Port\nSialkot Dry Port\nMultan Dry Port\nPeshawar Dry Port\nQuetta Dry Port\nTorkham\nWagah\nOther"
+   "options": "Port Of Discharge"
   },
   {
    "fieldname": "cb_3",
