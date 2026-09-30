@@ -155,7 +155,7 @@
    "fieldname": "clearing_agent",
    "fieldtype": "Link",
    "label": "Clearing Agent",
-   "options": "Supplier",
+   "options": "Clearing Agent",
    "fetch_from": "import_shipment.clearing_agent",
    "fetch_if_empty": 1
   },

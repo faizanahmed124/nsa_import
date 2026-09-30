@@ -9,6 +9,8 @@ SOURCES = {
 								 ("Shipping Insurance", "port_of_loading")]),
 	"Port Of Discharge": ("port", [("Letter of Credit", "port_of_discharge"), ("Shipping Document", "port_of_discharge"),
 								   ("Shipping Insurance", "port_of_discharge"), ("Duty Calculation", "clearance_port")]),
+	"Clearing Agent": ("clearing_agent_name", [("Shipping Document", "clearing_agent"),
+											   ("Customs Clearance", "clearing_agent")]),
 	"Vessel Name": ("vessel_name", [("Shipping Document", "vessel_flight_no"), ("Shipping Document", "vessel_name"),
 									("Shipping Insurance", "vessel_name")]),
 }

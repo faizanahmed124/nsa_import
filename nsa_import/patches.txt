@@ -5,3 +5,5 @@ nsa_import.patches.rename_import_shipment_to_shipping_document
 nsa_import.patches.backfill_shipping_document_fields
 nsa_import.patches.create_insurance_company_masters
 nsa_import.patches.create_port_and_vessel_masters
+nsa_import.patches.create_clearing_agent_masters
+nsa_import.patches.clearance_bill_income_tax_paid_by

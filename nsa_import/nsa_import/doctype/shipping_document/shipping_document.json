@@ -705,7 +705,7 @@
    "fieldname": "clearing_agent",
    "fieldtype": "Link",
    "label": "Clearing Agent",
-   "options": "Supplier"
+   "options": "Clearing Agent"
   },
   {
    "fieldname": "bl_remarks",

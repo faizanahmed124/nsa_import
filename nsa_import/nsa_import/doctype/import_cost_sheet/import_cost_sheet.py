@@ -155,6 +155,14 @@ class ImportCostSheet(Document):
 												 "container_size_20", "container_size_40"))
 			add("Clearing Charges", other * share, clearing_acc, src, "DO / FCA / BL / DGM / container charges")
 
+		for cb in frappe.get_all("Clearance Bill", filters={"shipping_document": self.import_shipment, "docstatus": 1},
+								 fields=["name", "bill_number", "total", "total_bill"]):
+			# cost = bill before income tax withholding (Total + Agency Commission + Sales Tax)
+			it = frappe.db.get_value("Clearance Bill", cb.name, ["income_tax_agent", "income_tax_ats"], as_dict=True)
+			cost = flt(cb.total_bill) + flt(it.income_tax_agent) + flt(it.income_tax_ats)
+			add("Clearing Charges", cost * share, clearing_acc, f"Clearance Bill {cb.name}",
+				f"Clearing agent bill {cb.bill_number or ''}".strip())
+
 		for tb in frappe.get_all("Transporter Bill", filters={"shipping_document": self.import_shipment, "docstatus": 1},
 								 fields=["name", "bill_no", "gross_bill"]):
 			add("Transportation", flt(tb.gross_bill) * share, clearing_acc, f"Transporter Bill {tb.name}",

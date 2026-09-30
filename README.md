@@ -227,6 +227,28 @@ Header: Total Import Value and Total Duty and Taxes = item sums; Duty Amount = T
 Total Duty Amount HC = Duty Amount + Cess and Token; Total = HC + DO + Yard + Security Deposit + Other;
 Containers = 20 ft + 40 ft. DO / Yard / Deposit / Others Party link to Supplier. No accounting entries.
 
+## Clearing Agent and Clearance Bill
+
+**Clearing Agent** is a single-field master (Clearing Agent Name — mandatory, no duplicates). It is the Link used
+for the clearing agent on the Shipping Document and the Clearance Bill (values already entered become masters).
+
+**Clearance Bill** (`CB-.YYYY.-`) is the clearing agent's bill, created from a saved Duty Calculation → *Create*.
+Header: PO No., Ship No., BL No., Duty Calculation, Amended From, Clearing Agent Name, Bill Number, Date.
+Each charge has an Agent amount and an ATS amount, each with its own *Paid By* selection (Paid By Agent / Paid By
+ATS): Excise, Stamp Charges, LOLO Charges, Port Charges, Port Charges (Warfage), Weboc, DO, Demurrage and
+Detention, Others, Misc, Lab/Cargo Charges, Agency Commission, Sales Tax on Agency Commission, Income Tax.
+BL No. is the Bill of Lading number from the Shipping Document (the B/L is a tab of the Shipping Document, not a
+separate DocType).
+
+| Field | Formula |
+|---|---|
+| Total | all Agent + ATS charges except Agency Commission, Sales Tax and Income Tax |
+| Total Bill | Total + Agency Commission + Sales Tax − Income Tax |
+| Paid By Agent / Paid By ATS | amounts marked Paid By Agent / ATS, less income tax deducted by that side |
+| PAYABLE/ RECEIVABLE | Total Bill − Amount Paid to C Agent (editable after submit) |
+
+The Import Cost Sheet adds each submitted Clearance Bill (before income-tax withholding) as Clearing Charges.
+
 ## Freight Bill and Transporter Bill
 
 Both are created from a saved Duty Calculation → *Create* (or its Connections "+") and link Purchase Order,

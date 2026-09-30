@@ -8,6 +8,6 @@ def get_data():
 						   "Letter of Credit": "letter_of_credit"},
 		"transactions": [
 			{"label": _("Source"), "items": ["Purchase Order", "Letter of Credit", "Shipping Document"]},
-			{"label": _("Bills"), "items": ["Freight Bill", "Transporter Bill"]},
+			{"label": _("Bills"), "items": ["Clearance Bill", "Freight Bill", "Transporter Bill"]},
 		],
 	}

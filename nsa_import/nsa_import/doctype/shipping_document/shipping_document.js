@@ -72,7 +72,6 @@ frappe.ui.form.on("Shipping Document", {
 		}));
 		frm.set_query("purchase_order", () => ({ filters: { docstatus: 1, purchase_type: "Import" } }));
 		frm.set_query("warehouse", "items", () => ({ filters: { company: frm.doc.company, is_group: 0 } }));
-		frm.set_query("clearing_agent", () => ({ filters: { disabled: 0 } }));
 	},
 	onload(frm) {
 		frappe.call({ method: "nsa_import.api.get_shipping_settings" }).then((r) => {

@@ -59,7 +59,9 @@ frappe.ui.form.on("Duty Calculation", {
 		frm.make_methods = Object.assign(frm.make_methods || {}, {
 			"Freight Bill": make("nsa_import.api.make_freight_bill"),
 			"Transporter Bill": make("nsa_import.api.make_transporter_bill"),
+			"Clearance Bill": make("nsa_import.api.make_clearance_bill"),
 		});
+		frm.add_custom_button(__("Clearance Bill"), make("nsa_import.api.make_clearance_bill"), __("Create"));
 		frm.add_custom_button(__("Freight Bill"), make("nsa_import.api.make_freight_bill"), __("Create"));
 		frm.add_custom_button(__("Transporter Bill"), make("nsa_import.api.make_transporter_bill"), __("Create"));
 	},

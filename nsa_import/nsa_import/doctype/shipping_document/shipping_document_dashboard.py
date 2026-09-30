@@ -9,11 +9,12 @@ def get_data():
 			"Duty Calculation": "shipping_document",
 			"Shipment Check And Delays": "shipping_document",
 			"Freight Bill": "shipping_document",
+			"Clearance Bill": "shipping_document",
 			"Transporter Bill": "shipping_document",
 		},
 		"transactions": [
 			{"label": _("Shipment"), "items": ["Shipment Check And Delays", "Duty Calculation", "Shipping Insurance"]},
-			{"label": _("Bills"), "items": ["Freight Bill", "Transporter Bill"]},
+			{"label": _("Bills"), "items": ["Clearance Bill", "Freight Bill", "Transporter Bill"]},
 			{"label": _("Receipt"), "items": ["Purchase Receipt"]},
 			{"label": _("Costing & Settlement"), "items": ["Import Cost Sheet", "LC Retirement", "Purchase Invoice"]},
 		],

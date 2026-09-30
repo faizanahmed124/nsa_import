@@ -1,0 +1,730 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "main_section",
+  "naming_series",
+  "purchase_order",
+  "shipping_document",
+  "bl_no",
+  "duty_calculation",
+  "amended_from",
+  "clearing_agent",
+  "bill_number",
+  "posting_date",
+  "excise_paid_by_agent",
+  "excise_agent",
+  "excise_paid_by_ats",
+  "excise_ats",
+  "stamp_charges_paid_by_agent",
+  "stamp_charges_agent",
+  "stamp_charges_paid_by_ats",
+  "stamp_charges_ats",
+  "lolo_charges_paid_by_agent",
+  "lolo_charges_agent",
+  "lolo_charges_paid_by_ats",
+  "lolo_charges_ats",
+  "port_charges_paid_by_agent",
+  "port_charges_agent",
+  "port_charges_paid_by_ats",
+  "port_charges_ats",
+  "port_warfage_paid_by_agent",
+  "port_warfage_agent",
+  "port_warfage_paid_by_ats",
+  "port_warfage_ats",
+  "weboc_paid_by_agent",
+  "weboc_agent",
+  "weboc_paid_by_ats",
+  "weboc_ats",
+  "do_paid_by_agent",
+  "do_agent",
+  "do_paid_by_ats",
+  "do_ats",
+  "demurrage_detention_paid_by_agent",
+  "demurrage_detention_agent",
+  "demurrage_detention_paid_by_ats",
+  "demurrage_detention_ats",
+  "cb_1",
+  "others_paid_by_agent",
+  "others_agent",
+  "others_paid_by_ats",
+  "others_ats",
+  "misc_paid_by_agent",
+  "misc_agent",
+  "misc_paid_by_ats",
+  "misc_ats",
+  "lab_cargo_paid_by_agent",
+  "lab_cargo_agent",
+  "lab_cargo_paid_by_ats",
+  "lab_cargo_ats",
+  "total",
+  "agency_commission_paid_by_agent",
+  "agency_commission_agent",
+  "agency_commission_paid_by_ats",
+  "agency_commission_ats",
+  "sales_tax_paid_by_agent",
+  "sales_tax_agent",
+  "sales_tax_paid_by_ats",
+  "sales_tax_ats",
+  "income_tax_paid_by_agent",
+  "income_tax_agent",
+  "income_tax_paid_by_ats",
+  "income_tax_ats",
+  "total_bill",
+  "amount_paid_to_agent",
+  "payable_receivable",
+  "paid_by_agent_total",
+  "paid_by_ats_total",
+  "company",
+  "company_currency"
+ ],
+ "fields": [
+  {
+   "fieldname": "main_section",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "CB-.YYYY.-",
+   "reqd": 1,
+   "default": "CB-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "PO No.",
+   "options": "Purchase Order",
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "shipping_document",
+   "fieldtype": "Link",
+   "label": "Ship No.",
+   "options": "Shipping Document",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "bl_no",
+   "fieldtype": "Data",
+   "label": "BL No."
+  },
+  {
+   "fieldname": "duty_calculation",
+   "fieldtype": "Link",
+   "label": "Duty Calculation",
+   "options": "Duty Calculation",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Clearance Bill",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "clearing_agent",
+   "fieldtype": "Link",
+   "label": "Clearing Agent Name",
+   "options": "Clearing Agent",
+   "reqd": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "bill_number",
+   "fieldtype": "Data",
+   "label": "Bill Number",
+   "in_standard_filter": 1,
+   "in_list_view": 1,
+   "bold": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "excise_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Excise Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "excise_agent",
+   "fieldtype": "Currency",
+   "label": "Excise Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "excise_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Excise Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "excise_ats",
+   "fieldtype": "Currency",
+   "label": "Excise ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "stamp_charges_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Stamp Charges Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "stamp_charges_agent",
+   "fieldtype": "Currency",
+   "label": "Stamp Charges Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "stamp_charges_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Stamp Charges Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "stamp_charges_ats",
+   "fieldtype": "Currency",
+   "label": "Stamp Charges ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "lolo_charges_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "LOLO Charges Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "lolo_charges_agent",
+   "fieldtype": "Currency",
+   "label": "LOLO Charges Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "lolo_charges_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "LOLO Charges Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "lolo_charges_ats",
+   "fieldtype": "Currency",
+   "label": "LOLO Charges ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "port_charges_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Port Charges Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "port_charges_agent",
+   "fieldtype": "Currency",
+   "label": "Port Charges Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "port_charges_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Port Charges Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "port_charges_ats",
+   "fieldtype": "Currency",
+   "label": "Port Charges ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "port_warfage_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Port Charges (Warfage) Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "port_warfage_agent",
+   "fieldtype": "Currency",
+   "label": "Port Charges (Warfage) Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "port_warfage_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Port Charges (Warfage) Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "port_warfage_ats",
+   "fieldtype": "Currency",
+   "label": "Port Charges (Warfage) ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "weboc_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Weboc Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "weboc_agent",
+   "fieldtype": "Currency",
+   "label": "Weboc Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "weboc_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Weboc Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "weboc_ats",
+   "fieldtype": "Currency",
+   "label": "Weboc ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "do_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "DO Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "do_agent",
+   "fieldtype": "Currency",
+   "label": "DO Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "do_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "DO Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "do_ats",
+   "fieldtype": "Currency",
+   "label": "DO ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "demurrage_detention_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Demurrage and Detention Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "demurrage_detention_agent",
+   "fieldtype": "Currency",
+   "label": "Demurrage and Detention Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "demurrage_detention_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Demurrage and Detention Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "demurrage_detention_ats",
+   "fieldtype": "Currency",
+   "label": "Demurrage and Detention ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "others_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Others Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "others_agent",
+   "fieldtype": "Currency",
+   "label": "Others Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "others_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Others Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "others_ats",
+   "fieldtype": "Currency",
+   "label": "Others ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "misc_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Misc Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "misc_agent",
+   "fieldtype": "Currency",
+   "label": "Misc Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "misc_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Misc Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "misc_ats",
+   "fieldtype": "Currency",
+   "label": "Misc ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "lab_cargo_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Lab/Cargo Charges Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "lab_cargo_agent",
+   "fieldtype": "Currency",
+   "label": "Lab/Cargo Charges Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "lab_cargo_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Lab/Cargo Charges Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "lab_cargo_ats",
+   "fieldtype": "Currency",
+   "label": "Lab/Cargo Charges ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "total",
+   "fieldtype": "Currency",
+   "label": "Total",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "description": "All charges (Agent + ATS) except Agency Commission, Sales Tax and Income Tax"
+  },
+  {
+   "fieldname": "agency_commission_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Agency Commission Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "agency_commission_agent",
+   "fieldtype": "Currency",
+   "label": "Agency Commission Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "agency_commission_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Agency Commission Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "agency_commission_ats",
+   "fieldtype": "Currency",
+   "label": "Agency Commission ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "sales_tax_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Sales Tax on Agency Commission Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "sales_tax_agent",
+   "fieldtype": "Currency",
+   "label": "Sales Tax on Agency Commission Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "sales_tax_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Sales Tax on Agency Commission Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "sales_tax_ats",
+   "fieldtype": "Currency",
+   "label": "Sales Tax on Agency Commission ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "income_tax_paid_by_agent",
+   "fieldtype": "Select",
+   "label": "Income Tax Paid By Agent",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By Agent"
+  },
+  {
+   "fieldname": "income_tax_agent",
+   "fieldtype": "Currency",
+   "label": "Income Tax Agent",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "income_tax_paid_by_ats",
+   "fieldtype": "Select",
+   "label": "Income Tax Paid By ATS",
+   "options": "Paid By Agent\nPaid By ATS",
+   "reqd": 1,
+   "default": "Paid By ATS"
+  },
+  {
+   "fieldname": "income_tax_ats",
+   "fieldtype": "Currency",
+   "label": "Income Tax ATS",
+   "options": "company_currency"
+  },
+  {
+   "fieldname": "total_bill",
+   "fieldtype": "Currency",
+   "label": "Total Bill",
+   "options": "company_currency",
+   "read_only": 1,
+   "bold": 1,
+   "description": "Total + Agency Commission + Sales Tax - Income Tax"
+  },
+  {
+   "fieldname": "amount_paid_to_agent",
+   "fieldtype": "Currency",
+   "label": "Amount Paid to C Agent",
+   "options": "company_currency",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "payable_receivable",
+   "fieldtype": "Currency",
+   "label": "PAYABLE/ RECEIVABLE",
+   "options": "company_currency",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "bold": 1,
+   "description": "Total Bill - Amount Paid to C Agent"
+  },
+  {
+   "fieldname": "paid_by_agent_total",
+   "fieldtype": "Currency",
+   "label": "Paid By Agent",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "Amounts marked Paid By Agent, less income tax marked Paid By Agent"
+  },
+  {
+   "fieldname": "paid_by_ats_total",
+   "fieldtype": "Currency",
+   "label": "Paid By ATS",
+   "options": "company_currency",
+   "read_only": 1,
+   "description": "Amounts marked Paid By ATS, less income tax marked Paid By ATS"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
+   "read_only": 1,
+   "hidden": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Clearance Bill",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 0,
+   "amend": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "bill_number",
+ "search_fields": "bill_number,clearing_agent,purchase_order,shipping_document"
+}

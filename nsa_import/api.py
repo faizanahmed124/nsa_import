@@ -103,7 +103,6 @@ def get_shipment_defaults(purchase_order, letter_of_credit=None):
 		"shipping_term": po.get("shipping_term"), "port_of_loading": po.get("port_of_loading"),
 		"port_of_discharge": po.get("port_of_discharge"), "country_of_origin": po.get("import_country_of_origin"),
 		"etd": po.get("expected_shipment_date"), "eta": po.get("expected_arrival_date"),
-		"clearing_agent": po.get("customs_clearing_agent"),
 	}
 	if lc:
 		header.update({"letter_of_credit": lc.name, "lc_no": lc.lc_no, "currency": lc.currency,
@@ -451,6 +450,19 @@ def make_transporter_bill(source_name, target_doc=None, args=None):
 		"income_tax_percent": s.default_transport_income_tax_percent,
 	})
 	return tb
+
+
+@frappe.whitelist()
+def make_clearance_bill(source_name, target_doc=None, args=None):
+	dc, sd = _duty_calculation_source(source_name)
+	agent = frappe.db.get_value("Shipping Document", dc.shipping_document, "clearing_agent")
+	cb = frappe.new_doc("Clearance Bill")
+	cb.update({
+		"duty_calculation": dc.name, "shipping_document": dc.shipping_document, "purchase_order": dc.purchase_order,
+		"company": dc.company, "bl_no": sd.bl_awb_no or dc.mbl_no,
+		"clearing_agent": agent if agent and frappe.db.exists("Clearing Agent", agent) else None,
+	})
+	return cb
 
 
 @frappe.whitelist()

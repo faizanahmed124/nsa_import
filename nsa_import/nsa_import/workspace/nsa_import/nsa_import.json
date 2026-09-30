@@ -161,7 +161,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Costing",
-   "link_count": 4,
+   "link_count": 5,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -183,6 +183,17 @@
    "label": "Landed Cost Voucher",
    "link_count": 0,
    "link_to": "Landed Cost Voucher",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Clearance Bill",
+   "link_count": 0,
+   "link_to": "Clearance Bill",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
@@ -298,7 +309,7 @@
    "hidden": 0,
    "is_query_report": 0,
    "label": "Setup",
-   "link_count": 6,
+   "link_count": 7,
    "onboard": 0,
    "type": "Card Break"
   },
@@ -364,6 +375,17 @@
    "label": "Vessel Name",
    "link_count": 0,
    "link_to": "Vessel Name",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "dependencies": "",
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Clearing Agent",
+   "link_count": 0,
+   "link_to": "Clearing Agent",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
