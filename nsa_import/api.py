@@ -466,6 +466,42 @@ def make_clearance_bill(source_name, target_doc=None, args=None):
 
 
 @frappe.whitelist()
+def make_arrival_notice(source_name, target_doc=None, args=None):
+	"""Duty Calculation -> Create -> Arrival Notice (items, containers, agent and transporter pre-filled)."""
+	dc, _sd = _duty_calculation_source(source_name)
+	sd = frappe.get_doc("Shipping Document", dc.shipping_document)
+	dv = {d.shipping_document_item: d.dv_value for d in dc.items if d.get("shipping_document_item")}
+	transporter = frappe.db.get_value("Transporter Bill", {"shipping_document": sd.name, "docstatus": ["<", 2]},
+									  "transporter", order_by="creation desc")
+	an = frappe.new_doc("Arrival Notice")
+	an.update({
+		"shipping_document": sd.name, "purchase_order": sd.purchase_order, "letter_of_credit": sd.letter_of_credit,
+		"duty_calculation": dc.name, "company": sd.company, "clearing_agent": sd.clearing_agent,
+		"transporter": transporter, "container_20": dc.container_20, "container_40": dc.container_40,
+		"lcl": 1 if any((c.container_size or "").upper() == "LCL" for c in sd.get("containers") or []) else 0,
+		"packing": sd.packing,
+	})
+	for d in sd.items:
+		an.append("items", {
+			"item_code": d.item_code, "item_name": d.item_name, "shipped_qty": d.qty, "uom": d.get("po_uom") or d.uom,
+			"dv_value": dv.get(d.name), "warehouse": d.warehouse, "grn_qty": 0, "pending_qty": d.qty,
+			"shipping_document_item": d.name, "po_detail": d.po_detail,
+		})
+	an.containers = (an.container_20 or 0) + (an.container_40 or 0)
+	an.qty = sum(flt(d.shipped_qty) for d in an.items)
+	an.update_from_grns(save=False)
+	return an
+
+
+@frappe.whitelist()
+def refresh_arrival_notice_grn(name):
+	an = frappe.get_doc("Arrival Notice", name)
+	an.check_permission("write")
+	an.update_from_grns(reset=True)
+	return an.grn_status
+
+
+@frappe.whitelist()
 def get_transport_settings():
 	return {"withhold_transport_sales_tax": get_settings().withhold_transport_sales_tax}
 

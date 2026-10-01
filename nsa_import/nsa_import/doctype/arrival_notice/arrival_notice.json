@@ -1,0 +1,333 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-09-23 10:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "general_section",
+  "naming_series",
+  "posting_date",
+  "purchase_order",
+  "shipping_document",
+  "letter_of_credit",
+  "lcl",
+  "duty_calculation",
+  "plant_name",
+  "delivered_at",
+  "packing",
+  "cb_1",
+  "vehicle_type",
+  "clearing_agent",
+  "transporter",
+  "contact_detail",
+  "container_20",
+  "container_40",
+  "containers",
+  "qty",
+  "company",
+  "company_currency",
+  "qty_tracking_section",
+  "grn_status",
+  "items_section",
+  "items",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "general_section",
+   "fieldtype": "Section Break",
+   "label": "General Information"
+  },
+  {
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "AN-.YYYY.-",
+   "reqd": 1,
+   "default": "AN-.YYYY.-",
+   "no_copy": 1,
+   "print_hide": 1
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Date",
+   "reqd": 1,
+   "default": "Today"
+  },
+  {
+   "fieldname": "purchase_order",
+   "fieldtype": "Link",
+   "label": "PO No.",
+   "options": "Purchase Order",
+   "reqd": 1,
+   "read_only": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "shipping_document",
+   "fieldtype": "Link",
+   "label": "Ship No.",
+   "options": "Shipping Document",
+   "reqd": 1,
+   "read_only": 1,
+   "in_standard_filter": 1,
+   "in_list_view": 1
+  },
+  {
+   "fieldname": "letter_of_credit",
+   "fieldtype": "Link",
+   "label": "LC No.",
+   "options": "Letter of Credit",
+   "read_only": 1,
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "lcl",
+   "fieldtype": "Check",
+   "label": "LCL"
+  },
+  {
+   "fieldname": "duty_calculation",
+   "fieldtype": "Link",
+   "label": "Duty Calculation",
+   "options": "Duty Calculation",
+   "read_only": 1
+  },
+  {
+   "fieldname": "plant_name",
+   "fieldtype": "Data",
+   "label": "Plant Name"
+  },
+  {
+   "fieldname": "delivered_at",
+   "fieldtype": "Datetime",
+   "label": "Delivered At",
+   "allow_on_submit": 1
+  },
+  {
+   "fieldname": "packing",
+   "fieldtype": "Select",
+   "label": "Packing",
+   "options": "\nBulk\nBags\nDrums\nCartons\nPallets\nBales\nRolls\nCases\nCrates\nIBC Tanks\nContainers\nOther"
+  },
+  {
+   "fieldname": "cb_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "vehicle_type",
+   "fieldtype": "Select",
+   "label": "Vehicle Type",
+   "options": "\nContainer Trailer 20 ft\nContainer Trailer 40 ft\nFlatbed Trailer\nTruck\nMazda\nShehzore / Pickup\nOther"
+  },
+  {
+   "fieldname": "clearing_agent",
+   "fieldtype": "Link",
+   "label": "C/A",
+   "options": "Clearing Agent",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "transporter",
+   "fieldtype": "Link",
+   "label": "Transporter Name",
+   "options": "Supplier",
+   "in_standard_filter": 1
+  },
+  {
+   "fieldname": "contact_detail",
+   "fieldtype": "Data",
+   "label": "Contact Detail"
+  },
+  {
+   "fieldname": "container_20",
+   "fieldtype": "Int",
+   "label": "Container 20"
+  },
+  {
+   "fieldname": "container_40",
+   "fieldtype": "Int",
+   "label": "Container 40"
+  },
+  {
+   "fieldname": "containers",
+   "fieldtype": "Int",
+   "label": "Containers",
+   "read_only": 1,
+   "description": "Container 20 + Container 40"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "label": "QTY",
+   "read_only": 1,
+   "description": "Sum of item Shipped QTY"
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "label": "Company",
+   "options": "Company",
+   "hidden": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "company_currency",
+   "fieldtype": "Link",
+   "label": "Company Currency",
+   "options": "Currency",
+   "fetch_from": "company.default_currency",
+   "read_only": 1,
+   "hidden": 1
+  },
+  {
+   "fieldname": "qty_tracking_section",
+   "fieldtype": "Section Break",
+   "label": "Quantity Tracking"
+  },
+  {
+   "fieldname": "grn_status",
+   "fieldtype": "Select",
+   "label": "GRN Status",
+   "options": "Pending\nReceived",
+   "reqd": 1,
+   "default": "Pending",
+   "read_only": 1,
+   "allow_on_submit": 1,
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "description": "Received when every item has Pending QTY 0"
+  },
+  {
+   "fieldname": "items_section",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Arrival Notice Item",
+   "reqd": 1,
+   "cannot_add_rows": 1
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "options": "Arrival Notice",
+   "read_only": 1,
+   "no_copy": 1,
+   "print_hide": 1
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-09-23 10:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "NSA Import",
+ "name": "Arrival Notice",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Purchase User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 0,
+   "submit": 1,
+   "cancel": 0,
+   "amend": 1
+  },
+  {
+   "role": "Accounts Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "submit": 1,
+   "cancel": 1,
+   "amend": 1
+  },
+  {
+   "role": "Accounts User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock Manager",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  },
+  {
+   "role": "Stock User",
+   "read": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "export": 1,
+   "share": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "is_submittable": 1,
+ "track_changes": 1,
+ "autoname": "naming_series:",
+ "naming_rule": "By \"Naming Series\" field",
+ "title_field": "shipping_document",
+ "search_fields": "shipping_document,purchase_order,clearing_agent"
+}

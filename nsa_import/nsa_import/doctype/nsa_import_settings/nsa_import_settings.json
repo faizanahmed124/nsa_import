@@ -28,6 +28,8 @@
   "allow_shipping_without_lc",
   "cb_sd1",
   "default_shipment_commission_percent",
+  "arrival_settings_section",
+  "allow_multiple_arrival_notices",
   "transport_settings_section",
   "default_transport_sales_tax_percent",
   "default_transport_income_tax_percent",
@@ -166,6 +168,17 @@
    "fieldname": "default_shipment_commission_percent",
    "fieldtype": "Percent",
    "label": "Default Shipment Commission (%)"
+  },
+  {
+   "fieldname": "arrival_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Arrival Notice"
+  },
+  {
+   "fieldname": "allow_multiple_arrival_notices",
+   "fieldtype": "Check",
+   "label": "Allow more than one Arrival Notice per Shipping Document",
+   "description": "For partial deliveries. Unchecked: one Arrival Notice per Shipping Document."
   },
   {
    "fieldname": "transport_settings_section",

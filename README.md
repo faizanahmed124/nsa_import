@@ -227,6 +227,20 @@ Header: Total Import Value and Total Duty and Taxes = item sums; Duty Amount = T
 Total Duty Amount HC = Duty Amount + Cess and Token; Total = HC + DO + Yard + Security Deposit + Other;
 Containers = 20 ft + 40 ft. DO / Yard / Deposit / Others Party link to Supplier. No accounting entries.
 
+## Arrival Notice
+
+Created from a saved Duty Calculation → *Create → Arrival Notice* (naming `AN-.YYYY.-`), linked to the Shipping
+Document. General Information: Date, PO No., Ship No., LC No., LCL, Duty Calculation, Plant Name, Delivered At,
+Packing | Vehicle Type, C/A (Clearing Agent), Transporter Name, Contact Detail, Container 20 / 40, Containers, QTY.
+PO, Ship No., LC, Duty Calculation, clearing agent, transporter (latest Transporter Bill), containers, LCL and
+packing are pre-filled; items come from the Shipping Document with DV Value from the Duty Calculation.
+
+Items: Item Code, Item Name, Shipped QTY, DV Value, Warehouse, GRN QTY, Pending QTY (= Shipped − GRN).
+GRN QTY is filled from submitted GRNs of the Shipping Document (refreshed when a GRN is submitted or cancelled,
+or with *Update GRN QTY from GRNs*) and can be typed while receiving. GRN QTY cannot be negative or exceed
+Shipped QTY (+ tolerance %). GRN Status = Received when every item's Pending QTY is 0, otherwise Pending.
+One Arrival Notice per Shipping Document unless *Allow more than one Arrival Notice* is ticked in Settings.
+
 ## Clearing Agent and Clearance Bill
 
 **Clearing Agent** is a single-field master (Clearing Agent Name — mandatory, no duplicates). It is the Link used
