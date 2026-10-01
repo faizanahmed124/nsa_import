@@ -34,7 +34,7 @@ def get_source_dates(shipping_document):
 		where import_shipment=%s and docstatus=1""", shipping_document)
 	ats = frappe.db.sql("""select min(posting_date) from `tabPurchase Receipt`
 		where import_shipment=%s and docstatus=1""", shipping_document) \
-		if frappe.get_meta("Purchase Receipt").has_field("import_shipment") else [[None]]
+		if frappe.db.has_column("Purchase Receipt", "import_shipment") else [[None]]
 	return {
 		"pi": frappe.db.get_value("Purchase Order", sd.purchase_order, "pi_date") if sd.purchase_order else None,
 		"lc": frappe.db.get_value("Letter of Credit", sd.letter_of_credit, "lc_date") if sd.letter_of_credit else None,

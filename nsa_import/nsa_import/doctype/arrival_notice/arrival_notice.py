@@ -66,6 +66,9 @@ class ArrivalNotice(Document):
 
 	def update_from_grns(self, save=True, reset=False):
 		"""GRN QTY from submitted Purchase Receipts of the Shipping Document (per PO item, filled row by row)."""
+		if not frappe.db.has_column("Purchase Receipt", "import_shipment"):
+			# NSA Import fields on Purchase Receipt not created yet (run: bench --site <site> execute nsa_import.install.setup)
+			return
 		received = dict(frappe.db.sql(
 			"""select pri.purchase_order_item, sum(pri.qty) from `tabPurchase Receipt Item` pri
 			join `tabPurchase Receipt` pr on pr.name = pri.parent

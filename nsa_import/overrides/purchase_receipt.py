@@ -24,9 +24,11 @@ def validate(doc, method=None):
 	if doc.doctype == "Purchase Invoice" and doc.purchase_type == "Import" and not doc.get("import_shipment"):
 		pr = next((d.purchase_receipt for d in doc.items if d.get("purchase_receipt")), None)
 		if pr:
-			refs = frappe.db.get_value("Purchase Receipt", pr, ["import_shipment", "customs_clearance"], as_dict=True)
-			doc.import_shipment = refs.import_shipment
-			doc.customs_clearance = refs.customs_clearance
+			refs = frappe.db.get_value("Purchase Receipt", pr, ["import_shipment", "customs_clearance"], as_dict=True) \
+				if frappe.db.has_column("Purchase Receipt", "import_shipment") else None
+			if refs:
+				doc.import_shipment = refs.import_shipment
+				doc.customs_clearance = refs.customs_clearance
 
 
 def on_submit(doc, method=None):

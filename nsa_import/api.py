@@ -305,7 +305,8 @@ def get_insurance_related_documents(shipping_document):
 		{"label": "Bill Of Lading", "doctype": "Shipping Document", "names": [sd.name] if sd.bl_awb_no else [],
 		 "note": "Bill of Lading tab"},
 		{"label": "Purchase Receipt", "doctype": "Purchase Receipt",
-		 "names": names("Purchase Receipt", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or []},
+		 "names": (names("Purchase Receipt", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or [])
+		 if frappe.db.has_column("Purchase Receipt", "import_shipment") else []},
 		{"label": "Import Cost Sheet", "doctype": "Import Cost Sheet",
 		 "names": names("Import Cost Sheet", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or []},
 		{"label": "Duty Calculation", "doctype": "Duty Calculation",
