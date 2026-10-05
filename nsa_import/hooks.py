@@ -13,6 +13,7 @@ before_uninstall = "nsa_import.install.before_uninstall"
 doctype_js = {
     "Purchase Order": "public/js/purchase_order.js",
     "Purchase Receipt": "public/js/purchase_receipt.js",
+    "GRN": "public/js/purchase_receipt.js",  # sites where Purchase Receipt was renamed to GRN
 }
 
 doc_events = {
@@ -20,6 +21,11 @@ doc_events = {
         "validate": "nsa_import.overrides.purchase_order.validate",
     },
     "Purchase Receipt": {
+        "validate": "nsa_import.overrides.purchase_receipt.validate",
+        "on_submit": "nsa_import.overrides.purchase_receipt.on_submit",
+        "on_cancel": "nsa_import.overrides.purchase_receipt.on_cancel",
+    },
+    "GRN": {
         "validate": "nsa_import.overrides.purchase_receipt.validate",
         "on_submit": "nsa_import.overrides.purchase_receipt.on_submit",
         "on_cancel": "nsa_import.overrides.purchase_receipt.on_cancel",
@@ -36,6 +42,7 @@ doc_events = {
 override_doctype_dashboards = {
     "Purchase Order": "nsa_import.overrides.dashboard.purchase_order_dashboard",
     "Purchase Receipt": "nsa_import.overrides.dashboard.purchase_receipt_dashboard",
+    "GRN": "nsa_import.overrides.dashboard.purchase_receipt_dashboard",
 }
 
 scheduler_events = {

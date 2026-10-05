@@ -335,6 +335,13 @@ LC Retirement. On Customs Clearance and LC Retirement the Bank Account fills the
 Report **Insurance Policy Register**: filter by Insurance Company / Bank / Status (Expired, Fully Utilized…);
 tick *Show Utilization* to list the Shipping Insurance under each policy.
 
+## Sites where Purchase Receipt was renamed to "GRN"
+
+If ERPNext's Purchase Receipt DocType itself is named **GRN** on a site, the app detects it at run time
+(`nsa_import.utils.pr_doctype()`): custom fields, hooks, client script, dashboards, GRN creation (own PO → GRN
+mapping), Arrival Notice / Shipment Check / Cost Sheet queries, the Import Cost Sheet link and the workspace link
+all use the real name. Run `bench --site <site> execute nsa_import.install.setup` after migrate.
+
 ## Purchase Receipt shown as GRN
 
 ERPNext's Purchase Receipt is shown as **GRN** everywhere in the UI (titles, breadcrumbs, lists, link fields,

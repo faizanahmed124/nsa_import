@@ -1,7 +1,7 @@
 """Shared hooks for Purchase Receipt and Purchase Invoice: keep Purchase Type downstream."""
 import frappe
 
-from nsa_import.utils import refresh_po_import_status
+from nsa_import.utils import refresh_po_import_status, pr_doctype
 
 
 def _first_po(doc):
@@ -24,8 +24,8 @@ def validate(doc, method=None):
 	if doc.doctype == "Purchase Invoice" and doc.purchase_type == "Import" and not doc.get("import_shipment"):
 		pr = next((d.purchase_receipt for d in doc.items if d.get("purchase_receipt")), None)
 		if pr:
-			refs = frappe.db.get_value("Purchase Receipt", pr, ["import_shipment", "customs_clearance"], as_dict=True) \
-				if frappe.db.has_column("Purchase Receipt", "import_shipment") else None
+			refs = frappe.db.get_value(pr_doctype(), pr, ["import_shipment", "customs_clearance"], as_dict=True) \
+				if frappe.db.has_column(pr_doctype(), "import_shipment") else None
 			if refs:
 				doc.import_shipment = refs.import_shipment
 				doc.customs_clearance = refs.customs_clearance

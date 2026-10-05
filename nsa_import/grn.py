@@ -13,6 +13,8 @@ Remove:          bench --site <site> execute nsa_import.grn.remove
 import frappe
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
+from nsa_import.utils import pr_doctype
+
 GRN_SERIES = "GRN-.YYYY.-"
 
 GRN_TRANSLATIONS = {
@@ -81,14 +83,14 @@ def remove():
 
 
 def _set_grn_series():
-	df = frappe.get_meta("Purchase Receipt").get_field("naming_series")
+	df = frappe.get_meta(pr_doctype()).get_field("naming_series")
 	if not df:
 		return
 	options = [o for o in (df.options or "").split("\n") if o]
 	if GRN_SERIES not in options:
-		make_property_setter("Purchase Receipt", "naming_series", "options", "\n".join([GRN_SERIES] + options),
+		make_property_setter(pr_doctype(), "naming_series", "options", "\n".join([GRN_SERIES] + options),
 							 "Text")
-	make_property_setter("Purchase Receipt", "naming_series", "default", GRN_SERIES, "Text")
+	make_property_setter(pr_doctype(), "naming_series", "default", GRN_SERIES, "Text")
 
 
 def sync():

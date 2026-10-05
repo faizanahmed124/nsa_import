@@ -19,16 +19,17 @@ def purchase_receipt_dashboard(data):
 	import frappe
 
 	from nsa_import.api import igp_link_field
+	from nsa_import.utils import pr_doctype
 
 	data = data or {}
 	data.setdefault("transactions", [])
 	data.setdefault("internal_links", {})
 	data.setdefault("non_standard_fieldnames", {})
 	items = []
-	if frappe.get_meta("Purchase Receipt").has_field("arrival_notice"):
+	if frappe.get_meta(pr_doctype()).has_field("arrival_notice"):
 		data["internal_links"]["Arrival Notice"] = "arrival_notice"
 		items.append("Arrival Notice")
-	field = igp_link_field("Purchase Receipt")
+	field = igp_link_field(pr_doctype())
 	if field:
 		data["non_standard_fieldnames"]["Inward Gate Pass"] = field
 		items.append("Inward Gate Pass")

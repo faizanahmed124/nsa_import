@@ -10,6 +10,7 @@ from frappe import _
 from frappe.utils import flt, nowdate
 
 from nsa_import.utils import (
+	pr_doctype,
 	build_journal_entry,
 	get_company_accounts,
 	get_settings,
@@ -305,8 +306,8 @@ def get_insurance_related_documents(shipping_document):
 		{"label": "Bill Of Lading", "doctype": "Shipping Document", "names": [sd.name] if sd.bl_awb_no else [],
 		 "note": "Bill of Lading tab"},
 		{"label": "Purchase Receipt", "doctype": "Purchase Receipt",
-		 "names": (names("Purchase Receipt", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or [])
-		 if frappe.db.has_column("Purchase Receipt", "import_shipment") else []},
+		 "names": (names(pr_doctype(), {"import_shipment": sd.name, "docstatus": ["<", 2]}) or [])
+		 if frappe.db.has_column(pr_doctype(), "import_shipment") else []},
 		{"label": "Import Cost Sheet", "doctype": "Import Cost Sheet",
 		 "names": names("Import Cost Sheet", {"import_shipment": sd.name, "docstatus": ["<", 2]}) or []},
 		{"label": "Duty Calculation", "doctype": "Duty Calculation",
@@ -567,8 +568,44 @@ def get_hs_duty_rates(hs_code):
 # ----------------------------------------------------------------------------
 # Purchase Receipt (GRN)
 # ----------------------------------------------------------------------------
+def _make_grn_from_po(source_name):
+	"""PO -> GRN mapping for sites where ERPNext's Purchase Receipt DocType was renamed (ERPNext's own mapper
+	only knows the name 'Purchase Receipt')."""
+	from frappe.model.mapper import get_mapped_doc
+
+	from nsa_import.utils import pr_item_doctype
+
+	def update_item(obj, target, source_parent):
+		target.qty = flt(obj.qty) - flt(obj.received_qty)
+		target.stock_qty = target.qty * flt(obj.conversion_factor or 1)
+		target.received_qty = target.qty
+		target.received_stock_qty = target.stock_qty
+
+	def set_missing(source, target):
+		target.run_method("set_missing_values")
+		target.run_method("calculate_taxes_and_totals")
+
+	return get_mapped_doc("Purchase Order", source_name, {
+		"Purchase Order": {"doctype": pr_doctype(), "field_map": {"supplier_warehouse": "supplier_warehouse"},
+						   "validation": {"docstatus": ["=", 1]}},
+		"Purchase Order Item": {
+			"doctype": pr_item_doctype(),
+			"field_map": {"name": "purchase_order_item", "parent": "purchase_order", "bom": "bom",
+						  "material_request": "material_request", "material_request_item": "material_request_item"},
+			"postprocess": update_item,
+			"condition": lambda d: abs(flt(d.received_qty)) < abs(flt(d.qty)) and d.delivered_by_supplier != 1,
+		},
+		"Purchase Taxes and Charges": {"doctype": "Purchase Taxes and Charges", "reset_value": True},
+	}, None, set_missing)
+
+
 def _make_pr(shipment, clearance=None, qty_map=None, wh_map=None):
-	from erpnext.buying.doctype.purchase_order.purchase_order import make_purchase_receipt
+	from nsa_import.utils import pr_doctype as _pr
+
+	if _pr() == "Purchase Receipt":
+		from erpnext.buying.doctype.purchase_order.purchase_order import make_purchase_receipt
+	else:
+		make_purchase_receipt = _make_grn_from_po
 
 	if qty_map is None:
 		qty_map, wh_map = {}, {}
@@ -631,7 +668,7 @@ def make_purchase_receipt_from_arrival_notice(source_name, target_doc=None, args
 	if not qty_map:
 		frappe.throw(_("Nothing pending to receive on Arrival Notice {0}.").format(an.name))
 	pr = _make_pr(frappe.get_doc("Shipping Document", an.shipping_document), None, qty_map, wh_map)
-	if frappe.get_meta("Purchase Receipt").has_field("arrival_notice"):
+	if frappe.get_meta(pr_doctype()).has_field("arrival_notice"):
 		pr.arrival_notice = an.name
 	return pr
 
@@ -647,7 +684,7 @@ def igp_link_field(options):
 	if not frappe.db.exists("DocType", IGP):
 		return None
 	meta = frappe.get_meta(IGP)
-	ours = {"Purchase Receipt": "nsa_purchase_receipt", "Arrival Notice": "nsa_arrival_notice",
+	ours = {pr_doctype(): "nsa_purchase_receipt", "Arrival Notice": "nsa_arrival_notice",
 			"Shipping Document": "nsa_shipping_document"}
 	own = [df.fieldname for df in meta.fields
 		   if df.fieldtype == "Link" and df.options == options and df.fieldname != ours.get(options)]
@@ -661,11 +698,11 @@ def make_inward_gate_pass(source_name, target_doc=None, args=None):
 	"""GRN -> Create -> Inward Gate Pass, linked to the GRN, Arrival Notice and Shipping Document."""
 	if not frappe.db.exists("DocType", IGP):
 		frappe.throw(_("DocType {0} is not installed on this site.").format(IGP))
-	pr = frappe.get_doc("Purchase Receipt", source_name)
+	pr = frappe.get_doc(pr_doctype(), source_name)
 	pr.check_permission("read")
 	meta = frappe.get_meta(IGP)
 	igp = frappe.new_doc(IGP)
-	links = {"Purchase Receipt": pr.name, "Arrival Notice": pr.get("arrival_notice"),
+	links = {pr_doctype(): pr.name, "Arrival Notice": pr.get("arrival_notice"),
 			 "Shipping Document": pr.get("import_shipment")}
 	for options, value in links.items():
 		field = igp_link_field(options)
@@ -709,7 +746,7 @@ def make_purchase_receipt_from_clearance(source_name, target_doc=None, args=None
 # ----------------------------------------------------------------------------
 @frappe.whitelist()
 def make_import_cost_sheet(source_name, target_doc=None, args=None):
-	pr = _submitted("Purchase Receipt", source_name)
+	pr = _submitted(pr_doctype(), source_name)
 	cs = frappe.new_doc("Import Cost Sheet")
 	cs.purchase_receipt = pr.name
 	cs.posting_date = nowdate()
@@ -722,7 +759,7 @@ def make_landed_cost_voucher(source_name):
 	cs = _submitted("Import Cost Sheet", source_name)
 	if cs.landed_cost_voucher and frappe.db.exists("Landed Cost Voucher", cs.landed_cost_voucher):
 		return cs.landed_cost_voucher
-	pr = frappe.get_doc("Purchase Receipt", cs.purchase_receipt)
+	pr = frappe.get_doc(pr_doctype(), cs.purchase_receipt)
 
 	lcv = frappe.new_doc("Landed Cost Voucher")
 	lcv.company = cs.company
@@ -730,7 +767,7 @@ def make_landed_cost_voucher(source_name):
 	lcv.distribute_charges_based_on = "Distribute Manually" if cs.distribute_charges_based_on == "Weight" \
 		else cs.distribute_charges_based_on
 	lcv.append("purchase_receipts", {
-		"receipt_document_type": "Purchase Receipt", "receipt_document": pr.name, "supplier": pr.supplier,
+		"receipt_document_type": pr_doctype(), "receipt_document": pr.name, "supplier": pr.supplier,
 		"posting_date": pr.posting_date, "grand_total": pr.base_grand_total,
 	})
 	lcv.get_items_from_purchase_receipts()

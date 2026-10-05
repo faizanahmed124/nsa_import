@@ -1,5 +1,5 @@
 // NSA Import - Purchase Receipt (GRN)
-frappe.ui.form.on("Purchase Receipt", {
+const nsa_import_grn_events = {
 	refresh(frm) {
 		if (frm.doc.docstatus === 1 && frm.doc.purchase_type === "Import") {
 			frm.add_custom_button(__("Import Cost Sheet"), () =>
@@ -15,4 +15,6 @@ frappe.ui.form.on("Purchase Receipt", {
 			if (info.can_create) frm.add_custom_button(__("Inward Gate Pass"), make_igp, __("Create"));
 		});
 	},
-});
+};
+// "GRN" on sites where ERPNext's Purchase Receipt DocType was renamed
+["Purchase Receipt", "GRN"].forEach((dt) => frappe.ui.form.on(dt, nsa_import_grn_events));

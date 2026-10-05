@@ -14,6 +14,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.utils import getdate
+from nsa_import.utils import pr_doctype
 
 MILESTONES = (
 	("pi_to_lc", "pi", "lc"),
@@ -32,9 +33,10 @@ def get_source_dates(shipping_document):
 							 ["purchase_order", "letter_of_credit", "eta"], as_dict=True) or frappe._dict()
 	gd = frappe.db.sql("""select max(release_date) from `tabCustoms Clearance`
 		where import_shipment=%s and docstatus=1""", shipping_document)
-	ats = frappe.db.sql("""select min(posting_date) from `tabPurchase Receipt`
+	pr = pr_doctype()
+	ats = frappe.db.sql(f"""select min(posting_date) from `tab{pr}`
 		where import_shipment=%s and docstatus=1""", shipping_document) \
-		if frappe.db.has_column("Purchase Receipt", "import_shipment") else [[None]]
+		if frappe.db.has_column(pr, "import_shipment") else [[None]]
 	return {
 		"pi": frappe.db.get_value("Purchase Order", sd.purchase_order, "pi_date") if sd.purchase_order else None,
 		"lc": frappe.db.get_value("Letter of Credit", sd.letter_of_credit, "lc_date") if sd.letter_of_credit else None,

@@ -12,7 +12,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
-from nsa_import.utils import get_settings
+from nsa_import.utils import get_settings, pr_doctype, pr_item_doctype
 
 
 class ArrivalNotice(Document):
@@ -66,12 +66,13 @@ class ArrivalNotice(Document):
 
 	def update_from_grns(self, save=True, reset=False):
 		"""GRN QTY from submitted Purchase Receipts of the Shipping Document (per PO item, filled row by row)."""
-		if not frappe.db.has_column("Purchase Receipt", "import_shipment"):
+		pr, pr_item = pr_doctype(), pr_item_doctype()
+		if not frappe.db.has_column(pr, "import_shipment"):
 			# NSA Import fields on Purchase Receipt not created yet (run: bench --site <site> execute nsa_import.install.setup)
 			return
 		received = dict(frappe.db.sql(
-			"""select pri.purchase_order_item, sum(pri.qty) from `tabPurchase Receipt Item` pri
-			join `tabPurchase Receipt` pr on pr.name = pri.parent
+			f"""select pri.purchase_order_item, sum(pri.qty) from `tab{pr_item}` pri
+			join `tab{pr}` pr on pr.name = pri.parent
 			where pr.docstatus = 1 and pr.import_shipment = %s group by pri.purchase_order_item""",
 			self.shipping_document))
 		if not received and not reset:

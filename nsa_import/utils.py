@@ -148,3 +148,24 @@ def build_journal_entry(company, posting_date, rows, balancing_account, remark, 
 		je.append("accounts", bal)
 	je.insert()
 	return je
+
+
+def pr_doctype():
+	"""Name of ERPNext's Purchase Receipt DocType on this site ('GRN' on sites where it was renamed)."""
+	cache = getattr(frappe.local, "nsa_pr_doctype", None)
+	if cache:
+		return cache
+	name = "Purchase Receipt"
+	if not frappe.db.exists("DocType", "Purchase Receipt") and frappe.db.exists("DocType", "GRN"):
+		name = "GRN"
+	frappe.local.nsa_pr_doctype = name
+	return name
+
+
+def pr_item_doctype():
+	"""Child DocType of the GRN items table ('Purchase Receipt Item' unless renamed too)."""
+	try:
+		df = frappe.get_meta(pr_doctype()).get_field("items")
+		return df.options if df and df.options else "Purchase Receipt Item"
+	except Exception:
+		return "Purchase Receipt Item"

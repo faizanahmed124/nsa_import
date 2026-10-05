@@ -4,6 +4,8 @@ NSA Local / Import Purchase Order, plus downstream documents."""
 import re
 
 import frappe
+
+from nsa_import.utils import pr_doctype
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
@@ -74,6 +76,11 @@ def setup():
 	except Exception as e:
 		errors.append(f"Removing old / duplicate Purchase Order fields: {e}")
 		frappe.log_error(title="NSA Import: remove PO fields", message=frappe.get_traceback())
+	try:
+		fix_renamed_grn_links()
+	except Exception as e:
+		errors.append(f"GRN DocType links: {e}")
+		frappe.log_error(title="NSA Import: GRN links", message=frappe.get_traceback())
 	try:
 		make_property_setters()
 	except Exception as e:
@@ -273,7 +280,7 @@ def get_custom_fields():
 	)
 
 	# ---------------- Downstream documents keep Purchase Type ----------------
-	for dt in ("Purchase Receipt", "Purchase Invoice"):
+	for dt in (pr_doctype(), "Purchase Invoice"):
 		fields[dt] = [
 			F("purchase_type", "Select", "Purchase Type", "\nLocal\nImport", in_standard_filter=1,
 			  in_list_view=1, insert_after="naming_series"),
@@ -296,17 +303,17 @@ def get_custom_fields():
 		"company",
 	)
 	# ---------------- GRN <- Arrival Notice; Inward Gate Pass links ----------------
-	fields["Purchase Receipt"] = fields.get("Purchase Receipt", []) + [
+	fields[pr_doctype()] = fields.get(pr_doctype(), []) + [
 		F("arrival_notice", "Link", "Arrival Notice", "Arrival Notice", insert_after="import_shipment", read_only=1,
 		  no_copy=1),
 	]
 	if frappe.db.exists("DocType", "Inward Gate Pass"):
 		igp_meta = frappe.get_meta("Inward Gate Pass")
-		has_own_pr = any(df.fieldtype == "Link" and df.options == "Purchase Receipt" and df.fieldname != "nsa_purchase_receipt"
+		has_own_pr = any(df.fieldtype == "Link" and df.options == pr_doctype() and df.fieldname != "nsa_purchase_receipt"
 						 for df in igp_meta.fields)
 		igp_fields = [F("nsa_import_section", "Section Break", "NSA Import", collapsible=1)]
 		if not has_own_pr:
-			igp_fields.append(F("nsa_purchase_receipt", "Link", "GRN", "Purchase Receipt", in_standard_filter=1,
+			igp_fields.append(F("nsa_purchase_receipt", "Link", "GRN", pr_doctype(), in_standard_filter=1,
 								search_index=1))
 		igp_fields += [
 			F("nsa_arrival_notice", "Link", "Arrival Notice", "Arrival Notice", in_standard_filter=1),
@@ -434,3 +441,21 @@ def remove_duplicate_po_fields():
 	frappe.db.commit()
 	frappe.clear_cache(doctype=doctype)
 	return removed
+
+
+def fix_renamed_grn_links():
+	"""Sites where ERPNext's Purchase Receipt DocType was renamed (e.g. to 'GRN'): point our Link fields and
+	workspace shortcuts to the real DocType name."""
+	from frappe.custom.doctype.property_setter.property_setter import make_property_setter
+
+	pr = pr_doctype()
+	if pr == "Purchase Receipt":
+		return
+	for dt, field in (("Import Cost Sheet", "purchase_receipt"),):
+		make_property_setter(dt, field, "options", pr, "Text", validate_fields_for_doctype=False)
+	if frappe.db.exists("Workspace", "NSA Import"):
+		frappe.db.sql("""update `tabWorkspace Link` set link_to=%s
+			where parent='NSA Import' and link_to='Purchase Receipt'""", pr)
+		frappe.db.sql("""update `tabWorkspace Shortcut` set link_to=%s
+			where parent='NSA Import' and link_to='Purchase Receipt'""", pr)
+	frappe.db.commit()

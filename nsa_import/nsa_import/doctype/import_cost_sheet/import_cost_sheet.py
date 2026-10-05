@@ -3,7 +3,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
-from nsa_import.utils import get_company_accounts, get_settings
+from nsa_import.utils import get_company_accounts, get_settings, pr_doctype, pr_item_doctype
 
 
 class ImportCostSheet(Document):
@@ -29,7 +29,7 @@ class ImportCostSheet(Document):
 	# ------------------------------------------------------------------
 	def set_receipt_details(self):
 		pr = frappe.db.get_value(
-			"Purchase Receipt", self.purchase_receipt,
+			pr_doctype(), self.purchase_receipt,
 			["docstatus", "company", "supplier", "import_shipment", "customs_clearance", "letter_of_credit"], as_dict=True)
 		if not pr or pr.docstatus != 1:
 			frappe.throw(_("GRN (Purchase Receipt) {0} must be submitted.").format(self.purchase_receipt))
@@ -40,14 +40,14 @@ class ImportCostSheet(Document):
 				self.set(f, pr.get(f))
 		if not self.purchase_order:
 			self.purchase_order = frappe.db.get_value(
-				"Purchase Receipt Item", {"parent": self.purchase_receipt, "purchase_order": ["is", "set"]}, "purchase_order")
+				pr_item_doctype(), {"parent": self.purchase_receipt, "purchase_order": ["is", "set"]}, "purchase_order")
 		if not self.distribute_charges_based_on:
 			self.distribute_charges_based_on = get_settings().default_distribution or "Amount"
 
 	@frappe.whitelist()
 	def set_items_from_receipt(self):
 		self.set("items", [])
-		pr = frappe.get_doc("Purchase Receipt", self.purchase_receipt)
+		pr = frappe.get_doc(pr_doctype(), self.purchase_receipt)
 		for d in pr.items:
 			self.append("items", {
 				"item_code": d.item_code, "item_name": d.item_name, "qty": d.qty, "uom": d.uom,
