@@ -567,15 +567,17 @@ def get_hs_duty_rates(hs_code):
 # ----------------------------------------------------------------------------
 # Purchase Receipt (GRN)
 # ----------------------------------------------------------------------------
-def _make_pr(shipment, clearance=None):
+def _make_pr(shipment, clearance=None, qty_map=None, wh_map=None):
 	from erpnext.buying.doctype.purchase_order.purchase_order import make_purchase_receipt
 
-	qty_map, wh_map = {}, {}
-	for d in shipment.items:
-		if d.po_detail:
-			qty_map[d.po_detail] = qty_map.get(d.po_detail, 0) + flt(d.qty)
-			if d.get("warehouse"):
-				wh_map[d.po_detail] = d.warehouse
+	if qty_map is None:
+		qty_map, wh_map = {}, {}
+		for d in shipment.items:
+			if d.po_detail:
+				qty_map[d.po_detail] = qty_map.get(d.po_detail, 0) + flt(d.qty)
+				if d.get("warehouse"):
+					wh_map[d.po_detail] = d.warehouse
+	wh_map = wh_map or {}
 
 	pr = make_purchase_receipt(shipment.purchase_order)
 	items = []
@@ -611,6 +613,89 @@ def make_purchase_receipt_from_shipment(source_name, target_doc=None, args=None)
 	shp = _submitted("Shipping Document", source_name)
 	gd = frappe.db.get_value("Customs Clearance", {"import_shipment": shp.name, "docstatus": 1}, "name")
 	return _make_pr(shp, frappe.get_doc("Customs Clearance", gd) if gd else None)
+
+
+@frappe.whitelist()
+def make_purchase_receipt_from_arrival_notice(source_name, target_doc=None, args=None):
+	"""Arrival Notice -> Create -> GRN for the Pending QTY of each item, into the Arrival Notice warehouse."""
+	an = frappe.get_doc("Arrival Notice", source_name)
+	an.check_permission("read")
+	if an.docstatus != 1:
+		frappe.throw(_("Submit Arrival Notice {0} before creating the GRN.").format(an.name))
+	qty_map, wh_map = {}, {}
+	for d in an.items:
+		if d.po_detail and flt(d.pending_qty) > 0:
+			qty_map[d.po_detail] = qty_map.get(d.po_detail, 0) + flt(d.pending_qty)
+			if d.warehouse:
+				wh_map[d.po_detail] = d.warehouse
+	if not qty_map:
+		frappe.throw(_("Nothing pending to receive on Arrival Notice {0}.").format(an.name))
+	pr = _make_pr(frappe.get_doc("Shipping Document", an.shipping_document), None, qty_map, wh_map)
+	if frappe.get_meta("Purchase Receipt").has_field("arrival_notice"):
+		pr.arrival_notice = an.name
+	return pr
+
+
+# ----------------------------------------------------------------------------
+# Inward Gate Pass (existing DocType of the gate pass app) - linked after the GRN
+# ----------------------------------------------------------------------------
+IGP = "Inward Gate Pass"
+
+
+def igp_link_field(options):
+	"""Fieldname of the Inward Gate Pass Link field to `options` (the app's own field first, else ours)."""
+	if not frappe.db.exists("DocType", IGP):
+		return None
+	meta = frappe.get_meta(IGP)
+	ours = {"Purchase Receipt": "nsa_purchase_receipt", "Arrival Notice": "nsa_arrival_notice",
+			"Shipping Document": "nsa_shipping_document"}
+	own = [df.fieldname for df in meta.fields
+		   if df.fieldtype == "Link" and df.options == options and df.fieldname != ours.get(options)]
+	if own:
+		return own[0]
+	return ours.get(options) if meta.has_field(ours.get(options) or "") else None
+
+
+@frappe.whitelist()
+def make_inward_gate_pass(source_name, target_doc=None, args=None):
+	"""GRN -> Create -> Inward Gate Pass, linked to the GRN, Arrival Notice and Shipping Document."""
+	if not frappe.db.exists("DocType", IGP):
+		frappe.throw(_("DocType {0} is not installed on this site.").format(IGP))
+	pr = frappe.get_doc("Purchase Receipt", source_name)
+	pr.check_permission("read")
+	meta = frappe.get_meta(IGP)
+	igp = frappe.new_doc(IGP)
+	links = {"Purchase Receipt": pr.name, "Arrival Notice": pr.get("arrival_notice"),
+			 "Shipping Document": pr.get("import_shipment")}
+	for options, value in links.items():
+		field = igp_link_field(options)
+		if field and value:
+			igp.set(field, value)
+	# copy common header fields when the gate pass has them
+	po = next((d.purchase_order for d in pr.items if d.get("purchase_order")), None)
+	for field, value in (("company", pr.company), ("supplier", pr.supplier), ("supplier_name", pr.supplier_name),
+						 ("purchase_order", po), ("set_warehouse", pr.set_warehouse)):
+		df = meta.get_field(field)
+		if df and value and not igp.get(field) and df.fieldtype in ("Link", "Data", "Small Text"):
+			igp.set(field, value)
+	# items: first child table that has item_code and qty
+	for table in meta.get_table_fields():
+		child = frappe.get_meta(table.options)
+		if child.has_field("item_code") and child.has_field("qty"):
+			for d in pr.items:
+				row = {"item_code": d.item_code, "qty": d.qty}
+				for f in ("item_name", "uom", "stock_uom", "warehouse", "description"):
+					if child.has_field(f):
+						row[f] = d.get(f)
+				igp.append(table.fieldname, row)
+			break
+	return igp
+
+
+@frappe.whitelist()
+def get_inward_gate_pass_info():
+	exists = bool(frappe.db.exists("DocType", IGP))
+	return {"exists": exists, "can_create": exists and frappe.has_permission(IGP, "create")}
 
 
 @frappe.whitelist()

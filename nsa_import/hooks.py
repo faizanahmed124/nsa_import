@@ -35,6 +35,7 @@ doc_events = {
 
 override_doctype_dashboards = {
     "Purchase Order": "nsa_import.overrides.dashboard.purchase_order_dashboard",
+    "Purchase Receipt": "nsa_import.overrides.dashboard.purchase_receipt_dashboard",
 }
 
 scheduler_events = {

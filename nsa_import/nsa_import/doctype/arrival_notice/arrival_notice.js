@@ -14,6 +14,11 @@ frappe.ui.form.on("Arrival Notice", {
 		frm.set_query("warehouse", "items", () => ({ filters: { company: frm.doc.company, is_group: 0 } }));
 	},
 	refresh(frm) {
+		const make_grn = () => frappe.model.open_mapped_doc({ method: "nsa_import.api.make_purchase_receipt_from_arrival_notice", frm });
+		frm.make_methods = Object.assign(frm.make_methods || {}, { "Purchase Receipt": make_grn });
+		if (frm.doc.docstatus === 1 && frm.doc.grn_status !== "Received") {
+			frm.add_custom_button(__("Purchase Receipt"), make_grn, __("Create"));
+		}
 		if (frm.doc.docstatus < 2 && !frm.is_new()) {
 			frm.add_custom_button(__("Update GRN QTY from GRNs"), () =>
 				frappe.call({ method: "nsa_import.api.refresh_arrival_notice_grn", args: { name: frm.doc.name }, freeze: true })

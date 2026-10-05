@@ -241,6 +241,19 @@ or with *Update GRN QTY from GRNs*) and can be typed while receiving. GRN QTY ca
 Shipped QTY (+ tolerance %). GRN Status = Received when every item's Pending QTY is 0, otherwise Pending.
 One Arrival Notice per Shipping Document unless *Allow more than one Arrival Notice* is ticked in Settings.
 
+### GRN and Inward Gate Pass
+
+Submitted Arrival Notice → *Create → GRN*: a Purchase Receipt for the Pending QTY of each item, into the Arrival
+Notice warehouses, linked through the new GRN field *Arrival Notice* (plus Shipping Document / LC). Submitting it
+updates the Arrival Notice GRN QTY and GRN Status.
+
+Submitted GRN → *Create → Inward Gate Pass* (the existing DocType of the gate pass app). The gate pass is linked
+to the GRN — through its own Purchase Receipt link field if it has one, otherwise through the added *GRN* field —
+and to the Arrival Notice and Shipping Document (added fields in a collapsed *NSA Import* section). Supplier,
+company, PO and items are copied when the gate pass has matching fields. GRN Connections show the Arrival Notice
+and Inward Gate Passes; Arrival Notice Connections show its GRNs and gate passes. Nothing is created when the gate
+pass app is not installed.
+
 ## Clearing Agent and Clearance Bill
 
 **Clearing Agent** is a single-field master (Clearing Agent Name — mandatory, no duplicates). It is the Link used

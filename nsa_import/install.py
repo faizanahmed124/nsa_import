@@ -295,6 +295,25 @@ def get_custom_fields():
 		],
 		"company",
 	)
+	# ---------------- GRN <- Arrival Notice; Inward Gate Pass links ----------------
+	fields["Purchase Receipt"] = fields.get("Purchase Receipt", []) + [
+		F("arrival_notice", "Link", "Arrival Notice", "Arrival Notice", insert_after="import_shipment", read_only=1,
+		  no_copy=1),
+	]
+	if frappe.db.exists("DocType", "Inward Gate Pass"):
+		igp_meta = frappe.get_meta("Inward Gate Pass")
+		has_own_pr = any(df.fieldtype == "Link" and df.options == "Purchase Receipt" and df.fieldname != "nsa_purchase_receipt"
+						 for df in igp_meta.fields)
+		igp_fields = [F("nsa_import_section", "Section Break", "NSA Import", collapsible=1)]
+		if not has_own_pr:
+			igp_fields.append(F("nsa_purchase_receipt", "Link", "GRN", "Purchase Receipt", in_standard_filter=1,
+								search_index=1))
+		igp_fields += [
+			F("nsa_arrival_notice", "Link", "Arrival Notice", "Arrival Notice", in_standard_filter=1),
+			F("nsa_shipping_document", "Link", "Shipping Document", "Shipping Document"),
+		]
+		fields["Inward Gate Pass"] = igp_fields
+
 	# ---------------- Journal Entry -> Letter of Credit (Expense Booked) ----------------
 	fields["Journal Entry"] = [
 		F("letter_of_credit", "Link", "Letter of Credit", "Letter of Credit", insert_after="cheque_date",
