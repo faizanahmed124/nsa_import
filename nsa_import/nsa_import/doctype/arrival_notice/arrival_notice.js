@@ -15,9 +15,17 @@ frappe.ui.form.on("Arrival Notice", {
 	},
 	refresh(frm) {
 		const make_grn = () => frappe.model.open_mapped_doc({ method: "nsa_import.api.make_purchase_receipt_from_arrival_notice", frm });
-		frm.make_methods = Object.assign(frm.make_methods || {}, { "Purchase Receipt": make_grn, GRN: make_grn });
-		if (frm.doc.docstatus === 1 && frm.doc.grn_status !== "Received") {
-			frm.add_custom_button(__("Purchase Receipt"), make_grn, __("Create"));
+		const make_igp = () => frappe.model.open_mapped_doc({ method: "nsa_import.api.make_inward_gate_pass_from_arrival_notice", frm });
+		frm.make_methods = Object.assign(frm.make_methods || {}, {
+			"Purchase Receipt": make_grn, GRN: make_grn, "Inward Gate Pass": make_igp,
+		});
+		if (frm.doc.docstatus === 1) {
+			// Create -> IGP, GRN (same order as the reference screen)
+			frappe.call({ method: "nsa_import.api.get_inward_gate_pass_info" }).then((r) => {
+				const info = r.message || {};
+				if (info.exists && info.can_create) frm.add_custom_button(__("IGP"), make_igp, __("Create"));
+				if (frm.doc.grn_status !== "Received") frm.add_custom_button(__("GRN"), make_grn, __("Create"));
+			});
 		}
 		if (frm.doc.docstatus < 2 && !frm.is_new()) {
 			frm.add_custom_button(__("Update GRN QTY from GRNs"), () =>

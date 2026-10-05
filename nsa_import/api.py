@@ -693,40 +693,79 @@ def igp_link_field(options):
 	return ours.get(options) if meta.has_field(ours.get(options) or "") else None
 
 
-@frappe.whitelist()
-def make_inward_gate_pass(source_name, target_doc=None, args=None):
-	"""GRN -> Create -> Inward Gate Pass, linked to the GRN, Arrival Notice and Shipping Document."""
+def _build_inward_gate_pass(links, header, items):
+	"""New Inward Gate Pass (gate pass app) with our links, matching header fields and an item table if it has one."""
 	if not frappe.db.exists("DocType", IGP):
 		frappe.throw(_("DocType {0} is not installed on this site.").format(IGP))
-	pr = frappe.get_doc(pr_doctype(), source_name)
-	pr.check_permission("read")
 	meta = frappe.get_meta(IGP)
 	igp = frappe.new_doc(IGP)
-	links = {pr_doctype(): pr.name, "Arrival Notice": pr.get("arrival_notice"),
-			 "Shipping Document": pr.get("import_shipment")}
 	for options, value in links.items():
 		field = igp_link_field(options)
 		if field and value:
 			igp.set(field, value)
-	# copy common header fields when the gate pass has them
-	po = next((d.purchase_order for d in pr.items if d.get("purchase_order")), None)
-	for field, value in (("company", pr.company), ("supplier", pr.supplier), ("supplier_name", pr.supplier_name),
-						 ("purchase_order", po), ("set_warehouse", pr.set_warehouse)):
+	for field, value in header.items():
 		df = meta.get_field(field)
-		if df and value and not igp.get(field) and df.fieldtype in ("Link", "Data", "Small Text"):
+		if df and value and not igp.get(field) and df.fieldtype in ("Link", "Data", "Small Text", "Select", "Date",
+																	 "Datetime", "Int", "Float"):
+			if df.fieldtype == "Link" and not frappe.db.exists(df.options, value):
+				continue
 			igp.set(field, value)
-	# items: first child table that has item_code and qty
 	for table in meta.get_table_fields():
 		child = frappe.get_meta(table.options)
 		if child.has_field("item_code") and child.has_field("qty"):
-			for d in pr.items:
-				row = {"item_code": d.item_code, "qty": d.qty}
+			for d in items:
+				row = {"item_code": d.get("item_code"), "qty": d.get("qty")}
 				for f in ("item_name", "uom", "stock_uom", "warehouse", "description"):
-					if child.has_field(f):
+					if child.has_field(f) and d.get(f):
 						row[f] = d.get(f)
 				igp.append(table.fieldname, row)
 			break
 	return igp
+
+
+@frappe.whitelist()
+def make_inward_gate_pass(source_name, target_doc=None, args=None):
+	"""GRN -> Create -> Inward Gate Pass, linked to the GRN, Arrival Notice and Shipping Document."""
+	pr = frappe.get_doc(pr_doctype(), source_name)
+	pr.check_permission("read")
+	po = next((d.purchase_order for d in pr.items if d.get("purchase_order")), None)
+	return _build_inward_gate_pass(
+		{pr_doctype(): pr.name, "Arrival Notice": pr.get("arrival_notice"), "Shipping Document": pr.get("import_shipment")},
+		{"company": pr.company, "supplier": pr.supplier, "supplier_name": pr.supplier_name, "purchase_order": po,
+		 "set_warehouse": pr.set_warehouse},
+		[d.as_dict() for d in pr.items])
+
+
+@frappe.whitelist()
+def make_inward_gate_pass_from_arrival_notice(source_name, target_doc=None, args=None):
+	"""Arrival Notice -> Create -> IGP (vehicle at the gate before the GRN); the GRN is linked to it on submit."""
+	an = frappe.get_doc("Arrival Notice", source_name)
+	an.check_permission("read")
+	if an.docstatus == 2:
+		frappe.throw(_("Arrival Notice {0} is cancelled.").format(an.name))
+	sd = frappe.db.get_value("Shipping Document", an.shipping_document, ["supplier", "supplier_name"], as_dict=True) \
+		or frappe._dict()
+	items = [{"item_code": d.item_code, "item_name": d.item_name, "uom": d.uom, "warehouse": d.warehouse,
+			  "qty": flt(d.pending_qty) or flt(d.shipped_qty)} for d in an.items]
+	return _build_inward_gate_pass(
+		{"Arrival Notice": an.name, "Shipping Document": an.shipping_document},
+		{"company": an.company, "supplier": sd.supplier, "supplier_name": sd.supplier_name,
+		 "purchase_order": an.purchase_order, "transporter": an.transporter, "vehicle_type": an.vehicle_type,
+		 "contact_detail": an.contact_detail, "clearing_agent": an.clearing_agent, "posting_date": nowdate()},
+		items)
+
+
+def link_gate_passes_to_grn(pr):
+	"""On GRN submit: Inward Gate Passes made from its Arrival Notice and not yet linked get this GRN."""
+	an = pr.get("arrival_notice")
+	if not an or not frappe.db.exists("DocType", IGP):
+		return
+	meta = frappe.get_meta(IGP)
+	pr_field = igp_link_field(pr_doctype())
+	if not pr_field or not meta.has_field("nsa_arrival_notice"):
+		return
+	for name in frappe.get_all(IGP, filters={"nsa_arrival_notice": an, pr_field: ["is", "not set"]}, pluck="name"):
+		frappe.db.set_value(IGP, name, pr_field, pr.name, update_modified=False)
 
 
 @frappe.whitelist()

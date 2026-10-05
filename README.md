@@ -247,6 +247,9 @@ Submitted Arrival Notice → *Create → GRN*: a Purchase Receipt for the Pendin
 Notice warehouses, linked through the new GRN field *Arrival Notice* (plus Shipping Document / LC). Submitting it
 updates the Arrival Notice GRN QTY and GRN Status.
 
+Submitted Arrival Notice → *Create → IGP* makes the Inward Gate Pass before the GRN (vehicle at the gate; items
+with their pending qty, transporter / vehicle / contact copied when the gate pass has those fields); when the GRN
+made from that Arrival Notice is submitted, it is written into those gate passes automatically.
 Submitted GRN → *Create → Inward Gate Pass* (the existing DocType of the gate pass app). The gate pass is linked
 to the GRN — through its own Purchase Receipt link field if it has one, otherwise through the added *GRN* field —
 and to the Arrival Notice and Shipping Document (added fields in a collapsed *NSA Import* section). Supplier,

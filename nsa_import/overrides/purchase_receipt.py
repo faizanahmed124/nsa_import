@@ -35,6 +35,10 @@ def on_submit(doc, method=None):
 	if doc.get("import_shipment"):
 		frappe.db.set_value("Shipping Document", doc.import_shipment, "status", "Received", update_modified=False)
 		_update_arrival_notices(doc.import_shipment)
+	if doc.get("arrival_notice"):
+		from nsa_import.api import link_gate_passes_to_grn
+
+		link_gate_passes_to_grn(doc)
 	for po in {d.purchase_order for d in doc.items if d.get("purchase_order")}:
 		refresh_po_import_status(po)
 
